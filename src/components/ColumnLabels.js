@@ -4,8 +4,6 @@ import React, { Component } from 'react';
 import { Text, View, StyleSheet } from 'react-native';
 
 import { Consts } from '../utils';
-import type { Cell } from '../data';
-import colors from '../colors';
 
 let consts = new Consts();
 
@@ -18,12 +16,17 @@ export default class ColumnLabels extends Component {
     );
   }
 
-  _renderColumnLabel(cell: Cell, index: number) {
+  _renderColumnLabel(cell, index) {
     let names = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+
     return (
-      <View key={cell.id} style={styles.columnLabel} pointerEvents={'box-none'}>
+      <View
+        key={ cell.id }
+        style={ styles.columnLabel }
+        pointerEvents={ 'box-none' }>
+
         <Text style={styles.columnTitle}>
-          {names[index % names.length]}
+          { names[index % names.length] }
         </Text>
       </View>
     );
@@ -42,10 +45,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   columnTitle: {
-    backgroundColor: colors.lightGreen,
+    backgroundColor: consts.Colors.dayNameBackground,
     paddingVertical: 4,
     paddingHorizontal: 10,
-    color: colors.white,
+    color: '#fff',
     fontWeight: '500',
     fontSize: 16,
   },

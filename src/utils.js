@@ -16,6 +16,10 @@ export class Consts {
     settings: '#1976d2',
     settingsDark: '#004ba0',
     settingsLight: '#63a4ff',
+
+    dayNameBackground: '#4b830d',
+    cellBackground: '#dadada',
+    hourBackground: '#004ba0',
   }
 
   Sizes = {

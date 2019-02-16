@@ -4,8 +4,6 @@ import React, { Component } from 'react';
 import { Text, View, StyleSheet } from 'react-native';
 
 import { Consts } from '../utils';
-import type { Row, Cell } from '../data';
-import colors from '../colors';
 
 let consts = new Consts();
 
@@ -18,7 +16,7 @@ export default class RowLabels extends Component {
     );
   }
 
-  _renderRowLabel(row: Row) {
+  _renderRowLabel(row) {
     let hour = (parseInt(row.id.split('-')[1]) + 7) + '';
     if (hour.length === 1) {
       hour = '0' + hour;
@@ -46,10 +44,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',    
   },
   rowTitle: {
-    backgroundColor: colors.darkPurple,
+    backgroundColor: consts.Colors.hourBackground,
     paddingVertical: 4,
     paddingHorizontal: 10,
-    color: colors.white,
+    color: '#fff',
     fontWeight: '500',
     fontSize: 16,
   },

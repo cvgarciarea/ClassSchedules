@@ -2,33 +2,34 @@
 
 import React, { Component } from 'react';
 import {
-  Text,
   View,
   StyleSheet,
   TouchableOpacity,
-  Alert
 } from 'react-native';
 
 import { Consts } from '../utils';
-import type { Row, Cell } from '../data';
-import colors from '../colors';
 
 let consts = new Consts();
 
 export default class GridContent extends Component {
-  props: {
-    cellsByRow: Array<Row>
-  }
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      cellsByRow: props.cellsByRow || [],
+    }
+  } 
 
   render() {
     return (
       <View>
-        { this.props.cellsByRow.map(row => this._renderRow(row)) }
+        { this.state.cellsByRow.map(row => this._renderRow(row)) }
       </View>
     );
   }
 
-  _renderRow(row: Row) {
+  _renderRow(row) {
     return (
       <View key={row.id} style={styles.rowContainer}>
         { row.cells.map(cell => this._renderCell(cell)) }
@@ -36,19 +37,14 @@ export default class GridContent extends Component {
     );
   }
 
-  _renderCell(cell: Cell) {
+  _renderCell(cell) {
     return (
       <TouchableOpacity 
         key={cell.id}
         style={styles.cellContainer}
-        onPress={() => { this._onCellPressed(cell.id); }}
-      >
+        onPress={() => { }} >
       </TouchableOpacity>
     );
-  }
-
-  _onCellPressed(cellId: string) {
-    Alert.alert(`Pressed ${cellId}`);
   }
 }
 
@@ -62,6 +58,6 @@ const styles = StyleSheet.create({
     height: consts.Sizes.CellHeight,
     width: consts.Sizes.CellWidth,
     margin: consts.Sizes.CellMargin,
-    backgroundColor: colors.lightGray,
+    backgroundColor: consts.Colors.cellBackground,
   },
 });
