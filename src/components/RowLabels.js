@@ -17,7 +17,7 @@ export default class RowLabels extends Component {
   }
 
   _renderRowLabel(row) {
-    let hour = (parseInt(row.id.split('-')[1]) + 7) + '';
+    let hour = (row.id + 7) + '';
     if (hour.length === 1) {
       hour = '0' + hour;
     }

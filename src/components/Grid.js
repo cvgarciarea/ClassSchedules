@@ -4,17 +4,17 @@ import React, { Component } from 'react';
 import { StyleSheet, View } from 'react-native';
 import ScrollView, { ScrollViewChild } from 'react-native-directed-scrollview';
 
-import { Consts } from '../utils';
+import { Consts, Utils } from '../utils';
 import GridContent from './GridContent';
 import RowLabels from './RowLabels';
 import ColumnLabels from './ColumnLabels';
-import { getCellsByRow } from '../data';
 
 let consts = new Consts();
+let utils = new Utils();
 
 export default class Grid extends Component {
   render() {
-    const cellsByRow = getCellsByRow();
+    const cellsByRow = utils.getCellsByRow();
 
     return (
       <ScrollView

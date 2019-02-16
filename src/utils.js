@@ -30,4 +30,26 @@ export class Consts {
 }
 
 export class Utils {
+
+  getCellsByRow() {
+    const cellsByRow = [];
+
+    for (var rowIndex = 1; rowIndex < 14; rowIndex++) {
+      let row = {
+        id: rowIndex,
+        cells: [],
+      }
+
+      for (var columnIndex = 1; columnIndex < 8; columnIndex++) {
+        row.cells.push({
+          id: `${rowIndex}-${columnIndex}`,
+          title: 'Cell',
+        });
+      }
+
+      cellsByRow.push(row);
+    }
+
+    return cellsByRow;
+  }
 }
