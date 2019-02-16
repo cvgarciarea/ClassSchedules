@@ -11,12 +11,12 @@ export default class ColumnLabels extends Component {
   render() {
     return (
       <View style={styles.container} pointerEvents={'box-none'}>
-        { this.props.cellsByRow[1].cells.map((cell, index) => this._renderColumnLabel(cell, index)) }
+        { this.props.cellsByRow[1].cells.map((cell) => this.renderColumnLabel(cell)) }
       </View>
     );
   }
 
-  _renderColumnLabel(cell, index) {
+  renderColumnLabel(cell) {
     let names = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
 
     return (
@@ -26,7 +26,7 @@ export default class ColumnLabels extends Component {
         pointerEvents={ 'box-none' }>
 
         <Text style={styles.columnTitle}>
-          { names[index % names.length] }
+          { names[cell.id] }
         </Text>
       </View>
     );

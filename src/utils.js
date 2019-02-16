@@ -27,11 +27,21 @@ export class Consts {
     CellHeight: 80,
     CellMargin: 0.5,
   }
+
+  Days = {
+    SUNDAY: 0,
+    MONDAY: 1,
+    TUESDAY: 2,
+    WEDNESDAY: 3,
+    THURSDAY: 4,
+    FRIDAY: 5,
+    SATURDAY: 6,
+  }
 }
 
 export class Utils {
 
-  getCellsByRow() {
+  getCellsByRow(visibleDays=[0, 1, 2, 3, 4, 5, 6]) {
     const cellsByRow = [];
 
     for (var rowIndex = 1; rowIndex < 14; rowIndex++) {
@@ -40,9 +50,9 @@ export class Utils {
         cells: [],
       }
 
-      for (var columnIndex = 1; columnIndex < 8; columnIndex++) {
+      for (var columnIndex = 0; columnIndex < visibleDays.length; columnIndex++) {
         row.cells.push({
-          id: `${rowIndex}-${columnIndex}`,
+          id: visibleDays[columnIndex],
           title: 'Cell',
         });
       }

@@ -13,30 +13,52 @@ let consts = new Consts();
 let utils = new Utils();
 
 export default class Grid extends Component {
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      visibleDays: [
+        consts.Days.MONDAY,
+        consts.Days.TUESDAY,
+        consts.Days.WEDNESDAY,
+        consts.Days.THURSDAY,
+        consts.Days.FRIDAY,
+      ]
+    }
+  }
+
   render() {
-    const cellsByRow = utils.getCellsByRow();
+    const cellsByRow = utils.getCellsByRow(this.state.visibleDays);
+
+    let styles = StyleSheet.create({
+      contentContainer: {
+        height: (consts.Sizes.CellHeight + consts.Sizes.CellMargin * 2) * 10,
+        width: (consts.Sizes.CellWidth + consts.Sizes.CellMargin * 2) * this.state.visibleDays.length,
+      },
+    });
 
     return (
       <ScrollView
-        bounces={true}
-        bouncesZoom={true}
-        maximumZoomScale={1.5}
-        minimumZoomScale={0.75}
-        showsHorizontalScrollIndicator={false}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.contentContainer}
-        style={styles.container} >
+        bounces={ true }
+        bouncesZoom={ true }
+        maximumZoomScale={ 1.5 }
+        minimumZoomScale={ 0.75 }
+        showsHorizontalScrollIndicator={ false }
+        showsVerticalScrollIndicator={ false }
+        contentContainerStyle={ styles.contentContainer }
+        style={ constStyles.container }>
 
-        <ScrollViewChild scrollDirection={'both'}>
-          <GridContent cellsByRow={cellsByRow} />
+        <ScrollViewChild scrollDirection={ 'both' }>
+          <GridContent cellsByRow={ cellsByRow } />
         </ScrollViewChild>
 
-        <ScrollViewChild scrollDirection={'vertical'} style={styles.rowLabelsContainer}>
-          <RowLabels cellsByRow={cellsByRow} />
+        <ScrollViewChild scrollDirection={ 'vertical' } style={ constStyles.rowLabelsContainer }>
+          <RowLabels cellsByRow={ cellsByRow } />
         </ScrollViewChild>
 
-        <ScrollViewChild scrollDirection={'horizontal'} style={styles.columnLabelsContainer}>
-          <ColumnLabels cellsByRow={cellsByRow} />
+        <ScrollViewChild scrollDirection={ 'horizontal' } style={ constStyles.columnLabelsContainer }>
+          <ColumnLabels cellsByRow={ cellsByRow } />
         </ScrollViewChild>
 
       </ScrollView>
@@ -44,13 +66,9 @@ export default class Grid extends Component {
   }
 }
 
-const styles = StyleSheet.create({
+const constStyles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  contentContainer: {
-    height: (consts.Sizes.CellHeight + consts.Sizes.CellMargin * 2) * 10,
-    width: (consts.Sizes.CellWidth + consts.Sizes.CellMargin * 2) * 7,  // (100 width + 10 padding) * 7 days
   },
   rowLabelsContainer: {
     position: 'absolute',
