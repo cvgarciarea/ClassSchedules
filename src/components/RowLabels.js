@@ -11,13 +11,13 @@ export default class RowLabels extends Component {
   render() {
     return (
       <View style={styles.container} pointerEvents={'box-none'}>
-        { this.props.cellsByRow.map(row => this._renderRowLabel(row)) }
+        { this.props.cellsByRow.map(row => this.renderRowLabel(row)) }
       </View>
     );
   }
 
-  _renderRowLabel(row) {
-    let hour = (row.id + 7) + '';
+  renderRowLabel(row) {
+    let hour = (row.id) + '';
     if (hour.length === 1) {
       hour = '0' + hour;
     }

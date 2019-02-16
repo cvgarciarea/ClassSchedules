@@ -24,16 +24,21 @@ export default class Grid extends Component {
         consts.Days.WEDNESDAY,
         consts.Days.THURSDAY,
         consts.Days.FRIDAY,
-      ]
+      ],
+
+      visibleHours: {
+        start: 8,
+        end: 14,
+      }
     }
   }
 
   render() {
-    const cellsByRow = utils.getCellsByRow(this.state.visibleDays);
+    const cellsByRow = utils.getCellsByRow(this.state.visibleHours, this.state.visibleDays);
 
     let styles = StyleSheet.create({
       contentContainer: {
-        height: (consts.Sizes.CellHeight + consts.Sizes.CellMargin * 2) * 10,
+        height: (consts.Sizes.CellHeight + consts.Sizes.CellMargin * 2) * (this.state.visibleHours.end - this.state.visibleHours.start),
         width: (consts.Sizes.CellWidth + consts.Sizes.CellMargin * 2) * this.state.visibleDays.length,
       },
     });

@@ -41,10 +41,10 @@ export class Consts {
 
 export class Utils {
 
-  getCellsByRow(visibleDays=[0, 1, 2, 3, 4, 5, 6]) {
+  getCellsByRow(visibleHoursRange, visibleDays=[0, 1, 2, 3, 4, 5, 6]) {
     const cellsByRow = [];
 
-    for (var rowIndex = 1; rowIndex < 14; rowIndex++) {
+    for (var rowIndex = visibleHoursRange.start; rowIndex <= visibleHoursRange.end; rowIndex++) {
       let row = {
         id: rowIndex,
         cells: [],
