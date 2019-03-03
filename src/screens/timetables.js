@@ -9,7 +9,7 @@ import {
 import moment from 'moment';
 import ScrollView, { ScrollViewChild } from 'react-native-directed-scrollview';
 
-import { Consts, Utils } from '../utils';
+import { Consts, Utils, Color } from '../utils';
 import GridContent from '../components/GridContent';
 import RowLabels from '../components/RowLabels';
 import ColumnLabels from '../components/ColumnLabels';
@@ -40,7 +40,7 @@ export default class TimetablesScreen extends React.Component {
 
       data: {},
 
-      /* debug
+      /* debug */
       data: {
         "1": {
           "name": "Prueba",
@@ -64,7 +64,6 @@ export default class TimetablesScreen extends React.Component {
           ]
         }
       }
-      */
     }
   }
 
@@ -83,7 +82,7 @@ export default class TimetablesScreen extends React.Component {
 
     return Object.keys(this.state.data).map((key, i) => {
       return this.state.data[key].schedules.map((object, j) => {
-        let styles = {
+        let dynamicStyles = {
           cell: {
             position: 'absolute',
             width: consts.Sizes.CellWidth + consts.Sizes.CellMargin,
@@ -96,8 +95,10 @@ export default class TimetablesScreen extends React.Component {
         };
 
         if (!utils.emptyString(object.color)) {
-          styles.cell.backgroundColor = object.color;
+          dynamicStyles.cell.backgroundColor = object.color;
         }
+
+        dynamicStyles.text.color = Color.getTextColorForBackground(dynamicStyles.cell.backgroundColor);
 
         let startDate = Number(object.startTime.split(' ')[0]);
         let endDate = Number(object.endTime.split(' ')[0]);
@@ -115,15 +116,15 @@ export default class TimetablesScreen extends React.Component {
           let betweenSurplus = diff / 60 * (consts.Sizes.CellMargin * 2);
           let beforeSurplus = starts.diff(firstHour, 'minutes') / 60 * ( consts.Sizes.CellMargin * 2)
 
-          styles.cell.top = consts.Sizes.CellHeight / 60 * starts.diff(firstHour, 'minutes') + beforeSurplus;
-          styles.cell.height = consts.Sizes.CellHeight / 60 * diff + betweenSurplus;
-          styles.cell.left = this.state.visibleDays.indexOf(startDate) * (consts.Sizes.CellWidth + 2 * consts.Sizes.CellMargin) + consts.Sizes.CellMargin / 2;
+          dynamicStyles.cell.top = consts.Sizes.CellHeight / 60 * starts.diff(firstHour, 'minutes') + beforeSurplus;
+          dynamicStyles.cell.height = consts.Sizes.CellHeight / 60 * diff + betweenSurplus;
+          dynamicStyles.cell.left = this.state.visibleDays.indexOf(startDate) * (consts.Sizes.CellWidth + 2 * consts.Sizes.CellMargin) + consts.Sizes.CellMargin / 2;
 
-          let stylesheet = StyleSheet.create(styles);
+          let stylesheet = StyleSheet.create(dynamicStyles);
 
           return (
-            <View key={ j } style={ stylesheet.cell }>
-              <Text>{ this.state.data[key].name }</Text>
+            <View key={ j } style={[ styles.cell, stylesheet.cell ]}>
+              <Text style={ dynamicStyles.text }>{ this.state.data[key].name }</Text>
             </View>
           )
         } else if (this.itsVisible(object.startTime)) {
@@ -226,5 +227,10 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     // backgroundColor: '#aaffaa',
-  }
+  },
+
+  cell: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });
