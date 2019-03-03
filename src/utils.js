@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 export class Consts {
 
   Colors = {
@@ -61,5 +63,22 @@ export class Utils {
     }
 
     return cellsByRow;
+  }
+
+  emptyValue(value) {
+    return [null, undefined].includes(value);
+  }
+
+  emptyString(value) {
+    return this.emptyValue(value) || value === '';
+  }
+
+  numberToMomentHour(value) {
+    let hour = String(value);
+    if (hour.length === 1) {
+      hour = '0' + hour;
+    }
+
+    return moment(hour, 'HH');
   }
 }
