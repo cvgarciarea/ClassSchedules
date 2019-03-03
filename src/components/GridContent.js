@@ -7,9 +7,8 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
-import { Consts } from '../utils';
-
-let consts = new Consts();
+import Consts from '../utils/consts';
+import Colors from '../utils/colors';
 
 export default class GridContent extends Component {
 
@@ -52,12 +51,13 @@ const styles = StyleSheet.create({
   rowContainer: {
     flexDirection: 'row',
   },
+
   cellContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    height: consts.Sizes.CellHeight,
-    width: consts.Sizes.CellWidth,
-    margin: consts.Sizes.CellMargin,
-    backgroundColor: consts.Colors.cellBackground,
+    height: Consts.Sizes.CellHeight,
+    width: Consts.Sizes.CellWidth,
+    margin: Consts.Sizes.CellMargin,
+    backgroundColor: Colors.cellBackground,
   },
 });

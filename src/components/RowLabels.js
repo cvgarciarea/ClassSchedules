@@ -3,9 +3,8 @@
 import React, { Component } from 'react';
 import { Text, View, StyleSheet } from 'react-native';
 
-import { Consts } from '../utils';
-
-let consts = new Consts();
+import Consts from '../utils/consts';
+import Colors from '../utils/colors';
 
 export default class RowLabels extends Component {
   render() {
@@ -39,12 +38,12 @@ const styles = StyleSheet.create({
     left: 0,
   },
   rowLabel: {
-    height: (consts.Sizes.CellHeight + 2 * consts.Sizes.CellMargin),    
+    height: (Consts.Sizes.CellHeight + 2 * Consts.Sizes.CellMargin),
     justifyContent: 'flex-end',
-    alignItems: 'center',    
+    alignItems: 'center',
   },
   rowTitle: {
-    backgroundColor: consts.Colors.hourBackground,
+    backgroundColor: Colors.hourBackground,
     paddingVertical: 4,
     paddingHorizontal: 10,
     color: '#fff',

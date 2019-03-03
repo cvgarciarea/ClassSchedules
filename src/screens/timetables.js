@@ -9,13 +9,12 @@ import {
 import moment from 'moment';
 import ScrollView, { ScrollViewChild } from 'react-native-directed-scrollview';
 
-import { Consts, Utils, Color } from '../utils';
+import Consts from '../utils/consts';
+import Colors from '../utils/colors';
+import Utils from '../utils/utils';
 import GridContent from '../components/GridContent';
 import RowLabels from '../components/RowLabels';
 import ColumnLabels from '../components/ColumnLabels';
-
-let consts = new Consts();
-let utils = new Utils();
 
 export default class TimetablesScreen extends React.Component {
 
@@ -25,11 +24,11 @@ export default class TimetablesScreen extends React.Component {
     this.state = {
       visibleDays: [
         // consts.Days.SUNDAY,
-        consts.Days.MONDAY,
-        consts.Days.TUESDAY,
-        consts.Days.WEDNESDAY,
-        consts.Days.THURSDAY,
-        consts.Days.FRIDAY,
+        Consts.Days.MONDAY,
+        Consts.Days.TUESDAY,
+        Consts.Days.WEDNESDAY,
+        Consts.Days.THURSDAY,
+        Consts.Days.FRIDAY,
         // consts.Days.SATURDAY,
       ],
 
@@ -77,15 +76,15 @@ export default class TimetablesScreen extends React.Component {
   }
 
   renderClassesCells() {
-    let firstHour = utils.numberToMomentHour(this.state.visibleHours.start);
-    let lastHour = utils.numberToMomentHour(this.state.visibleHours.end);
+    let firstHour = Utils.numberToMomentHour(this.state.visibleHours.start);
+    let lastHour = Utils.numberToMomentHour(this.state.visibleHours.end);
 
     return Object.keys(this.state.data).map((key, i) => {
       return this.state.data[key].schedules.map((object, j) => {
         let dynamicStyles = {
           cell: {
             position: 'absolute',
-            width: consts.Sizes.CellWidth + consts.Sizes.CellMargin,
+            width: Consts.Sizes.CellWidth + Consts.Sizes.CellMargin,
             backgroundColor: this.state.data[key].color,
           },
 
@@ -94,11 +93,11 @@ export default class TimetablesScreen extends React.Component {
           }
         };
 
-        if (!utils.emptyString(object.color)) {
+        if (!Utils.emptyString(object.color)) {
           dynamicStyles.cell.backgroundColor = object.color;
         }
 
-        dynamicStyles.text.color = Color.getTextColorForBackground(dynamicStyles.cell.backgroundColor);
+        dynamicStyles.text.color = Colors.getTextColorForBackground(dynamicStyles.cell.backgroundColor);
 
         let startDate = Number(object.startTime.split(' ')[0]);
         let endDate = Number(object.endTime.split(' ')[0]);
@@ -113,12 +112,12 @@ export default class TimetablesScreen extends React.Component {
           let ends = moment(endTime, 'HH:mm');
           let diff = ends.diff(starts, 'minutes');
 
-          let betweenSurplus = diff / 60 * (consts.Sizes.CellMargin * 2);
-          let beforeSurplus = starts.diff(firstHour, 'minutes') / 60 * ( consts.Sizes.CellMargin * 2)
+          let betweenSurplus = diff / 60 * (Consts.Sizes.CellMargin * 2);
+          let beforeSurplus = starts.diff(firstHour, 'minutes') / 60 * ( Consts.Sizes.CellMargin * 2)
 
-          dynamicStyles.cell.top = consts.Sizes.CellHeight / 60 * starts.diff(firstHour, 'minutes') + beforeSurplus;
-          dynamicStyles.cell.height = consts.Sizes.CellHeight / 60 * diff + betweenSurplus;
-          dynamicStyles.cell.left = this.state.visibleDays.indexOf(startDate) * (consts.Sizes.CellWidth + 2 * consts.Sizes.CellMargin) + consts.Sizes.CellMargin / 2;
+          dynamicStyles.cell.top = Consts.Sizes.CellHeight / 60 * starts.diff(firstHour, 'minutes') + beforeSurplus;
+          dynamicStyles.cell.height = Consts.Sizes.CellHeight / 60 * diff + betweenSurplus;
+          dynamicStyles.cell.left = this.state.visibleDays.indexOf(startDate) * (Consts.Sizes.CellWidth + 2 * Consts.Sizes.CellMargin) + Consts.Sizes.CellMargin / 2;
 
           let stylesheet = StyleSheet.create(dynamicStyles);
 
@@ -144,19 +143,19 @@ export default class TimetablesScreen extends React.Component {
   }
 
   render() {
-    const cellsByRow = utils.getCellsByRow(this.state.visibleHours, this.state.visibleDays);
+    const cellsByRow = Utils.getCellsByRow(this.state.visibleHours, this.state.visibleDays);
 
     let dStyles = StyleSheet.create({
       contentContainer: {
-        height: (consts.Sizes.CellHeight + consts.Sizes.CellMargin * 2) * (this.state.visibleHours.end - this.state.visibleHours.start),
-        width: (consts.Sizes.CellWidth + consts.Sizes.CellMargin * 2) * this.state.visibleDays.length,
+        height: (Consts.Sizes.CellHeight + Consts.Sizes.CellMargin * 2) * (this.state.visibleHours.end - this.state.visibleHours.start),
+        width: (Consts.Sizes.CellWidth + Consts.Sizes.CellMargin * 2) * this.state.visibleDays.length,
       },
     });
 
     return (
       <View style={{ flex: 1 }}>
         <StatusBar
-          backgroundColor={ consts.Colors.primaryDark }
+          backgroundColor={ Colors.primaryDark }
           barStyle="light-content"
           hidden={ false } />
 
@@ -223,7 +222,7 @@ const styles = StyleSheet.create({
   cellsContainer: {
     position: 'absolute',
     top: 0,
-    bottom: -consts.Sizes.CellHeight,
+    bottom: -Consts.Sizes.CellHeight,
     left: 0,
     right: 0,
     // backgroundColor: '#aaffaa',

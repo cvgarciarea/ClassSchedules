@@ -3,9 +3,8 @@
 import React, { Component } from 'react';
 import { Text, View, StyleSheet } from 'react-native';
 
-import { Consts } from '../utils';
-
-let consts = new Consts();
+import Consts from '../utils/consts';
+import Colors from '../utils/colors';
 
 export default class ColumnLabels extends Component {
   render() {
@@ -40,12 +39,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row'
   },
   columnLabel: {
-    width: consts.Sizes.CellWidth + 2 * consts.Sizes.CellMargin,
+    width: Consts.Sizes.CellWidth + 2 * Consts.Sizes.CellMargin,
     justifyContent: 'center',
     alignItems: 'center',
   },
   columnTitle: {
-    backgroundColor: consts.Colors.dayNameBackground,
+    backgroundColor: Colors.dayNameBackground,
     paddingVertical: 4,
     paddingHorizontal: 10,
     color: '#fff',

@@ -14,16 +14,14 @@ import TimetablesScreen from './src/screens/timetables';
 import TestsScreen from './src/screens/tests';
 import SettingsScreen from './src/screens/settings';
 
-import { Consts } from './src/utils';
-
-let consts = new Consts();
+import Colors from './src/utils/colors';
 
 let tabNavigator = createMaterialBottomTabNavigator({
   Timetables: {
     screen: TimetablesScreen,
     navigationOptions: {
       tabBarLabel: i18n.t('timetables'),
-      tabBarColor: consts.Colors.primary,
+      tabBarColor: Colors.primary,
       tabBarIcon: ({ tintColor, focused }) => (
         <Icon size={ 25 } name={ 'calendar-multiselect' } style={{ color: '#fff' }} />
       )
@@ -34,7 +32,7 @@ let tabNavigator = createMaterialBottomTabNavigator({
     screen: TestsScreen,
     navigationOptions: {
       tabBarLabel: i18n.t('tests'),
-      tabBarColor: consts.Colors.tests,
+      tabBarColor: Colors.tests,
       tabBarIcon: ({ tintColor, focused }) => (
         <Icon size={ 25 } name={ 'pencil' } style={{ color: '#fff' }} />
       )
@@ -45,7 +43,7 @@ let tabNavigator = createMaterialBottomTabNavigator({
     screen: SettingsScreen,
     navigationOptions: {
       tabBarLabel: i18n.t('settings'),
-      tabBarColor: consts.Colors.settings,
+      tabBarColor: Colors.settings,
       tabBarIcon: ({ tintColor, focused }) => (
         <Icon size={ 25 } name={ 'settings' } style={{ color: '#fff' }} />
       )
@@ -60,7 +58,7 @@ let tabNavigator = createMaterialBottomTabNavigator({
 tabNavigator.navigationOptions = ({ navigation }) => {
   return {
     headerStyle: {
-      backgroundColor: consts.Colors.primary,
+      backgroundColor: Colors.primary,
     }
   }
 }

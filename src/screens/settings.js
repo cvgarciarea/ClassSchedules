@@ -3,9 +3,8 @@ import {
   View,
   StatusBar,
 } from 'react-native';
-import { Consts } from '../utils';
 
-let consts = new Consts();
+import Colors from '../utils/colors';
 
 export default class SettingsScreen extends React.Component {
 
@@ -13,7 +12,7 @@ export default class SettingsScreen extends React.Component {
     return (
       <View>
         <StatusBar
-          backgroundColor={ consts.Colors.primaryDark }
+          backgroundColor={ Colors.primaryDark }
           barStyle="light-content"
           hidden={ false } />
 
