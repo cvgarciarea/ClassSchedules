@@ -2,5 +2,17 @@
   "app-name": "Horarios de clase",
   "timetables": "Horarios",
   "tests": "Pruebas",
-  "settings": "Ajustes"
+  "settings": "Ajustes",
+  "theme": "Tema",
+
+  "visible-time-range": "Rango de tiempo visible",
+  "visible-days": "Días visibles",
+  "notifications": "Notificaciones",
+
+  "theme-light": "Claro",
+  "theme-dark": "Oscuro",
+  "theme-amoled": "AMOLED",
+
+  "section-general": "General",
+  "section-app-info": "Acerca de"
 }

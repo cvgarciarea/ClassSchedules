@@ -9,12 +9,12 @@ import { createMaterialBottomTabNavigator } from 'react-navigation-material-bott
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import i18n from './src/i18n';
+import Colors from './src/utils/colors';
+import Primitives from './src/utils/primitives';
 
 import TimetablesScreen from './src/screens/timetables';
 import TestsScreen from './src/screens/tests';
 import SettingsScreen from './src/screens/settings';
-
-import Colors from './src/utils/colors';
 
 let tabNavigator = createMaterialBottomTabNavigator({
   Timetables: {
@@ -48,7 +48,7 @@ let tabNavigator = createMaterialBottomTabNavigator({
         <Icon size={ 25 } name={ 'settings' } style={{ color: '#fff' }} />
       )
     }
-  }
+  },
 },
 {
   activeTintColor: '#fff',

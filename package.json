@@ -11,6 +11,7 @@
     "clean": "watchman watch-del-all && npm cache clean && cd android && ./gradlew clean && cd .."
   },
   "dependencies": {
+    "moment": "^2.24.0",
     "react": "16.6.3",
     "react-native": "0.57.8",
     "react-native-directed-scrollview": "git+https://github.com/chrisfisher/react-native-directed-scrollview.git#master",
@@ -20,8 +21,7 @@
     "react-native-paper": "^2.11.0",
     "react-native-vector-icons": "^6.2.0",
     "react-navigation": "^3.1.5",
-    "react-navigation-material-bottom-tabs": "^1.0.0",
-    "moment": "^2.24.0"
+    "react-navigation-material-bottom-tabs": "^1.0.0"
   },
   "devDependencies": {
     "babel-jest": "23.6.0",

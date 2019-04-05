@@ -37,11 +37,13 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
   },
+
   rowLabel: {
     height: (Consts.Sizes.CellHeight + 2 * Consts.Sizes.CellMargin),
     justifyContent: 'flex-end',
     alignItems: 'center',
   },
+
   rowTitle: {
     backgroundColor: Colors.hourBackground,
     paddingVertical: 4,
