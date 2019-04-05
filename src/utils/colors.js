@@ -20,6 +20,25 @@ export default class Colors {
   static cellBackground = '#dadada'
   static hourBackground = '#004ba0'
 
+  static THEME = 'light';
+
+  static Themes = {
+    light: {
+      background: '#f6f6f6',
+      foreground: '#363c3d',
+    },
+
+    dark: {
+      background: '#2a2a2a',
+      foreground: '#f6f6f6',
+    },
+
+    amoled: {
+      background: '#000000',
+      foreground: '#f6f6f6',
+    },
+  }
+
   static hexToRGB(hex) {
     var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
 

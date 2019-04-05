@@ -8,11 +8,10 @@ import {
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import Utils from '../utils/utils';
+import Colors from '../utils/colors';
 
 import {
-  Spacer20,
   Spacer30,
-  Spacer50,
   FlexSpacer,
 } from './spacer';
 
@@ -29,20 +28,22 @@ class ChooserItem extends React.Component {
    render() {
     let iconSize = 30;
     let icon = null;
+    let theme = Colors.Themes[Colors.THEME];
 
     if (!this.props.useIcon) {
       icon = (
         <Icon
           size={ iconSize * 2 / 3 }
+          color={ theme.foreground }
           name={
-          this.props.selected ?
-            'checkbox-marked-circle'
-          : 'checkbox-blank-circle-outline'
+            this.props.selected ?
+              'checkbox-marked-circle'
+            : 'checkbox-blank-circle-outline'
         } />
       )
     } else if (!Utils.emptyString(this.props.icon)) {
       icon = (
-        <Icon name={ this.props.icon } size={ iconSize } />
+        <Icon name={ this.props.icon } size={ iconSize } color={ theme.foreground } />
       )
     } else {
       icon = (
@@ -60,13 +61,19 @@ class ChooserItem extends React.Component {
         <View style={[ styles.itemContainer, { height: iconSize + 10 } ]}>
           { icon }
 
-          <Text style={{ paddingLeft: 15 }}>{ this.props.title }</Text>
+          <Text
+            style={{ paddingLeft: 15, color: theme.foreground }}>
+            { this.props.title }
+          </Text>
 
           <FlexSpacer />
 
           {
             this.props.selected && this.props.useIcon ?
-              <Icon name={ 'check' } size={ iconSize } />
+              <Icon
+                name={ 'check' }
+                size={ iconSize }
+                color={ theme.foreground } />
             :
               null
           }

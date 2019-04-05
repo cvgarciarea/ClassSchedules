@@ -12,7 +12,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { version } from '../../package';
 import i18n from '../i18n';
 
-// import Colors from '../utils/colors';
+import Colors from '../utils/colors';
 import Utils from '../utils/utils';
 
 import Toggle from '../components/toggle';
@@ -25,6 +25,8 @@ let modalsIdx = 0;
 class InputModal extends React.Component {
 
   render() {
+    let theme = Colors.Themes[Colors.THEME];
+
     return (
       <View>
         { /* Modal para el fondo */ }
@@ -49,9 +51,9 @@ class InputModal extends React.Component {
           }}>
 
           <View style={ styles.inputModalMain }>
-            <View style={ styles.inputModalBox }>
-              <View style={ styles.inputModalHeader }>
-                <Text>Test</Text>
+            <View style={[ styles.inputModalBox, { backgroundColor: theme.background } ]}>
+              <View style={[ styles.inputModalHeader, { backgroundColor: theme.background } ]}>
+                <Text style={{ color: theme.foreground }}>Test</Text>
               </View>
 
               <View style={ styles.inputModalChildBox }>
@@ -76,7 +78,13 @@ class SettingsSectionHeader extends React.Component {
   }
 
   render() {
-    return <Text style={{ padding: 10 }}>{ this.state.label }</Text>
+    let theme = Colors.Themes[Colors.THEME];
+
+    return (
+      <Text style={{ padding: 10, color: theme.foreground }}>
+        { this.state.label }
+      </Text>
+    )
   }
 }
 
@@ -99,6 +107,8 @@ class SettingItem extends React.Component {
   }
 
   render() {
+    let theme = Colors.Themes[Colors.THEME];
+
     return (
       <TouchableNativeFeedback onPress={ () => this._handlePress() }>
         <View style={{ padding: 10, flexDirection: 'row', marginRight: 20 }}>
@@ -109,10 +119,13 @@ class SettingItem extends React.Component {
               <Icon
                 size={ 30 }
                 name={ this.props.icon }
-                style={{ color: '#000', marginHorizontal: 10, alignSelf: 'center' }} />
+                color={ theme.foreground }
+                style={{ marginHorizontal: 10, alignSelf: 'center' }} />
           }
 
-          <Text style={{ alignSelf: 'center' }}>{ this.props.label }</Text>
+          <Text style={{ alignSelf: 'center', color: theme.foreground }}>
+            { this.props.label }
+          </Text>
 
           <View style={{ flex: 1 }} />
 
@@ -151,7 +164,7 @@ class BooleanSettingItem extends SettingItem {
     */
 
     return (
-      <Toggle isOn={ false } onToggle={ () => {} } />
+      <Toggle active={ false } onToggle={ () => {} } />
     )
   }
 
@@ -172,6 +185,8 @@ class SelectionSettingItem extends SettingItem {
   }
 
   rightChild() {
+    let theme = Colors.Themes[Colors.THEME];
+
     return (
       <View style={{ flexDirection: 'row' }}>
         {
@@ -186,7 +201,8 @@ class SelectionSettingItem extends SettingItem {
         <Icon
           size={ 22 }
           name={ 'menu-down' }
-          style={{ color: '#000', alignSelf: 'center' }} />
+          color={ theme.foreground }
+          style={{ alignSelf: 'center' }} />
       </View>
     )
   }
@@ -255,8 +271,10 @@ export default class SettingsScreen extends React.Component {
       "amoled": { title: i18n.t('theme-amoled') },
     }
 
+    let theme = Colors.Themes[Colors.THEME];
+
     return (
-      <View style={{ flex: 1 }}>
+      <View style={{ flex: 1, backgroundColor: theme.background }}>
         {
           this.state.modals.map(modal => {
             return modal;
@@ -264,8 +282,6 @@ export default class SettingsScreen extends React.Component {
         }
 
         <ScrollView>
-          { /* Theme */ }
-
           <SettingsSectionHeader label={ i18n.t('section-general') } />
           <SelectionSettingItem
             label={ i18n.t('theme') }
@@ -308,7 +324,6 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     borderColor: '#000',
     // backgroundColor: '#aaffaa',
-    backgroundColor: '#fff',  // FIXME: depende del tema seleccionado
   },
 
   inputModalHeader: {
