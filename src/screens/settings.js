@@ -275,7 +275,7 @@ export default class SettingsScreen extends React.Component {
   }
 
   onThemeChanged(theme) {
-    Colors.THEME = theme;
+    Colors.setTheme(theme);
     this.setState({ theme });
   }
 

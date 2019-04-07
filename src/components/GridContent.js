@@ -12,18 +12,27 @@ import Colors from '../utils/colors';
 
 export default class GridContent extends Component {
 
+  static defaultProps = {
+    cellsByRow: [],
+  }
+
   constructor(props) {
     super(props);
 
     this.state = {
-      cellsByRow: props.cellsByRow || [],
+      updated: true,
     }
+
+    Colors.addThemeCallback(theme => { this.setState({ updated: false }) });
   } 
 
   render() {
+    this.state.updated = true;
+    let theme = Colors.Themes[Colors.THEME];
+
     return (
-      <View>
-        { this.state.cellsByRow.map(row => this._renderRow(row)) }
+      <View style={{ backgroundColor: theme.gridBackground }}>
+        { this.props.cellsByRow.map(row => this._renderRow(row)) }
       </View>
     );
   }
@@ -37,11 +46,14 @@ export default class GridContent extends Component {
   }
 
   _renderCell(cell) {
+    let theme = Colors.Themes[Colors.THEME];
+
     return (
       <TouchableOpacity 
-        key={cell.id}
-        style={styles.cellContainer}
-        onPress={() => { }} >
+        key={ cell.id }
+        style={[ styles.cellContainer, { backgroundColor: theme.cellBackground } ]}
+        onPress={ () => { } }>
+
       </TouchableOpacity>
     );
   }
@@ -58,6 +70,6 @@ const styles = StyleSheet.create({
     height: Consts.Sizes.CellHeight,
     width: Consts.Sizes.CellWidth,
     margin: Consts.Sizes.CellMargin,
-    backgroundColor: Colors.cellBackground,
+    // backgroundColor: Colors.cellBackground,
   },
 });

@@ -17,28 +17,34 @@ export default class Colors {
   static settingsLight = '#63a4ff'
 
   static dayNameBackground = '#4b830d'
-  static cellBackground = '#dadada'
   static hourBackground = '#004ba0'
 
   static THEME = 'dark';
+  static THEME_CALLBACKS = [];
 
   static Themes = {
     light: {
       background: '#f6f6f6',
       foreground: '#363c3d',
       sectionHeaderBackground: '#eaeaea',
+      cellBackground: '#dadada',
+      gridBackground: '#fff',
     },
 
     dark: {
       background: '#2a2a2a',
       foreground: '#f6f6f6',
-      sectionHeaderBackground: '#000000',
+      sectionHeaderBackground: '#000',
+      cellBackground: '#2a2a2a',
+      gridBackground: '#000',
     },
 
     amoled: {
-      background: '#000000',
+      background: '#000',
       foreground: '#f6f6f6',
-      sectionHeaderBackground: '#000000',
+      sectionHeaderBackground: '#000',
+      cellBackground: '#000',
+      gridBackground: '#2a2a2a',
     },
   }
 
@@ -59,5 +65,17 @@ export default class Colors {
 
     let light = color.r * 0.299 + color.g * 0.587 + color.b * 0.114 > 186;
     return light ? '#000' : '#fff';
+  }
+
+  static addThemeCallback(func) {
+    Colors.THEME_CALLBACKS.push(func);
+  }
+
+  static setTheme(theme) {
+    Colors.THEME = theme;
+
+    for (let i=0; i<Colors.THEME_CALLBACKS.length; i++) {
+      Colors.THEME_CALLBACKS[i](theme);
+    }
   }
 }
