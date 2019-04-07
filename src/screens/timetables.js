@@ -12,9 +12,10 @@ import ScrollView, { ScrollViewChild } from 'react-native-directed-scrollview';
 import Consts from '../utils/consts';
 import Colors from '../utils/colors';
 import Utils from '../utils/utils';
-import GridContent from '../components/GridContent';
-import RowLabels from '../components/RowLabels';
-import ColumnLabels from '../components/ColumnLabels';
+
+import GridContent from '../components/grid-content';
+import RowLabels from '../components/row-labels';
+import ColumnLabels from '../components/column-labels';
 
 export default class TimetablesScreen extends React.Component {
 
@@ -22,6 +23,8 @@ export default class TimetablesScreen extends React.Component {
     super(props);
 
     this.state = {
+      updated: true,
+
       visibleDays: [
         // consts.Days.SUNDAY,
         Consts.Days.MONDAY,
@@ -64,6 +67,8 @@ export default class TimetablesScreen extends React.Component {
         }
       }
     }
+
+    Colors.addThemeCallback(theme => this.setState({ updated: false }));
   }
 
   itsVisible(datetime) {
@@ -115,9 +120,9 @@ export default class TimetablesScreen extends React.Component {
           let betweenSurplus = diff / 60 * (Consts.Sizes.CellMargin * 2);
           let beforeSurplus = starts.diff(firstHour, 'minutes') / 60 * ( Consts.Sizes.CellMargin * 2)
 
-          dynamicStyles.cell.top = Consts.Sizes.CellHeight / 60 * starts.diff(firstHour, 'minutes') + beforeSurplus;
+          dynamicStyles.cell.top = Consts.Sizes.CellHeight / 60 * starts.diff(firstHour, 'minutes') + beforeSurplus + Consts.Sizes.columnLabelHeight;
           dynamicStyles.cell.height = Consts.Sizes.CellHeight / 60 * diff + betweenSurplus;
-          dynamicStyles.cell.left = this.state.visibleDays.indexOf(startDate) * (Consts.Sizes.CellWidth + 2 * Consts.Sizes.CellMargin) + Consts.Sizes.CellMargin / 2;
+          dynamicStyles.cell.left = this.state.visibleDays.indexOf(startDate) * (Consts.Sizes.CellWidth + 2 * Consts.Sizes.CellMargin) + Consts.Sizes.CellMargin / 2 + Consts.Sizes.rowLabelWidth;
 
           let stylesheet = StyleSheet.create(dynamicStyles);
 
@@ -143,17 +148,20 @@ export default class TimetablesScreen extends React.Component {
   }
 
   render() {
+    this.state.updated = true;
+
+    const theme = Colors.Themes[Colors.THEME];
     const cellsByRow = Utils.getCellsByRow(this.state.visibleHours, this.state.visibleDays);
 
     let dStyles = StyleSheet.create({
       contentContainer: {
-        height: (Consts.Sizes.CellHeight + Consts.Sizes.CellMargin * 2) * (this.state.visibleHours.end - this.state.visibleHours.start),
-        width: (Consts.Sizes.CellWidth + Consts.Sizes.CellMargin * 2) * this.state.visibleDays.length,
+        height: (Consts.Sizes.CellHeight + Consts.Sizes.CellMargin * 2) * (this.state.visibleHours.end - this.state.visibleHours.start) + Consts.Sizes.columnLabelHeight,
+        width: (Consts.Sizes.CellWidth + Consts.Sizes.CellMargin * 2) * this.state.visibleDays.length + Consts.Sizes.rowLabelWidth,
       },
     });
 
     return (
-      <View style={{ flex: 1 }}>
+      <View style={{ flex: 1, backgroundColor: theme.gridBackground }}>
         <StatusBar
           backgroundColor={ Colors.primaryDark }
           barStyle="light-content"
@@ -177,7 +185,7 @@ export default class TimetablesScreen extends React.Component {
               <GridContent cellsByRow={ cellsByRow } />
             </ScrollViewChild>
 
-            <ScrollViewChild scrollDirection={ 'both' } style={ styles.cellsContainer }>
+            <ScrollViewChild scrollDirection={ 'both' } style={[ styles.cellsContainer, ]}>
               { this.renderClassesCells() }
               { /* <Text style={{ fontSize: 30 }}>TEST</Text> */ }
             </ScrollViewChild>
@@ -216,7 +224,7 @@ const styles = StyleSheet.create({
     left: 0,
     top: 0,
     right: 0,
-    height: 30,
+    height: Consts.Sizes.columnLabelHeight,
   },
 
   cellsContainer: {

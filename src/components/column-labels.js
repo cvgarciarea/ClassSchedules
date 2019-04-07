@@ -38,11 +38,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row'
   },
+
   columnLabel: {
+    paddingLeft: Consts.Sizes.rowLabelWidth,
     width: Consts.Sizes.CellWidth + 2 * Consts.Sizes.CellMargin,
     justifyContent: 'center',
     alignItems: 'center',
   },
+
   columnTitle: {
     backgroundColor: Colors.dayNameBackground,
     paddingVertical: 4,

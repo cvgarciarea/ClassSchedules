@@ -7,9 +7,13 @@ import Consts from '../utils/consts';
 import Colors from '../utils/colors';
 
 export default class RowLabels extends Component {
+
   render() {
     return (
-      <View style={styles.container} pointerEvents={'box-none'}>
+      <View
+        style={ styles.container }
+        pointerEvents={ 'none' }>
+
         { this.props.cellsByRow.map(row => this.renderRowLabel(row)) }
       </View>
     );
@@ -24,8 +28,12 @@ export default class RowLabels extends Component {
     let time = hour + ':00';
 
     return (
-      <View key={row.id} style={styles.rowLabel} pointerEvents={'box-none'}>
-        <Text style={styles.rowTitle}>{ time }</Text>
+      <View
+        key={ row.id }
+        style={ styles.rowLabel }
+        pointerEvents={ 'none' }>
+
+        <Text style={ styles.rowTitle }>{ time }</Text>
       </View>
     )
   }
@@ -39,12 +47,15 @@ const styles = StyleSheet.create({
   },
 
   rowLabel: {
+    paddingTop: Consts.Sizes.columnLabelHeight - Consts.Sizes.rowLabelTitleWidth / 2,
     height: (Consts.Sizes.CellHeight + 2 * Consts.Sizes.CellMargin),
-    justifyContent: 'flex-end',
+    // justifyContent: 'flex-end',
     alignItems: 'center',
+    // width: Consts.Sizes.rowLabelWidth,
   },
 
   rowTitle: {
+    height: Consts.Sizes.rowLabelTitleWidth,
     backgroundColor: Colors.hourBackground,
     paddingVertical: 4,
     paddingHorizontal: 10,

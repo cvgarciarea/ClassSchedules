@@ -7,8 +7,9 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import Utils from '../utils/utils';
+import Consts from '../utils/consts';
 import Colors from '../utils/colors';
+import Utils from '../utils/utils';
 
 import {
   Spacer30,
@@ -62,7 +63,7 @@ class ChooserItem extends React.Component {
           { icon }
 
           <Text
-            style={{ paddingLeft: 15, color: theme.foreground }}>
+            style={{ paddingLeft: Consts.Sizes.rowLabelWidth, color: theme.foreground }}>
             { this.props.title }
           </Text>
 

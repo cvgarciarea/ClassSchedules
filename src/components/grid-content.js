@@ -31,7 +31,12 @@ export default class GridContent extends Component {
     let theme = Colors.Themes[Colors.THEME];
 
     return (
-      <View style={{ backgroundColor: theme.gridBackground }}>
+      <View style={{
+        backgroundColor: theme.gridBackground,
+        paddingLeft: Consts.Sizes.rowLabelWidth,
+        paddingTop: Consts.Sizes.columnLabelHeight,
+      }}>
+
         { this.props.cellsByRow.map(row => this._renderRow(row)) }
       </View>
     );
@@ -70,6 +75,5 @@ const styles = StyleSheet.create({
     height: Consts.Sizes.CellHeight,
     width: Consts.Sizes.CellWidth,
     margin: Consts.Sizes.CellMargin,
-    // backgroundColor: Colors.cellBackground,
   },
 });
