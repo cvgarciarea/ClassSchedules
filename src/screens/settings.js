@@ -81,7 +81,12 @@ class SettingsSectionHeader extends React.Component {
     let theme = Colors.Themes[Colors.THEME];
 
     return (
-      <Text style={{ padding: 10, color: theme.foreground }}>
+      <Text style={{
+        padding: 10,
+        color: theme.foreground,
+        backgroundColor: theme.sectionHeaderBackground,
+      }}>
+
         { this.state.label }
       </Text>
     )
@@ -103,6 +108,12 @@ class SettingItem extends React.Component {
       this.props.handlePress();
     } else if (!Utils.emptyValue(this.handlePress)) {
       this.handlePress();
+    }
+  }
+
+  _onChange(value) {
+    if (!Utils.emptyValue(this.props.onChange)) {
+      this.props.onChange(value);
     }
   }
 
@@ -180,7 +191,7 @@ class SelectionSettingItem extends SettingItem {
     super(props);
 
     this.state = {
-      selected: null,
+      selected: this.props.selected,
     }
   }
 
@@ -191,7 +202,7 @@ class SelectionSettingItem extends SettingItem {
       <View style={{ flexDirection: 'row' }}>
         {
           !Utils.emptyValue(this.state.selected) ?
-            <Text style={{ marginRight: 5, alignSelf: 'center' }}>
+            <Text style={{ marginRight: 5, alignSelf: 'center', color: theme.foreground }}>
               { this.props.options[this.state.selected].title }
             </Text>
           :
@@ -227,8 +238,9 @@ class SelectionSettingItem extends SettingItem {
               onChange={ key => {
                 this.setState({ selected: key });
                 this._requestClose(modal);
+                this._onChange(key);
               } } />
-          }/>
+          } />
       )
     }
   }
@@ -240,7 +252,7 @@ export default class SettingsScreen extends React.Component {
     super(props);
 
     this.state = {
-      theme: '',
+      theme: Colors.THEME,
       modals: [],
     };
 
@@ -262,16 +274,21 @@ export default class SettingsScreen extends React.Component {
     this.setState({ modals: this.state.modals.remove(modal) })
   }
 
+  onThemeChanged(theme) {
+    Colors.THEME = theme;
+    this.setState({ theme });
+  }
+
   render() {
     // FIXME: Podría tener esto cargado sin tener
     // que crearlo en el render()
     let themes = {
-      "light": { title: i18n.t('theme-light') },
-      "dark": { title: i18n.t('theme-dark') },
-      "amoled": { title: i18n.t('theme-amoled') },
+      'light': { title: i18n.t('theme-light') },
+      'dark': { title: i18n.t('theme-dark') },
+      'amoled': { title: i18n.t('theme-amoled') },
     }
 
-    let theme = Colors.Themes[Colors.THEME];
+    let theme = Colors.Themes[this.state.theme];
 
     return (
       <View style={{ flex: 1, backgroundColor: theme.background }}>
@@ -283,10 +300,13 @@ export default class SettingsScreen extends React.Component {
 
         <ScrollView>
           <SettingsSectionHeader label={ i18n.t('section-general') } />
+
           <SelectionSettingItem
             label={ i18n.t('theme') }
             icon={ 'eye' }
             options={ themes }
+            selected={ this.state.theme }
+            onChange={ theme => this.onThemeChanged(theme) }
             showUpModal={ this.addModal }
             closeModal={ this.removeModal } />
 

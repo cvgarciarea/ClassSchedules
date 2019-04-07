@@ -20,22 +20,25 @@ export default class Colors {
   static cellBackground = '#dadada'
   static hourBackground = '#004ba0'
 
-  static THEME = 'light';
+  static THEME = 'dark';
 
   static Themes = {
     light: {
       background: '#f6f6f6',
       foreground: '#363c3d',
+      sectionHeaderBackground: '#eaeaea',
     },
 
     dark: {
       background: '#2a2a2a',
       foreground: '#f6f6f6',
+      sectionHeaderBackground: '#000000',
     },
 
     amoled: {
       background: '#000000',
       foreground: '#f6f6f6',
+      sectionHeaderBackground: '#000000',
     },
   }
 
