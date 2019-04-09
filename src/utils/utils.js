@@ -1,4 +1,7 @@
 import moment from 'moment';
+import {
+  Platform,
+} from 'react-native';
 
 export default class Utils {
 
@@ -39,5 +42,9 @@ export default class Utils {
     }
 
     return moment(hour, 'HH');
+  }
+
+  static itsRippleCompatibleDevice() {
+    return Platform.OS !== 'android' || (Platform.OS === 'android' && Platform.Version >= 21);
   }
 }

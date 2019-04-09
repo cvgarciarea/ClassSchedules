@@ -16,11 +16,15 @@ import Utils from '../utils/utils';
 import GridContent from '../components/grid-content';
 import RowLabels from '../components/row-labels';
 import ColumnLabels from '../components/column-labels';
+import FloatingActionButton from '../components/floating-action-button';
+import CircleTransition from '../components/circle-reveal-view';
 
 export default class TimetablesScreen extends React.Component {
 
   constructor(props) {
     super(props);
+
+    this.revealer = null;
 
     this.state = {
       updated: true,
@@ -201,6 +205,26 @@ export default class TimetablesScreen extends React.Component {
           </ScrollView>
 
         </SafeAreaView>
+
+        <CircleTransition
+          ref={ ref => this.revealer = ref }
+          duration={ 250 }
+          bottom={ 41 /* 16 de margen + 50 / 2 de tamaño */ }
+          right={ 41 /* 16 de margen + 50 / 2 de tamaño */ }>
+
+          <View>
+            <View style={{alignItems:'center',justifyContent:'center'}}>
+              <Text>test</Text>
+            </View>
+          </View>
+        </CircleTransition>
+
+        <FloatingActionButton iconName={ 'plus' } onPress={ () => {
+          if (!Utils.emptyValue(this.revealer)) {
+            this.revealer.toggle();
+          }
+        }} />
+
       </View>
     );
   }

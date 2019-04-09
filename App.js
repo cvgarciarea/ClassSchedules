@@ -1,6 +1,8 @@
-
 import React from 'react';
-
+import {
+  Easing,
+  Animated,
+} from 'react-native';
 import {
   createAppContainer,
   createStackNavigator,
@@ -15,6 +17,7 @@ import Primitives from './src/utils/primitives';
 import TimetablesScreen from './src/screens/timetables';
 import TestsScreen from './src/screens/tests';
 import SettingsScreen from './src/screens/settings';
+import EditClassScheduleScreen from './src/screens/edit-class-schedule';
 
 let tabNavigator = createMaterialBottomTabNavigator({
   Timetables: {
@@ -65,6 +68,7 @@ tabNavigator.navigationOptions = ({ navigation }) => {
 
 let App = createAppContainer(createStackNavigator({
   Home: { screen: tabNavigator },
+  EditClassSchedule: { screen: EditClassScheduleScreen },
 }));
 
 export default App;
