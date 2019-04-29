@@ -4,6 +4,7 @@ import {
   Text,
   StatusBar,
   StyleSheet,
+  BackHandler,
   SafeAreaView,
 } from 'react-native';
 import moment from 'moment';
@@ -73,6 +74,40 @@ export default class TimetablesScreen extends React.Component {
     }
 
     Colors.addThemeCallback(theme => this.setState({ updated: false }));
+
+    this.onBackButtonPressAndroid = this.onBackButtonPressAndroid.bind(this);
+
+    this.focusListener = this.props.navigation.addListener('didFocus', () =>
+      BackHandler.addEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
+    );
+
+    this.didBlurListener = this.props.navigation.addListener('didBlur', () => {
+      if (!Utils.emptyValue(this.revealer) && this.revealer.getVisible()) {
+        this.revealer.collapse();
+      }
+    })
+  }
+
+  componentDidMount() {
+    this.willBlurListener = this.props.navigation.addListener('willBlur', () =>
+      BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
+    );
+  }
+
+  componentWillUnmount() {
+    this.removeTimeout();
+    this.focusListener.remove();
+    this.willBlurListener.remove();
+    this.didBlurListener.remove();
+  }
+
+  onBackButtonPressAndroid() {
+    if (!Utils.emptyValue(this.revealer) && this.revealer.getVisible()) {
+      this.revealer.collapse();
+      return true;
+    }
+
+    return false;
   }
 
   itsVisible(datetime) {
@@ -178,8 +213,8 @@ export default class TimetablesScreen extends React.Component {
           <ScrollView
             bounces={ true }
             bouncesZoom={ true }
-            maximumZoomScale={ 1.5 }
-            minimumZoomScale={ 0.75 }
+            maximumZoomScale={ 2 }
+            minimumZoomScale={ 0.2 }
             showsHorizontalScrollIndicator={ false }
             showsVerticalScrollIndicator={ false }
             contentContainerStyle={ dStyles.contentContainer }
@@ -208,7 +243,6 @@ export default class TimetablesScreen extends React.Component {
 
         <CircleTransition
           ref={ ref => this.revealer = ref }
-          duration={ 250 }
           bottom={ 41 /* 16 de margen + 50 / 2 de tamaño */ }
           right={ 41 /* 16 de margen + 50 / 2 de tamaño */ }>
 

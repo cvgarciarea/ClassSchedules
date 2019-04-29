@@ -10,8 +10,6 @@ import * as Animatable from 'react-native-animatable'
 
 import Utils from '../utils/utils';
 
-const { width } = Dimensions.get('window')
-
 class CircleTransition extends Component {
 
   scale = new Animated.Value(0.00001)
@@ -35,7 +33,13 @@ class CircleTransition extends Component {
     this.toggle = this.toggle.bind(this);
   }
 
+  getVisible() {
+    return this.state.visible;
+  }
+
   render() {
+    let { width } = Dimensions.get('window')
+
     return (
       this.state.visible ?
         <View
