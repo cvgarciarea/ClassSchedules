@@ -13,6 +13,11 @@
   "theme-dark": "Oscuro",
   "theme-amoled": "AMOLED",
 
+  "field-class-name": "Nombre de la clase",
+  "field-details": "Detalles",
+  "field-start": "Empieza:",
+  "field-end": "Termina:",
+
   "section-general": "General",
   "section-app-info": "Acerca de"
 }

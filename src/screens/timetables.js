@@ -10,6 +10,8 @@ import {
 import moment from 'moment';
 import ScrollView, { ScrollViewChild } from 'react-native-directed-scrollview';
 
+import i18n from '../i18n';
+
 import Consts from '../utils/consts';
 import Colors from '../utils/colors';
 import Utils from '../utils/utils';
@@ -19,6 +21,36 @@ import RowLabels from '../components/row-labels';
 import ColumnLabels from '../components/column-labels';
 import FloatingActionButton from '../components/floating-action-button';
 import CircleTransition from '../components/circle-reveal-view';
+import CreateClassSchedule from '../components/create-class-schedule';
+
+const FABAnimations = {
+  rotate: {
+    0: {
+      rotate: '0deg',
+      backgroundColor: Colors.Action.CONSTRUCTIVE,
+    },
+    1: {
+      rotate: '135deg',
+      backgroundColor: Colors.Action.DESTRICTIVE,
+    }
+  },
+
+  reset_rotate: {
+    0: {
+      rotate: '135deg',
+      backgroundColor: Colors.Action.DESTRICTIVE,
+    },
+    1: {
+      rotate: '0deg',
+      backgroundColor: Colors.Action.CONSTRUCTIVE,
+    },
+  }
+}
+
+const FABAnimationType = {
+  ROTATE: 'rotate',
+  RESET_ROTATE: 'reset_rotate',
+}
 
 export default class TimetablesScreen extends React.Component {
 
@@ -26,6 +58,8 @@ export default class TimetablesScreen extends React.Component {
     super(props);
 
     this.revealer = null;
+    this.createScheduleFAB = null;
+    this.fabAnimation = FABAnimationType.RESET_ROTATE;
 
     this.state = {
       updated: true,
@@ -77,14 +111,13 @@ export default class TimetablesScreen extends React.Component {
 
     this.onBackButtonPressAndroid = this.onBackButtonPressAndroid.bind(this);
 
-    this.focusListener = this.props.navigation.addListener('didFocus', () =>
+    this.focusListener = this.props.navigation.addListener('didFocus', () => {
+      this.resetCreateSchedule();
       BackHandler.addEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
-    );
+    });
 
     this.didBlurListener = this.props.navigation.addListener('didBlur', () => {
-      if (!Utils.emptyValue(this.revealer) && this.revealer.getVisible()) {
-        this.revealer.collapse();
-      }
+      this.resetCreateSchedule();
     })
   }
 
@@ -101,13 +134,24 @@ export default class TimetablesScreen extends React.Component {
     this.didBlurListener.remove();
   }
 
-  onBackButtonPressAndroid() {
-    if (!Utils.emptyValue(this.revealer) && this.revealer.getVisible()) {
+  resetCreateSchedule() {
+    let revealed = !Utils.emptyValue(this.revealer) && this.revealer.getVisible();
+    let rotated = !Utils.emptyValue(this.createScheduleFAB) && this.fabAnimation === FABAnimationType.ROTATE;
+
+    if (revealed) {
       this.revealer.collapse();
-      return true;
     }
 
-    return false;
+    if (rotated) {
+      this.fabAnimation = FABAnimationType.RESET_ROTATE;
+      this.createScheduleFAB.animate(FABAnimations[this.fabAnimation]);
+    }
+
+    return revealed || rotated;
+  }
+
+  onBackButtonPressAndroid() {
+    return this.resetCreateSchedule();
   }
 
   itsVisible(datetime) {
@@ -246,18 +290,34 @@ export default class TimetablesScreen extends React.Component {
           bottom={ 41 /* 16 de margen + 50 / 2 de tamaño */ }
           right={ 41 /* 16 de margen + 50 / 2 de tamaño */ }>
 
-          <View>
-            <View style={{alignItems:'center',justifyContent:'center'}}>
-              <Text>test</Text>
-            </View>
-          </View>
+          <CreateClassSchedule />
+
         </CircleTransition>
 
-        <FloatingActionButton iconName={ 'plus' } onPress={ () => {
-          if (!Utils.emptyValue(this.revealer)) {
-            this.revealer.toggle();
-          }
-        }} />
+        <FloatingActionButton
+          iconName={ 'plus' }
+          ref={ fab => this.createScheduleFAB = fab }
+          onPress={ () => {
+            if (!Utils.emptyValue(this.revealer)) {
+              this.revealer.toggle();
+            }
+
+            if (!Utils.emptyValue(this.createScheduleFAB)) {
+              let animation;
+              if (this.fabAnimation === FABAnimationType.RESET_ROTATE) {
+                animation = FABAnimationType.ROTATE;
+              } else {
+                animation = FABAnimationType.RESET_ROTATE;
+              }
+
+              this.createScheduleFAB.animate(FABAnimations[animation])
+              .then(() => {
+                this.fabAnimation = animation;
+              });  
+            }
+        }}>
+
+        </FloatingActionButton>
 
       </View>
     );

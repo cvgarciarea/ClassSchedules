@@ -1,18 +1,47 @@
 import React from 'react';
 import {
   View,
+  Animated,
   StyleSheet,
   TouchableNativeFeedback,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import * as Animatable from 'react-native-animatable';
 
 import Colors from '../utils/colors';
 import Utils from '../utils/utils';
 
+/*
+<Animated.View>
+
+  <Animatable.View ref={ value => this.rotateView = value }>
+    <Icon
+      name={ 'plus' }
+      size={ 30 }
+      color={ '#fff' } />
+
+  </Animatable.View>
+
+</Animated.View>
+*/
 export default class FloatingActionButton extends React.Component {
 
   static defaultProps = {
     iconSize: 30,
+    style: null,
+    color: null,
+  }
+
+  constructor(props) {
+    super(props);
+
+    this._animatableView = null;
+  }
+
+  async animate(animation) {
+    if (!Utils.emptyValue(this._animatableView)) {
+      return await this._animatableView.animate(animation);
+    }
   }
 
   render() {
@@ -21,10 +50,18 @@ export default class FloatingActionButton extends React.Component {
       ripple = TouchableNativeFeedback.Ripple('#000', true);
     }
 
+    let backgroundColor = this.props.color;
+    if (Utils.emptyValue(backgroundColor)) {
+      backgroundColor = Colors.secondary;
+    }
+
     return (
-      <View style={[
-        styles.floatingActionButton,
-        { backgroundColor: Colors.secondary }
+      <Animatable.View
+        ref={ view => this._animatableView = view }
+        style={[
+          styles.floatingActionButton,
+          { backgroundColor },
+          this.props.style,
       ]}>
 
         <TouchableNativeFeedback
@@ -35,15 +72,20 @@ export default class FloatingActionButton extends React.Component {
             pointerEvents='box-only'
             style={ styles.floatingActionButtonChild }>
 
-            <Icon
-              name={ this.props.iconName }
-              size={ this.props.iconSize }
-              color={ '#fff' } />
+            {
+              Utils.emptyValue(this.props.children) ?
+                <Icon
+                  name={ this.props.iconName }
+                  size={ this.props.iconSize }
+                  color={ '#fff' } />
+              :
+                this.props.children
+            }
 
           </View>
 
         </TouchableNativeFeedback>
-      </View>
+      </Animatable.View>
     )
   }
 }

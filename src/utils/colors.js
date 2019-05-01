@@ -19,6 +19,11 @@ export default class Colors {
   static dayNameBackground = '#4b830d'
   static hourBackground = '#004ba0'
 
+  static Action = {
+    CONSTRUCTIVE: '#8bc34a',
+    DESTRICTIVE: '#c34a4a',
+  }
+
   static THEME = 'dark';
   static THEME_CALLBACKS = [];
 

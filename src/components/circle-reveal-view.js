@@ -1,12 +1,12 @@
 // Source: https://github.com/lvlrSajjad/react-native-circle-reveal-view/blob/master/CircleTransition.js
 
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 import {
   View,
   Animated,
   Dimensions,
-} from 'react-native'
-import * as Animatable from 'react-native-animatable'
+} from 'react-native';
+import * as Animatable from 'react-native-animatable';
 
 import Utils from '../utils/utils';
 
