@@ -60,6 +60,7 @@ export default class TimetablesScreen extends React.Component {
     this.revealer = null;
     this.createScheduleFAB = null;
     this.fabAnimation = FABAnimationType.RESET_ROTATE;
+    this.animatingFAB = false;
 
     this.state = {
       updated: true,
@@ -138,20 +139,22 @@ export default class TimetablesScreen extends React.Component {
     let revealed = !Utils.emptyValue(this.revealer) && this.revealer.getVisible();
     let rotated = !Utils.emptyValue(this.createScheduleFAB) && this.fabAnimation === FABAnimationType.ROTATE;
 
-    if (revealed) {
-      this.revealer.collapse();
-    }
+    if (!this.animatingFAB) {
+      if (revealed) {
+        this.revealer.collapse();
+      }
 
-    if (rotated) {
-      this.fabAnimation = FABAnimationType.RESET_ROTATE;
-      this.createScheduleFAB.animate(FABAnimations[this.fabAnimation]);
+      if (rotated) {
+        this.fabAnimation = FABAnimationType.RESET_ROTATE;
+        this.createScheduleFAB.animate(FABAnimations[this.fabAnimation]);
+      }
     }
 
     return revealed || rotated;
   }
 
   onBackButtonPressAndroid() {
-    return this.resetCreateSchedule();
+    return this.resetCreateSchedule() || this.animatingFAB;
   }
 
   itsVisible(datetime) {
@@ -310,9 +313,11 @@ export default class TimetablesScreen extends React.Component {
                 animation = FABAnimationType.RESET_ROTATE;
               }
 
+              this.animatingFAB = true;
               this.createScheduleFAB.animate(FABAnimations[animation])
               .then(() => {
                 this.fabAnimation = animation;
+                this.animatingFAB = false;
               });  
             }
         }}>
