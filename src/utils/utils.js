@@ -47,4 +47,12 @@ export default class Utils {
   static itsRippleCompatibleDevice() {
     return Platform.OS !== 'android' || (Platform.OS === 'android' && Platform.Version >= 21);
   }
+
+  static itsTouchableNativeFeedbackCompatibleDevice() {
+    return (
+      Platform.OS === 'android' &&
+      Platform.Version >= 18  // FIXME: Sé que la 17 no funciona, pero
+                              // no sé cuál es la primera que funciona
+    );
+  }
 }

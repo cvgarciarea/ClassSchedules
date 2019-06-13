@@ -22,6 +22,7 @@ import ColumnLabels from '../components/column-labels';
 import FloatingActionButton from '../components/floating-action-button';
 import CircleTransition from '../components/circle-reveal-view';
 import CreateClassSchedule from '../components/create-class-schedule';
+import { showSaveButton } from './home';
 
 const FABAnimations = {
   rotate: {
@@ -214,9 +215,11 @@ export default class TimetablesScreen extends React.Component {
 
           return (
             <View key={ j } style={[ styles.cell, stylesheet.cell ]}>
-              <Text style={ dynamicStyles.text }>{ this.state.data[key].name }</Text>
+              <Text style={ dynamicStyles.text }>
+                { this.state.data[key].name }
+              </Text>
             </View>
-          )
+          );
         } else if (this.itsVisible(object.startTime)) {
           // La hora de salida queda fuera
           console.log('CELL NO RENDERIZADA, CASO 1');
@@ -290,6 +293,8 @@ export default class TimetablesScreen extends React.Component {
 
         <CircleTransition
           ref={ ref => this.revealer = ref }
+          expandedCallback={ () => { showSaveButton(true) }}
+          collapsedCallback={ () => { showSaveButton(false) }}
           bottom={ 41 /* 16 de margen + 50 / 2 de tamaño */ }
           right={ 41 /* 16 de margen + 50 / 2 de tamaño */ }>
 

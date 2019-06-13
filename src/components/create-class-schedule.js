@@ -1,7 +1,6 @@
 import React from 'react';
 import {
   View,
-  Text,
   StyleSheet,
 } from 'react-native';
 import moment from 'moment';
@@ -12,7 +11,6 @@ import Utils from '../utils/utils';
 import Field from './field';
 import TimePickerButton from './time-picker-button';
 import { Spacer40, FlexSpacer } from './spacer';
-import FloatingActionButton from './floating-action-button';
 
 export default class CreateClassSchedule extends React.Component {
 
@@ -39,49 +37,30 @@ export default class CreateClassSchedule extends React.Component {
 
   render() {
     return (
-      <View style={{ flex: 1, backgroundColor: '#aaaaff' }}>
+      <View style={{ flex: 1 }}>
         <Field
           iconName={ 'book-open-page-variant' }
-          placeholder={ i18n.t('field-class-name') } />
+          placeholder={ i18n.t('field-class-name') }
+        />
 
         <Field
-          placeholder={ i18n.t('field-details') } />
+          placeholder={ i18n.t('field-details') }
+        />
+
+        <Spacer40 />
 
         <View style={ styles.hbox }>
-          <FlexSpacer />
+          <TimePickerButton
+            title={ i18n.t('field-start') }
+          />
 
-          <Text style={ styles.timePickerTitle }>
-            { i18n.t('field-start') }
-          </Text>
-          <TimePickerButton />
-
-          <FlexSpacer />
-
-          <Text style={ styles.timePickerTitle }>
-            { i18n.t('field-end') }
-          </Text>
-
-          <TimePickerButton />
-
-          <FlexSpacer />
+          <TimePickerButton
+            title={ i18n.t('field-end') }
+          />
         </View>
 
         <FlexSpacer />
 
-        {/*
-        <View style={{ flexDirection: 'row', paddingRight: 66 }}>
-          <FlexSpacer />
-
-          <FloatingActionButton
-            iconName={ 'close' }
-            color={ '#ffaaaa' }
-            style={{ position: 'relative' }}
-            onPress={ () => {
-              console.log('press');
-          }} />
-
-        </View>
-        */}
       </View>
     )
   }
@@ -90,11 +69,8 @@ export default class CreateClassSchedule extends React.Component {
 let styles = StyleSheet.create({
   hbox: {
     flexDirection: 'row',
-    height: 32,
     alignItems: 'center',
-  },
-
-  timePickerTitle: {
-    fontSize: 16,
+    justifyContent: 'space-around',
+    paddingHorizontal: 35,
   },
 });

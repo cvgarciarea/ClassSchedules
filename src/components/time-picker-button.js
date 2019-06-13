@@ -3,15 +3,18 @@ import {
   View,
   Text,
   StyleSheet,
-  TouchableNativeFeedback,
+  TouchableOpacity,
 } from 'react-native';
-import DateTimePicker from "react-native-modal-datetime-picker";
+import DateTimePicker from 'react-native-modal-datetime-picker';
 import moment from 'moment';
+
+import Utils from '../utils/utils';
 
 export default class TimePickerButton extends React.Component {
 
   static defaultProps = {
     time: '08:00',
+    title: null,
   }
 
   constructor(props) {
@@ -26,13 +29,27 @@ export default class TimePickerButton extends React.Component {
   render() {
     return (
       <View>
-        <TouchableNativeFeedback onPress={ () => { this.setState({ pickerVisible: true }) }}>
+        <TouchableOpacity
+          onPress={ () => {
+            this.setState({ pickerVisible: true })
+          }}
+        >
           <View style={ styles.buttonBox }>
+            {
+              !Utils.emptyValue(this.props.title) ?
+                <Text style={ styles.title }>
+                  { this.props.title }
+                </Text>
+              :
+                null
+            }
+
             <Text style={ styles.timeText }>
               { this.state.time }
             </Text>
           </View>
-        </TouchableNativeFeedback>
+ 
+        </TouchableOpacity>
 
         <DateTimePicker
           mode={ 'time' }
@@ -62,6 +79,10 @@ let styles = StyleSheet.create({
 
   timeText: {
     fontWeight: 'bold',
+    fontSize: 24,
+  },
+
+  title: {
     fontSize: 16,
   },
 })

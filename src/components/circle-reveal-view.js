@@ -10,13 +10,15 @@ import * as Animatable from 'react-native-animatable';
 
 import Utils from '../utils/utils';
 
-class CircleTransition extends Component {
+export default class CircleTransition extends Component {
 
   scale = new Animated.Value(0.00001)
 
   static defaultProps = {
     backgroundColor: '#fff',
     duration: 250,
+    expandedCallback: null,
+    collapsedCallback: null,
   }
 
   constructor(props) {
@@ -56,7 +58,8 @@ class CircleTransition extends Component {
             transform: [{
               scale: this.scale
             }]
-          }} />
+          }}
+        />
           {
             this.state.showChildren &&
             <Animatable.View ref={ref => { this.childContainer = ref }}
@@ -78,6 +81,10 @@ class CircleTransition extends Component {
   expand() {
     if (!this.state.animating) {
       this.setState({ visible: true, animating: true }, () => {
+        if (!Utils.emptyValue(this.props.expandedCallback)) {
+          this.props.expandedCallback();
+        }
+
         Animated.timing(
           this.scale, {
             useNativeDriver: true,
@@ -98,6 +105,10 @@ class CircleTransition extends Component {
 
   collapse() {
     if (!this.state.animating) {
+      if (!Utils.emptyValue(this.props.expandedCallback)) {
+        this.props.collapsedCallback();
+      }
+
       this.setState({ animating: true });
       if (!Utils.emptyValue(this.childContainer) && !Utils.emptyValue(this.childContainer)) {
         this.childContainer.fadeOut(200);
@@ -121,5 +132,3 @@ class CircleTransition extends Component {
     !this.state.visible ? this.expand() : this.collapse()
   }
 }
-
-export default CircleTransition
