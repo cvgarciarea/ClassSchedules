@@ -13,15 +13,9 @@ export default class Field extends React.Component {
   static defaultProps = {
     iconName: null,
     placeholder: null,
-  }
-
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      value: '',
-    }
-  }
+    value: '',
+    onChange: null,
+  };
 
   render() {
     return (
@@ -30,17 +24,23 @@ export default class Field extends React.Component {
           !Utils.emptyString(this.props.iconName) ?
             <Icon
               size={ 32 }
-              text={ this.state.value }
               name={ this.props.iconName }
-              style={{ paddingRight: 15 }} />
+              style={{ paddingRight: 15 }}
+            />
           :
             <View style={{ width: 47, height: 1 }} />
         }
 
         <TextInput
+          value={ this.props.value }
           style={ styles.textInput }
           placeholder={ this.props.placeholder }
-          onChangeText={ text => { this.setState({ value: text }) }} />
+          onChangeText={ text => {
+            if (!Utils.emptyValue(this.props.onChange)) {
+              this.props.onChange(text)
+            }
+          }}
+        />
       </View>
     )
   }

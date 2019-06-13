@@ -15,6 +15,7 @@ export default class TimePickerButton extends React.Component {
   static defaultProps = {
     time: '08:00',
     title: null,
+    onChange: null,
   }
 
   constructor(props) {
@@ -45,7 +46,7 @@ export default class TimePickerButton extends React.Component {
             }
 
             <Text style={ styles.timeText }>
-              { this.state.time }
+              { this.props.time }
             </Text>
           </View>
  
@@ -57,8 +58,12 @@ export default class TimePickerButton extends React.Component {
           onConfirm={ data => {
             this.setState({
               pickerVisible: false,
-              time: moment(data).format('HH:mm'),
+              // time: moment(data).format('HH:mm'),
             });
+
+            if (!Utils.emptyValue(this.props.onChange)) {
+              this.props.onChange(moment(data).format('HH:mm'));
+            }
           }}
           onCancel={ () => {
             this.setState({ pickerVisible: false })

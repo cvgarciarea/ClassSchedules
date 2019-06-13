@@ -22,7 +22,10 @@ import ColumnLabels from '../components/column-labels';
 import FloatingActionButton from '../components/floating-action-button';
 import CircleTransition from '../components/circle-reveal-view';
 import CreateClassSchedule from '../components/create-class-schedule';
-import { showSaveButton } from './home';
+import {
+  showSaveButton,
+  enableSaveButton,
+} from './home';
 
 const FABAnimations = {
   rotate: {
@@ -298,7 +301,11 @@ export default class TimetablesScreen extends React.Component {
           bottom={ 41 /* 16 de margen + 50 / 2 de tamaño */ }
           right={ 41 /* 16 de margen + 50 / 2 de tamaño */ }>
 
-          <CreateClassSchedule />
+          <CreateClassSchedule
+            onDataChange={ correct => {
+              enableSaveButton(correct);
+            }}
+          />
 
         </CircleTransition>
 

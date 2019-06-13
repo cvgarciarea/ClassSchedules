@@ -14,37 +14,62 @@ import { Spacer40, FlexSpacer } from './spacer';
 
 export default class CreateClassSchedule extends React.Component {
 
+  static defaultProps = {
+    previousName: null,
+    previousDescription: null,
+    previousStart: '08:00',
+    previousEnd: '10:00',
+    onDataChange: null,
+  };
+
   constructor(props) {
     super(props);
 
     this.state = {
-      name: null,
-      description: null,
-      start: null,
-      end: null,
-    }
+      name: this.props.previousName,
+      description: this.props.previousDescription,
+      start: this.props.previousStart,
+      end: this.props.previousEnd,
+    };
   }
 
   validateFields() {
+    let format = 'HH:mm';
+
     return (
       !Utils.emptyString(this.state.name) &&
       !Utils.emptyString(this.state.start) &&
       !Utils.emptyString(this.state.end) &&
 
-      moment(this.state.start).diff(moment(this.state.end) < 0)
+      moment(this.state.start, format).diff(moment(this.state.end, format) < 0)
     )
+  }
+
+  dataChanged() {
+    if (!Utils.emptyValue(this.props.onDataChange)) {
+      this.props.onDataChange(this.validateFields());
+    }
   }
 
   render() {
     return (
       <View style={{ flex: 1 }}>
         <Field
+          value={ this.state.name }
           iconName={ 'book-open-page-variant' }
           placeholder={ i18n.t('field-class-name') }
+          onChange={ name => {
+            this.setState({ name }, () => { this.dataChanged() })
+          }}
         />
 
         <Field
+          value={ this.state.description }
           placeholder={ i18n.t('field-details') }
+          onChange={ text => { console.log(text) }}
+          onChange={ description => {
+            this.setState({ description }, () => { this.dataChanged() })
+          }}
         />
 
         <Spacer40 />
@@ -52,10 +77,18 @@ export default class CreateClassSchedule extends React.Component {
         <View style={ styles.hbox }>
           <TimePickerButton
             title={ i18n.t('field-start') }
+            time={ this.state.start }
+            onChange={ start => {
+              this.setState({ start }, () => { this.dataChanged() });
+            }}
           />
 
           <TimePickerButton
             title={ i18n.t('field-end') }
+            time={ this.state.end }
+            onChange={ end => {
+              this.setState({ end }, () => { this.dataChanged() });
+            }}
           />
         </View>
 

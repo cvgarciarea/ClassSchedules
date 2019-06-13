@@ -67,7 +67,6 @@ let _navigation = null;
 tabNavigator.navigationOptions = ({ navigation }) => {
   _navigation = navigation;
   let showSaveButton = navigation.getParam('showSaveButton', false);
-  console.log(showSaveButton);
   let headerRight = null;
 
   if (showSaveButton) {
@@ -75,6 +74,7 @@ tabNavigator.navigationOptions = ({ navigation }) => {
       <HeaderButton
         iconName={ 'content-save' }
         onPress={ () => { console.log('SAVE') }}
+        disabled={ !navigation.getParam('enableSaveButton', false) }
       />
     )
   }
@@ -90,7 +90,16 @@ tabNavigator.navigationOptions = ({ navigation }) => {
 export let showSaveButton = show => {
   if (!Utils.emptyValue(_navigation)) {
     _navigation.setParams({
-      showSaveButton: show
+      showSaveButton: show,
+      enableSaveButton: false,
+    });
+  }
+}
+
+export let enableSaveButton = enable => {
+  if (!Utils.emptyValue(_navigation)) {
+    _navigation.setParams({
+      enableSaveButton: enable,
     });
   }
 }
