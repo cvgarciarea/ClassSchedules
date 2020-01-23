@@ -3,33 +3,36 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
+    "start": "react-native start",
     "test": "jest",
-    "prepare-repository": "npm i -g react-native-cli yarn;yarn install; react-native link",
-    "install": "react-native run-android",
-    "start": "react-native start --reset-cache",
-    "android": "npm run install && npm run start",
-    "clean": "watchman watch-del-all && npm cache clean && cd android && ./gradlew clean && cd .."
+    "lint": "eslint ."
   },
   "dependencies": {
-    "@react-native-community/async-storage": "^1.7.1",
-    "moment": "^2.24.0",
-    "react": "16.6.3",
-    "react-native": "0.57.8",
+    "@react-native-community/async-storage": "1.7.1",
+    "moment": "2.24.0",
+    "react": "16.9.0",
+    "react-native": "0.61.5",
     "react-native-directed-scrollview": "git+https://github.com/chrisfisher/react-native-directed-scrollview.git#master",
-    "react-native-gesture-handler": "^1.0.15",
-    "react-native-i18n": "^2.0.15",
-    "react-native-languages": "^3.0.2",
+    "react-native-gesture-handler": "1.5.3",
+    "react-native-i18n": "2.0.15",
+    "react-native-languages": "3.0.2",
     "react-native-modal-datetime-picker": "7.4.0",
-    "react-native-paper": "^2.11.0",
-    "react-native-vector-icons": "^6.2.0",
-    "react-navigation": "^3.1.5",
-    "react-navigation-material-bottom-tabs": "^1.0.0"
+    "react-native-paper": "^3.5.0",
+    "react-native-vector-icons": "6.6.0",
+    "react-navigation": "3.1.5",
+    "react-navigation-material-bottom-tabs": "1.0.0"
   },
   "devDependencies": {
-    "babel-jest": "23.6.0",
-    "jest": "23.6.0",
-    "metro-react-native-babel-preset": "0.48.5",
-    "react-test-renderer": "16.6.3"
+    "@babel/core": "^7.6.2",
+    "@babel/runtime": "^7.6.2",
+    "@react-native-community/eslint-config": "^0.0.5",
+    "babel-jest": "^24.9.0",
+    "eslint": "^6.5.1",
+    "jest": "^24.9.0",
+    "metro-react-native-babel-preset": "^0.56.0",
+    "react-test-renderer": "16.9.0"
   },
   "jest": {
     "preset": "react-native"

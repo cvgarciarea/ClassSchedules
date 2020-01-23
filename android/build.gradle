@@ -2,38 +2,61 @@
 
 buildscript {
     ext {
-        buildToolsVersion = "27.0.3"
+        buildToolsVersion = "28.0.3"
         minSdkVersion = 16
-        compileSdkVersion = 27
-        targetSdkVersion = 26
-        supportLibVersion = "27.1.1"
+        compileSdkVersion = 28
+        targetSdkVersion = 28
+        supportLibVersion = "28.0.0"
+        // googlePlayServicesVisionVersion = "18.0.0"
+        // googlePlayServicesVersion   = "18.0.0"
+        // firebaseVersion = "17.3.4"
+        // androidMapsUtilsVersion = "0.5+"
     }
     repositories {
         google()
         jcenter()
+
+        maven {
+            url 'http://storage.googleapis.com/r8-releases/raw'
+        }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.4'
+        classpath('com.android.tools.build:gradle:3.4.2')
+        classpath('com.google.gms:google-services:4.2.0')
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
+        classpath('com.android.tools:r8:1.4.57')  // Must be before the Gradle Plugin for Android.
+        classpath('com.android.tools.build:gradle:3.3.1')  // You don't need to upgrade this to use a newer R8 version.
+    }
+
+    subprojects {
+        afterEvaluate { project ->
+            if (project.hasProperty("android")) {
+                android {
+                    compileSdkVersion 28        // version of compile sdk used for project
+                    buildToolsVersion '28.0.3'    // version of build tool used for project
+                }
+            }
+        }
     }
 }
 
 allprojects {
     repositories {
         mavenLocal()
-        google()
-        jcenter()
         maven {
             // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
-            url "$rootDir/../node_modules/react-native/android"
+            url("$rootDir/../node_modules/react-native/android")
         }
+        maven {
+            // Android JSC is installed from npm
+            url("$rootDir/../node_modules/jsc-android/dist")
+        }
+        maven { url 'https://maven.google.com' }
+        maven { url "https://jitpack.io" }
+        google()
+        jcenter()
+        maven { url 'https://jitpack.io' }
     }
-}
-
-
-task wrapper(type: Wrapper) {
-    gradleVersion = '4.4'
-    distributionUrl = distributionUrl.replace("bin", "all")
 }
