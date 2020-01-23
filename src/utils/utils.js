@@ -8,13 +8,13 @@ export default class Utils {
   static getCellsByRow(visibleHoursRange, visibleDays=[0, 1, 2, 3, 4, 5, 6]) {
     const cellsByRow = [];
 
-    for (var rowIndex = visibleHoursRange.start; rowIndex <= visibleHoursRange.end; rowIndex++) {
+    for (let rowIndex=visibleHoursRange.start; rowIndex <= visibleHoursRange.end; rowIndex++) {
       let row = {
         id: rowIndex,
         cells: [],
       }
 
-      for (var columnIndex = 0; columnIndex < visibleDays.length; columnIndex++) {
+      for (let columnIndex=0; columnIndex < visibleDays.length; columnIndex++) {
         row.cells.push({
           id: visibleDays[columnIndex],
           title: 'Cell',

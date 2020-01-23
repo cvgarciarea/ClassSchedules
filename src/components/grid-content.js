@@ -31,11 +31,13 @@ export default class GridContent extends Component {
     let theme = Colors.Themes[Colors.THEME];
 
     return (
-      <View style={{
-        backgroundColor: theme.gridBackground,
-        paddingLeft: Consts.Sizes.rowLabelWidth,
-        paddingTop: Consts.Sizes.columnLabelHeight,
-      }}>
+      <View
+        style={{
+          backgroundColor: theme.gridBackground,
+          paddingLeft: Consts.Sizes.rowLabelWidth,
+          paddingTop: Consts.Sizes.columnLabelHeight,
+        }}
+      >
 
         { this.props.cellsByRow.map(row => this._renderRow(row)) }
       </View>
@@ -44,7 +46,10 @@ export default class GridContent extends Component {
 
   _renderRow(row) {
     return (
-      <View key={row.id} style={styles.rowContainer}>
+      <View
+        key={ row.id }
+        style={ styles.rowContainer }
+      >
         { row.cells.map(cell => this._renderCell(cell)) }
       </View>
     );

@@ -9,12 +9,22 @@ import Colors from '../utils/colors';
 export default class RowLabels extends Component {
 
   render() {
+    let { cellsByRow: rows } = this.props;
+    rows = JSON.parse(JSON.stringify(rows));
+
+    if (rows.length > 0) {
+      rows.push({
+        id: rows[rows.length - 1].id + 1,
+      });
+    }
+
     return (
       <View
         style={ styles.container }
-        pointerEvents={ 'none' }>
+        pointerEvents={ 'none' }
+      >
 
-        { this.props.cellsByRow.map(row => this.renderRowLabel(row)) }
+        { rows.map(row => this.renderRowLabel(row)) }
       </View>
     );
   }
@@ -31,9 +41,14 @@ export default class RowLabels extends Component {
       <View
         key={ row.id }
         style={ styles.rowLabel }
-        pointerEvents={ 'none' }>
+        pointerEvents={ 'none' }
+      >
 
-        <Text style={ styles.rowTitle }>{ time }</Text>
+        <Text
+          style={ styles.rowTitle }
+        >
+          { time }
+        </Text>
       </View>
     )
   }

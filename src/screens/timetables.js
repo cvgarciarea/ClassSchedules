@@ -81,7 +81,7 @@ export default class TimetablesScreen extends React.Component {
 
       visibleHours: {
         start: 8,
-        end: 23,
+        end: 17,
       },
 
       data: {},
@@ -93,20 +93,24 @@ export default class TimetablesScreen extends React.Component {
           "color": '#aaffaa',
           "schedules": [
             {
-              "startTime": "1 10:00",
-              "endTime": "1 13:00",
+              "startTime": "07:00",
+              "endTime": "11:00",
+              "startDay": 1,
+              "endDay": 1,
               'color': '#ffaaaa',
             },
             {
-              "startTime": "2 10:00",
-              "endTime": "2 12:00",
-              'color': '#aaffaa',
+              "startTime": "14:00",
+              "endTime": "15:45",
+              startDay: 2,
+              endDay: 2,
             },
             {
-              "startTime": "2 09:15",
-              "endTime": "2 10:45",
-              'color': '#aaaaff',
-            }
+              "startTime": "09:15",
+              "endTime": "10:45",
+              startDay: 2,
+              endDay: 2,
+            },
           ]
         }
       }
@@ -161,76 +165,119 @@ export default class TimetablesScreen extends React.Component {
     return this.resetCreateSchedule() || this.animatingFAB;
   }
 
-  itsVisible(datetime) {
-    // Formato: 'D HH:mm'
-    let day = Number(datetime.split(' ')[0]);
-    let time = datetime.split(' ')[1];
+  itsVisible(schedule) {
+    let {
+      startDay,
+      endDay,
+      startTime,
+      endtime,
+    } = schedule;
+
+    let { visibleDays } = this.state;
 
     // TODO: Hay que comprobar basado en la hora también
-    return this.state.visibleDays.includes(day);
+    return (
+      visibleDays.includes(startDay) ||
+      visibleDays.includes(endDay)
+    )
   }
 
   renderClassesCells() {
     let firstHour = Utils.numberToMomentHour(this.state.visibleHours.start);
     let lastHour = Utils.numberToMomentHour(this.state.visibleHours.end);
 
-    return Object.keys(this.state.data).map((key, i) => {
-      return this.state.data[key].schedules.map((object, j) => {
-        let dynamicStyles = {
-          cell: {
-            position: 'absolute',
-            width: Consts.Sizes.CellWidth + Consts.Sizes.CellMargin,
-            backgroundColor: this.state.data[key].color,
-          },
+    return Object.keys(this.state.data).map(key => {
+      let schedule = this.state.data[key];
 
-          text: {
-            fontSize: 20,
-          }
-        };
+      return schedule.schedules.map((object, j) => {
+        let { color: backgroundColor } = schedule;
 
         if (!Utils.emptyString(object.color)) {
-          dynamicStyles.cell.backgroundColor = object.color;
+          backgroundColor = object.color;
         }
 
-        dynamicStyles.text.color = Colors.getTextColorForBackground(dynamicStyles.cell.backgroundColor);
+        let {
+          startDay,
+          endDay,
+          startTime,
+          endTime,
+        } = object;
 
-        let startDate = Number(object.startTime.split(' ')[0]);
-        let endDate = Number(object.endTime.split(' ')[0]);
+        if (this.itsVisible(object)) {
+          let children = [];
 
-        let startTime = object.startTime.split(' ')[1];
-        let endTime = object.endTime.split(' ')[1];
+          for (let day=startDay; day<=endDay; day++) {
+            if (!this.state.visibleDays.includes(day)) {
+              continue;
+            }
 
-        if (this.itsVisible(object.startTime) && this.itsVisible(object.endTime)) {
-          // Tanto el inicio como el final son visibles
+            let starts;
+            let ends;
+            let visibleStart = moment(this.state.visibleHours.start, 'HH');
+            let visibleEnd = moment(this.state.visibleHours.end + 1, 'HH');
+  
+            if (day > startDay) {
+              starts = moment(this.state.visibleHours.start, 'HH');
+            } else {
+              starts = moment(startTime, 'HH:mm');
 
-          let starts = moment(startTime, 'HH:mm');
-          let ends = moment(endTime, 'HH:mm');
-          let diff = ends.diff(starts, 'minutes');
+              if (starts.diff(visibleStart) < 0) {
+                starts = moment(visibleStart, 'HH');
+              }
+            }
 
-          let betweenSurplus = diff / 60 * (Consts.Sizes.CellMargin * 2);
-          let beforeSurplus = starts.diff(firstHour, 'minutes') / 60 * ( Consts.Sizes.CellMargin * 2)
+            if (day < endDay) {
+              ends = moment(this.state.visibleHours.end + 1, 'HH');
+            } else {
+              ends = moment(endTime, 'HH:mm');
 
-          dynamicStyles.cell.top = Consts.Sizes.CellHeight / 60 * starts.diff(firstHour, 'minutes') + beforeSurplus + Consts.Sizes.columnLabelHeight;
-          dynamicStyles.cell.height = Consts.Sizes.CellHeight / 60 * diff + betweenSurplus;
-          dynamicStyles.cell.left = this.state.visibleDays.indexOf(startDate) * (Consts.Sizes.CellWidth + 2 * Consts.Sizes.CellMargin) + Consts.Sizes.CellMargin / 2 + Consts.Sizes.rowLabelWidth;
+              if (ends.diff(visibleEnd) > 0) {
+                ends = visibleEnd;
+              }
+            }
 
-          let stylesheet = StyleSheet.create(dynamicStyles);
+            let diff = ends.diff(starts, 'minutes');
 
-          return (
-            <View key={ j } style={[ styles.cell, stylesheet.cell ]}>
-              <Text style={ dynamicStyles.text }>
-                { this.state.data[key].name }
-              </Text>
-            </View>
-          );
-        } else if (this.itsVisible(object.startTime)) {
-          // La hora de salida queda fuera
-          console.log('CELL NO RENDERIZADA, CASO 1');
-          return null;
-        } else if (this.itsVisible(object.endTime)) {
-          // La hora de inicio queda fuera
-          console.log('CELL NO RENDERIZADA, CASO 2');
-          return null;
+            let betweenSurplus = diff / 60 * (Consts.Sizes.CellMargin * 2);
+            let beforeSurplus = starts.diff(firstHour, 'minutes') / 60 * (Consts.Sizes.CellMargin * 2)
+
+            let dynamicStyles = {
+              cell: {
+                position: 'absolute',
+                top: Consts.Sizes.CellHeight / 60 * starts.diff(firstHour, 'minutes') + beforeSurplus + Consts.Sizes.columnLabelHeight,
+                width: Consts.Sizes.CellWidth + Consts.Sizes.CellMargin,
+                height: Consts.Sizes.CellHeight / 60 * diff + betweenSurplus,
+                backgroundColor,
+              },
+    
+              text: {
+                fontSize: 20,
+                color: Colors.getTextColorForBackground(backgroundColor),
+              },
+            };
+  
+            dynamicStyles.cell.left = this.state.visibleDays.indexOf(day) *
+                                      (Consts.Sizes.CellWidth + 2 * Consts.Sizes.CellMargin) +
+                                      Consts.Sizes.CellMargin / 2 + Consts.Sizes.rowLabelWidth;
+
+            // console.log(day, this.state.visibleDays.indexOf(day), dynamicStyles.cell.left);
+            children.push(
+              <View
+                key={ day }
+                style={[
+                  styles.cell,
+                  dynamicStyles.cell
+                ]}
+              >
+  
+                <Text style={ dynamicStyles.text }>
+                  { schedule.name }
+                </Text>
+              </View>
+            );
+          }
+
+          return children;
         } else {
           // Esta clase no se ve
           return null;
@@ -253,13 +300,22 @@ export default class TimetablesScreen extends React.Component {
     });
 
     return (
-      <View style={{ flex: 1, backgroundColor: theme.gridBackground }}>
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: theme.gridBackground
+        }}
+      >
+
         <StatusBar
           backgroundColor={ Colors.primaryDark }
           barStyle="light-content"
           hidden={ false } />
 
-        <SafeAreaView style={{ flex: 1 }}>
+        <SafeAreaView
+          style={{ flex: 1 }}
+        >
+
           { /* <Grid /> */ }
           { /* this.renderClassesCells() */ }
 
@@ -271,7 +327,8 @@ export default class TimetablesScreen extends React.Component {
             showsHorizontalScrollIndicator={ false }
             showsVerticalScrollIndicator={ false }
             contentContainerStyle={ dStyles.contentContainer }
-            style={ styles.container }>
+            style={ styles.container }
+          >
 
             <ScrollViewChild scrollDirection={ 'both' }>
               <GridContent cellsByRow={ cellsByRow } />

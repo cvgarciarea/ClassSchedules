@@ -7,9 +7,14 @@ import Consts from '../utils/consts';
 import Colors from '../utils/colors';
 
 export default class ColumnLabels extends Component {
+
   render() {
     return (
-      <View style={styles.container} pointerEvents={'box-none'}>
+      <View
+        style={ styles.container }
+        pointerEvents={ 'box-none' }
+      >
+
         { this.props.cellsByRow[1].cells.map((cell) => this.renderColumnLabel(cell)) }
       </View>
     );
