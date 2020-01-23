@@ -11,12 +11,16 @@ import {
 import i18n from './src/i18n';
 import Primitives from './src/utils/primitives';
 
+import SplashScreen from './src/screens/splash';
 import HomeScreen from './src/screens/home';
 import EditClassScheduleScreen from './src/screens/edit-class-schedule';
 
-let App = createAppContainer(createStackNavigator({
-  Home: { screen: HomeScreen },
-  EditClassSchedule: { screen: EditClassScheduleScreen },
-}));
+let App = createAppContainer(
+  createStackNavigator({
+    Splash: { screen: SplashScreen },
+    Home: { screen: HomeScreen },
+    EditClassSchedule: { screen: EditClassScheduleScreen },
+  })
+);
 
 export default App;

@@ -7,7 +7,7 @@ export default class Consts {
     rowLabelTitleWidth: 30,
     rowLabelWidth: 65,
     columnLabelHeight: 35,
-  }
+  };
 
   static Days = {
     SUNDAY: 0,
@@ -17,5 +17,5 @@ export default class Consts {
     THURSDAY: 4,
     FRIDAY: 5,
     SATURDAY: 6,
-  }
+  };
 }
