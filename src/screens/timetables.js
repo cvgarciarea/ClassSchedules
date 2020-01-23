@@ -61,29 +61,39 @@ export default class TimetablesScreen extends React.Component {
   constructor(props) {
     super(props);
 
+    const { getParam } = this.props.navigation;
+
     this.revealer = null;
     this.createScheduleFAB = null;
     this.fabAnimation = FABAnimationType.RESET_ROTATE;
     this.animatingFAB = false;
 
+    const defaultVisibleDays = [
+      // consts.Days.SUNDAY,
+      Consts.Days.MONDAY,
+      Consts.Days.TUESDAY,
+      Consts.Days.WEDNESDAY,
+      Consts.Days.THURSDAY,
+      Consts.Days.FRIDAY,
+      // consts.Days.SATURDAY,
+    ];
+
+    const defaultVisibleHours = {
+      start: 8,
+      end: 17,
+    };
+
+    let visibleDays = getParam('visibleDays', defaultVisibleDays);
+    let visibleHours = getParam('visibleHours', defaultVisibleHours);
+
+    console.log('VISIBLE DAYS', visibleDays);
+    console.log('VISIBLE HOURS', visibleHours);
+
     this.state = {
       updated: true,
 
-      visibleDays: [
-        // consts.Days.SUNDAY,
-        Consts.Days.MONDAY,
-        Consts.Days.TUESDAY,
-        Consts.Days.WEDNESDAY,
-        Consts.Days.THURSDAY,
-        Consts.Days.FRIDAY,
-        // consts.Days.SATURDAY,
-      ],
-
-      visibleHours: {
-        start: 8,
-        end: 17,
-      },
-
+      visibleDays,
+      visibleHours,
       data: {},
 
       /* debug */
