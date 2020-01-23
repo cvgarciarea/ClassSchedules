@@ -61,4 +61,4 @@ buck-out/
 /ios/Pods/
 
 # Custom
-# android/gradle.properties
+android/gradle.properties
