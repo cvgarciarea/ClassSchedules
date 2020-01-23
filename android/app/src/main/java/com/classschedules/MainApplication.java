@@ -3,6 +3,7 @@ package com.classschedules;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 import com.AlexanderZaytsev.RNI18n.RNI18nPackage;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
 import com.reactcommunity.rnlanguages.RNLanguagesPackage;
@@ -28,6 +29,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new AsyncStoragePackage(),
             new RNI18nPackage(),
             new RNGestureHandlerPackage(),
             new RNLanguagesPackage(),
