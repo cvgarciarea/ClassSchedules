@@ -4,6 +4,7 @@
   "tests": "Tests",
   "settings": "Settings",
   "theme": "Theme",
+  "visible-hours": "Visible hours",
 
   "visible-time-range": "Visible time range",
   "visible-days": "Visible days",
@@ -17,6 +18,14 @@
   "field-details": "Details",
   "field-start": "Start:",
   "field-end": "End:",
+
+  "sunday": "Sunday",
+  "monday": "Monday",
+  "tuesday": "Tuesday",
+  "wednesday": "Wednesday",
+  "thursday": "Thursday",
+  "friday": "Friday",
+  "saturday": "Saturday",
 
   "section-general": "General",
   "section-app-info": "About"
