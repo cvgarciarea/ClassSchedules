@@ -1,5 +1,7 @@
 export default class Consts {
 
+  static APP_VERSION = '0.1.0';
+
   static Sizes = {
     CellWidth: 175,
     CellHeight: 80,
@@ -18,4 +20,19 @@ export default class Consts {
     FRIDAY: 5,
     SATURDAY: 6,
   };
+
+  static defaultSettings = {
+    theme: 'light',
+    visibleDays: [
+      Consts.Days.MONDAY,
+      Consts.Days.TUESDAY,
+      Consts.Days.WEDNESDAY,
+      Consts.Days.THURSDAY,
+      Consts.Days.FRIDAY,
+    ],
+    visibleHours: {
+      start: 7,
+      end: 18,
+    },
+  }
 }

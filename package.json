@@ -1,6 +1,6 @@
 {
   "name": "ClassSchedules",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -12,6 +12,7 @@
   "dependencies": {
     "@react-native-community/async-storage": "1.7.1",
     "moment": "2.24.0",
+    "prop-types": "15.7.2",
     "react": "16.9.0",
     "react-native": "0.61.5",
     "react-native-directed-scrollview": "git+https://github.com/chrisfisher/react-native-directed-scrollview.git#master",
@@ -19,7 +20,7 @@
     "react-native-i18n": "2.0.15",
     "react-native-languages": "3.0.2",
     "react-native-modal-datetime-picker": "7.4.0",
-    "react-native-paper": "^3.5.0",
+    "react-native-paper": "3.5.0",
     "react-native-vector-icons": "6.6.0",
     "react-navigation": "3.1.5",
     "react-navigation-material-bottom-tabs": "1.0.0"

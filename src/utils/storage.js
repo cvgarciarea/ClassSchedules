@@ -9,13 +9,14 @@ export default class Storage {
   static Keys = {
     visibleDays: 'visibledays',
     visibleHours: 'visiblehours',
+    theme: 'theme',
   };
 
   // ****************************************************************
   // **                           STORE                            **
   // ****************************************************************
 
-  static async storeVaue(key, value) {
+  static async storeValue(key, value) {
     try {
       if (typeof(value) === 'object') {
         value = JSON.stringify(value);
@@ -35,7 +36,7 @@ export default class Storage {
     let saved = null;
 
     for (key in object) {
-      saved = await Storage.storeVaue(key, object[key]);
+      saved = await Storage.storeValue(key, object[key]);
       if (!saved) {
         unSaved.push(key);
       }
@@ -59,7 +60,7 @@ export default class Storage {
     if (!Utils.emptyString(value)) {
       let chunks = value.match(/.{1,100000}/g);
       for (let i=0; i<chunks.length; i++) {
-        await Storage.storeVaue(key + i, chunks[i], true);
+        await Storage.storeValue(key + i, chunks[i], true);
       }
     }
   }

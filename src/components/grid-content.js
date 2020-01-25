@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 
 import Consts from '../utils/consts';
+import State from '../utils/state';
 import Colors from '../utils/colors';
 
 export default class GridContent extends Component {
@@ -23,12 +24,17 @@ export default class GridContent extends Component {
       updated: true,
     }
 
-    Colors.addThemeCallback(theme => { this.setState({ updated: false }) });
+    State.subscribeTo(
+      'theme',
+      theme => {
+        this.setState({ updated: false });
+      },
+    );
   } 
 
   render() {
     this.state.updated = true;
-    let theme = Colors.Themes[Colors.THEME];
+    let theme = Colors.Themes[State.theme];
 
     return (
       <View
@@ -56,7 +62,7 @@ export default class GridContent extends Component {
   }
 
   _renderCell(cell) {
-    let theme = Colors.Themes[Colors.THEME];
+    let theme = Colors.Themes[State.theme];
 
     return (
       <TouchableOpacity 

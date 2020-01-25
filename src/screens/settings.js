@@ -6,26 +6,40 @@ import {
   StyleSheet,
   ScrollView,
   TouchableNativeFeedback,
+  TouchableWithoutFeedback,
 } from 'react-native';
+import PropTypes from 'prop-types';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import { version } from '../../package';
 import i18n from '../i18n';
 
-import Colors from '../utils/colors';
+import Consts from '../utils/consts';
 import Utils from '../utils/utils';
+import State from '../utils/state';
+import Colors from '../utils/colors';
 
 import Toggle from '../components/toggle';
 import {
   SingleChooser,
 } from '../components/options-chooser';
+import WeekdaysPicker from '../components/weekdays-picker';
 
 let modalsIdx = 0;
 
 class InputModal extends React.Component {
 
+  static defaultProps = {
+    title: null,
+    onRequestClose: null,
+  };
+
+  static propTypes = {
+    title: PropTypes.string,
+    onRequestClose: PropTypes.func,
+  };
+
   render() {
-    let theme = Colors.Themes[Colors.THEME];
+    let theme = Colors.Themes[State.theme];
 
     return (
       <View>
@@ -33,27 +47,34 @@ class InputModal extends React.Component {
         <Modal
           animationType='fade'
           transparent={ true }
-          style={{ width: '100%', height: '100%' }}
-          onRequestClose={ () => {} }>
+          style={{
+            width: '100%',
+            height: '100%',
+          }}
+          onRequestClose={ () => Utils.secureCall(this.props.onRequestClose) }
+        >
 
-          <View style={ styles.inputModalBackground } />
+          <TouchableWithoutFeedback
+            onPress={ () => { console.log('onPress')} }
+          >
+            <View style={ styles.inputModalBackground } />
+          </TouchableWithoutFeedback>
         </Modal>
 
         { /* Modal para el input */ }
         <Modal
-          animationType='slide'
+          animationType={ 'slide' }
           style={{ width: '100%', height: '100%' }}
           transparent={ true }
-          onRequestClose={ () => {
-            if (!Utils.emptyValue(this.props.onRequestClose)) {
-              this.props.onRequestClose();
-            }
-          }}>
+          onRequestClose={ () => Utils.secureCall(this.props.onRequestClose) }
+        >
 
           <View style={ styles.inputModalMain }>
             <View style={[ styles.inputModalBox, { backgroundColor: theme.background } ]}>
               <View style={[ styles.inputModalHeader, { backgroundColor: theme.background } ]}>
-                <Text style={{ color: theme.foreground }}>Test</Text>
+                <Text style={{ color: theme.foreground }}>
+                  { this.props.title }
+                </Text>
               </View>
 
               <View style={ styles.inputModalChildBox }>
@@ -63,7 +84,7 @@ class InputModal extends React.Component {
           </View>
         </Modal>
       </View>
-    )
+    );
   }
 }
 
@@ -73,21 +94,23 @@ class SettingsSectionHeader extends React.Component {
     super(props);
 
     this.state = {
-      label: props.label || '',
+      title: props.title || '',
     }
   }
 
   render() {
-    let theme = Colors.Themes[Colors.THEME];
+    let theme = Colors.Themes[State.theme];
 
     return (
-      <Text style={{
-        padding: 10,
-        color: theme.foreground,
-        backgroundColor: theme.sectionHeaderBackground,
-      }}>
+      <Text
+        style={{
+          padding: 10,
+          color: theme.foreground,
+          backgroundColor: theme.sectionHeaderBackground,
+        }}
+      >
 
-        { this.state.label }
+        { this.state.title }
       </Text>
     )
   }
@@ -95,12 +118,24 @@ class SettingsSectionHeader extends React.Component {
 
 class SettingItem extends React.Component {
 
+  static defaultProps = {
+    title: null,
+    icon: null,
+    touchable: true,
+  };
+
+  static propTypes = {
+    title: PropTypes.string,
+    icon: PropTypes.string,
+    touchable: PropTypes.bool,
+  };
+
   constructor(props) {
     super(props);
 
     this.state = {
       value: '',
-    }
+    };
   }
 
   _handlePress() {
@@ -118,40 +153,83 @@ class SettingItem extends React.Component {
   }
 
   render() {
-    let theme = Colors.Themes[Colors.THEME];
+    let theme = Colors.Themes[State.theme];
 
     return (
-      <TouchableNativeFeedback onPress={ () => this._handlePress() }>
-        <View style={{ padding: 10, flexDirection: 'row', marginRight: 20 }}>
-          {
-            Utils.emptyString(this.props.icon) ?
-              <View style={{ width: 50, height: 30 }} />
-            :
-              <Icon
-                size={ 30 }
-                name={ this.props.icon }
-                color={ theme.foreground }
-                style={{ marginHorizontal: 10, alignSelf: 'center' }} />
-          }
+      <TouchableNativeFeedback
+        onPress={ () => this._handlePress() }
+        disabled={ !this.props.touchable }
+      >
 
-          <Text style={{ alignSelf: 'center', color: theme.foreground }}>
-            { this.props.label }
-          </Text>
+        <View>
+          <View
+            style={{
+              padding: 10,
+              flexDirection: 'row',
+              marginRight: 20,
+              alignItems: 'center',
+            }}
+          >
 
-          <View style={{ flex: 1 }} />
+            <View
+              style={{ flex: 1 }}
+            >
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}
+              >
+                {
+                  Utils.emptyString(this.props.icon) ?
+                    <View style={{ width: 50, height: 30 }} />
+                  :
+                    <Icon
+                      size={ 30 }
+                      name={ this.props.icon }
+                      color={ theme.foreground }
+                      style={{ marginHorizontal: 10 }}
+                    />
+                }
 
-          <View style={{ alignSelf: 'center' }}>
+                <Text
+                  style={{
+                    color: theme.foreground,
+                  }}
+                >
+                  { this.props.title }
+                </Text>
+              </View>
+
+            </View>
+
+            <View>
+              {
+                Utils.isFunction(this.rightChild) ?
+                  this.rightChild()
+                :
+                  null
+              }
+            </View>
+
+          </View>
             {
-              !Utils.emptyValue(this.rightChild) ?
-                this.rightChild()
+              Utils.isFunction(this.bottomChild) ?
+                <View
+                  style={{
+                    paddingLeft: 65,
+                    paddingTop: 10,
+                  }}
+                >
+
+                  { this.bottomChild() }
+                </View>
               :
                 null
             }
-          </View>
-
         </View>
       </TouchableNativeFeedback>
-    )
+    );
   }
 }
 
@@ -161,8 +239,9 @@ class BooleanSettingItem extends SettingItem {
     super(props);
 
     this.state = {
+      ...this.state,
       value: false,
-    }
+    };
   }
 
   rightChild() {
@@ -175,8 +254,11 @@ class BooleanSettingItem extends SettingItem {
     */
 
     return (
-      <Toggle active={ false } onToggle={ () => {} } />
-    )
+      <Toggle
+        active={ false }
+        onToggle={ () => {} }
+      />
+    );
   }
 
   handlePress() {
@@ -185,24 +267,109 @@ class BooleanSettingItem extends SettingItem {
   }
 }
 
+class TimeRangeSettingItem extends SettingItem {
+
+  static defaultProps = {
+    ...SettingItem.defaultProps,
+    modalTitle: null,
+    startHour: null,
+    endHour: null,
+    showUpModal: null,
+    closeModal: null,
+    onChange: null,
+  };
+
+  static propTypes = {
+    ...SettingItem.propTypes,
+    modalTitle: PropTypes.string,
+    startHour: PropTypes.number,
+    endHour: PropTypes.number,
+    showUpModal: PropTypes.func,
+    closeModal: PropTypes.func,
+    onChange: PropTypes.func,
+  };
+
+  handlePress() {
+    let { showUpModal } = this.props;
+
+    let {
+      startHour,
+      endHour,
+    } = this.props;
+
+    if (!Utils.isDefined(startHour)) {
+      startHour = 0;
+    }
+
+    if (!Utils.isDefined(endHour)) {
+      endHour = startHour + 1;
+    }
+
+    if (Utils.isFunction(showUpModal)) {
+      let modal = showUpModal(
+        <InputModal
+          key={ modalsIdx }
+          onRequestClose={ () => { Utils.secureCall(this.props.closeModal, modal) }}
+          title={ this.props.modalTitle }
+          child={
+            <View />
+          }
+        />
+      );
+    }
+  }
+}
+
 class SelectionSettingItem extends SettingItem {
+
+  static defaultProps = {
+    ...SettingItem.defaultProps,
+    modalTitle: null,
+    options: null,
+    selected: null,
+    onChange: null,
+    showUpModal: null,
+    closeModal: null,
+  };
+
+  static propTypes = {
+    ...SettingItem.propTypes,
+    modalTitle: PropTypes.string,
+    options: PropTypes.object.isRequired,
+    selected: PropTypes.string.isRequired,
+    onChange: PropTypes.func,
+    showUpModal: PropTypes.func,
+    closeModal: PropTypes.func,
+  };
 
   constructor(props) {
     super(props);
 
     this.state = {
+      ...this.state,
       selected: this.props.selected,
-    }
+    };
   }
 
   rightChild() {
-    let theme = Colors.Themes[Colors.THEME];
+    let theme = Colors.Themes[State.theme];
 
     return (
-      <View style={{ flexDirection: 'row' }}>
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+        }}
+      >
         {
           !Utils.emptyValue(this.state.selected) ?
-            <Text style={{ marginRight: 5, alignSelf: 'center', color: theme.foreground }}>
+            <Text
+              style={{
+                marginRight: 5,
+                color: theme.foreground,
+              }}
+            >
+
               { this.props.options[this.state.selected].title }
             </Text>
           :
@@ -213,23 +380,20 @@ class SelectionSettingItem extends SettingItem {
           size={ 22 }
           name={ 'menu-down' }
           color={ theme.foreground }
-          style={{ alignSelf: 'center' }} />
+        />
       </View>
     )
   }
 
-  _requestClose(modal) {
-    if (!Utils.emptyValue(this.props.closeModal)) {
-      this.props.closeModal(modal);
-    }
-  }
-
   handlePress() {
-    if (!Utils.emptyValue(this.props.showUpModal)) {
-      let modal = this.props.showUpModal(
+    let { showUpModal } = this.props;
+
+    if (Utils.isFunction(showUpModal)) {
+      let modal = showUpModal(
         <InputModal
           key={ modalsIdx }
-          onRequestClose={ () => { this._requestClose(modal) }}
+          onRequestClose={ () => { Utils.secureCall(this.props.closeModal, modal) }}
+          title={ this.props.modalTitle }
           child={
             <SingleChooser
               useIcons={ false }
@@ -237,12 +401,50 @@ class SelectionSettingItem extends SettingItem {
               selected={ this.state.selected }
               onChange={ key => {
                 this.setState({ selected: key });
-                this._requestClose(modal);
+                Utils.secureCall(this.props.closeModal, modal)
                 this._onChange(key);
-              } } />
-          } />
-      )
+              }}
+            />
+          }
+        />
+      );
     }
+  }
+}
+
+class WeekdaysSettingItem extends SettingItem {
+
+  static defaultProps = {
+    ...SettingItem.defaultProps,
+    activeDays: [],
+    onChange: null,
+  };
+
+  static propTypes = {
+    ...SettingItem.propTypes,
+    activeDays: PropTypes.array.isRequired,
+    onChange: PropTypes.func,
+  };
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      ...this.state,
+    };
+  }
+
+  bottomChild() {
+    return (
+      <WeekdaysPicker
+        // activeDays={ this.state.activeDays }
+        activeDays={ this.props.activeDays }
+        onChange={ days => {
+          // this.setState({ activeDays: days });
+          Utils.secureCall(this.props.onChange, days);
+        }}
+      />
+    );
   }
 }
 
@@ -252,12 +454,22 @@ export default class SettingsScreen extends React.Component {
     super(props);
 
     this.state = {
-      theme: Colors.THEME,
+      theme: State.theme,
       modals: [],
+      rendered: false,
     };
 
     this.addModal = this.addModal.bind(this);
     this.removeModal = this.removeModal.bind(this);
+  }
+
+  componentDidMount() {
+    State.subscribeTo(
+      'visible-days',
+      days => {
+        this.setState({ rendered: false });
+      }
+    )
   }
 
   addModal(modal) {
@@ -275,23 +487,33 @@ export default class SettingsScreen extends React.Component {
   }
 
   onThemeChanged(theme) {
-    Colors.setTheme(theme);
+    State.setTheme(theme);
     this.setState({ theme });
   }
 
+  onVisibleDaysChanged(days) {
+    State.setVisibleDays(days);
+  }
+
   render() {
-    // FIXME: Podría tener esto cargado sin tener
-    // que crearlo en el render()
+    this.state.rendered = true;
+
     let themes = {
       'light': { title: i18n.t('theme-light') },
       'dark': { title: i18n.t('theme-dark') },
       'amoled': { title: i18n.t('theme-amoled') },
-    }
+    };
 
     let theme = Colors.Themes[this.state.theme];
 
     return (
-      <View style={{ flex: 1, backgroundColor: theme.background }}>
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: theme.background,
+        }}
+      >
+
         {
           this.state.modals.map(modal => {
             return modal;
@@ -299,23 +521,52 @@ export default class SettingsScreen extends React.Component {
         }
 
         <ScrollView>
-          <SettingsSectionHeader label={ i18n.t('section-general') } />
+          <SettingsSectionHeader
+            title={ i18n.t('section-general') }
+          />
 
           <SelectionSettingItem
-            label={ i18n.t('theme') }
+            title={ i18n.t('theme') }
             icon={ 'eye' }
+            modalTitle={ i18n.t('theme') }
             options={ themes }
             selected={ this.state.theme }
             onChange={ theme => this.onThemeChanged(theme) }
             showUpModal={ this.addModal }
-            closeModal={ this.removeModal } />
+            closeModal={ this.removeModal }
+          />
 
-          <SettingItem label={ i18n.t('visible-time-range') } icon={ 'clock' } />
-          <SettingItem label={ i18n.t('visible-days' )} icon={ 'calendar-multiselect' } />
-          <SettingItem label={ i18n.t('notifications') } icon={ 'bell' } />
+          <TimeRangeSettingItem
+            title={ i18n.t('visible-time-range') }
+            icon={ 'clock' }
+            modalTitle={ i18n.t('visible-hours') }
+            showUpModal={ this.addModal }
+            closeModal={ this.removeModal }
+            startHour={ 10 }
+            endHour={ 20 }
+          />
 
-          <SettingsSectionHeader label={ i18n.t('section-app-info') } />
-          <SettingItem label={ version } icon={ 'developer-board' } />
+          <WeekdaysSettingItem
+            title={ i18n.t('visible-days' )}
+            icon={ 'calendar-multiselect' }
+            touchable={ false }
+            activeDays={ State.visibleDays }
+            onChange={ days => this.onVisibleDaysChanged(days) }
+          />
+
+          <SettingItem
+            title={ i18n.t('notifications') }
+            icon={ 'bell' }
+          />
+
+          <SettingsSectionHeader
+            title={ i18n.t('section-app-info') }
+          />
+
+          <SettingItem
+            title={ Consts.APP_VERSION }
+            icon={ 'developer-board' }
+          />
         </ScrollView>
       </View>
     );
@@ -341,7 +592,6 @@ const styles = StyleSheet.create({
     // height: '40%',
     borderWidth: 2,
     borderRadius: 4,
-    alignSelf: 'center',
     borderColor: '#000',
     // backgroundColor: '#aaffaa',
   },

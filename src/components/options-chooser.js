@@ -9,6 +9,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import Consts from '../utils/consts';
 import Colors from '../utils/colors';
+import State from '../utils/state'
 import Utils from '../utils/utils';
 
 import {
@@ -29,7 +30,7 @@ class ChooserItem extends React.Component {
    render() {
     let iconSize = 30;
     let icon = null;
-    let theme = Colors.Themes[Colors.THEME];
+    let theme = Colors.Themes[State.theme];
 
     if (!this.props.useIcon) {
       icon = (

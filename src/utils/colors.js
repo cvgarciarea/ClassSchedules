@@ -25,7 +25,6 @@ export default class Colors {
   }
 
   static THEME = 'dark';
-  static THEME_CALLBACKS = [];
 
   static Themes = {
     light: {
@@ -70,17 +69,5 @@ export default class Colors {
 
     let light = color.r * 0.299 + color.g * 0.587 + color.b * 0.114 > 186;
     return light ? '#000' : '#fff';
-  }
-
-  static addThemeCallback(func) {
-    Colors.THEME_CALLBACKS.push(func);
-  }
-
-  static setTheme(theme) {
-    Colors.THEME = theme;
-
-    for (let i=0; i<Colors.THEME_CALLBACKS.length; i++) {
-      Colors.THEME_CALLBACKS[i](theme);
-    }
   }
 }

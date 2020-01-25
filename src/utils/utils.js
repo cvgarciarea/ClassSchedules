@@ -27,12 +27,38 @@ export default class Utils {
     return cellsByRow;
   }
 
+  static isDefined(value) {
+    return value !== null && value !== undefined;
+  }
+
   static emptyValue(value) {
     return [null, undefined].includes(value);
   }
 
   static emptyString(value) {
     return this.emptyValue(value) || value === '';
+  }
+
+  static isFunction(value) {
+    return typeof value === 'function';
+  }
+
+  static isBoolean(value) {
+    return typeof value === 'boolean';
+  }
+
+  static secureCall() {
+    let func = arguments[0];
+
+    if (Utils.isFunction(func)) {
+      let params = [];
+
+      for (let i=1; i<arguments.length; i++) {
+        params.push(arguments[i]);
+      }
+
+      return func(...params);
+    }
   }
 
   static numberToMomentHour(value) {

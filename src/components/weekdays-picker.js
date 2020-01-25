@@ -9,6 +9,7 @@ import PropTypes from 'prop-types';
 import i18n from '../i18n';
 import Consts from '../utils/consts';
 import Utils from '../utils/utils';
+import State from '../utils/state';
 import Colors from '../utils/colors';
 
 const days = Object.keys(Consts.Days);
@@ -33,7 +34,7 @@ class DayButton extends React.Component {
 
   render() {
     const size = 35;
-    const theme = Colors.Themes[Colors.THEME];
+    const theme = Colors.Themes[State.theme];
 
     return (
       <TouchableOpacity
@@ -47,8 +48,8 @@ class DayButton extends React.Component {
             alignItems: 'center',
             backgroundColor:
               this.props.active
-                ? theme.background
-                : theme.foreground,
+                ? theme.foreground
+                : theme.background,
           },
           this.props.style,
         ]}
@@ -57,8 +58,8 @@ class DayButton extends React.Component {
           style={{
             color:
               this.props.active
-                ? theme.foreground
-                : theme.background,
+                ? theme.background
+                : theme.foreground,
           }}
         >
           { /* Me quedo con la inicial */}
@@ -118,8 +119,6 @@ export default class WeekdaysPicker extends React.Component {
   }
 
   render() {
-    console.log(this.state.activeDays);
-
     return (
       <View
         style={{
