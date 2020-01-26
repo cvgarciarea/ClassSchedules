@@ -107,7 +107,7 @@ export default class State {
     State._trigger('theme', State.theme)
   }
 
-  setRecentColors(colors) {
+  static setRecentColors(colors) {
     State.recentColors = colors;
     Storage.storeValue(Storage.Keys.recentColors, JSON.stringify(colors));
     State._trigger('recent-colors', State.recentColors);

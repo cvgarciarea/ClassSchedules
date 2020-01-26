@@ -9,6 +9,7 @@ import moment from 'moment';
 import i18n from '../i18n';
 import Consts from '../utils/consts';
 import Utils from '../utils/utils';
+import State from '../utils/state';
 
 import Field from './field';
 import TimePickerButton from './time-picker-button';
@@ -40,7 +41,7 @@ export default class CreateClassSchedule extends React.Component {
       endTime: this.props.previousEnd,
       startDay: Consts.Days.MONDAY,
       endDay: Consts.Days.MONDAY,
-      color: null,
+      color: State.recentColors[0],
     };
   }
 

@@ -137,10 +137,13 @@ export default class TimetablesScreen extends React.Component {
       // FIXME: La idea es tener un id único por materia, no por horario de
       //        clase, es decir, si una materia tiene varios horarios deberían
       //        estar todos bajo el mismo id
+
+      let { color } = this.state.tempNewSchedule;
+
       schedules[Utils.uuidv4()] = {
         schedules: [ this.state.tempNewSchedule ],
         name: this.state.tempNewSchedule.name,
-        color: this.state.tempNewSchedule.color,
+        color,
       };
 
       this.setState({
@@ -150,6 +153,14 @@ export default class TimetablesScreen extends React.Component {
 
       // Guardar los nuevos horarios en el disco
       Storage.storeValue(Storage.Keys.schedules, JSON.stringify(schedules));
+
+      // Registrar este color como reciente
+      if (!State.recentColors.includes(color)) {
+        let recentColors = [ color ].concat(State.recentColors);
+        recentColors.pop();
+
+        State.setRecentColors(recentColors);
+      }
 
       // Resetear el botón con el signo de +
       const animation = FABAnimationType.RESET_ROTATE;
