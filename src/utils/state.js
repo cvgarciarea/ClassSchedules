@@ -79,6 +79,7 @@ export default class State {
     State.visibleDays = values[visibleDaysKey];
     State.visibleHours = values[visibleHoursKey];
     State.theme = values[themeKey];
+    State.recentColors = values[recentColorsKey];
 
     // Llamo a las funciones que detectan los cambios de estao
     if (triggerCallbacks) {
