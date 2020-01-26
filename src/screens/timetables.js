@@ -102,36 +102,7 @@ export default class TimetablesScreen extends React.Component {
       this.resetCreateSchedule();
     });
 
-    setOnSaveButtonPress(() => {
-      if (this.revealer.getVisible()) {
-        this.revealer.collapse();
-      }
-
-      let { schedules } = this.state;
-      schedules = JSON.parse(JSON.stringify(schedules));
-
-      // FIXME: La idea es tener un id único por materia, no por horario de
-      //        clase, es decir, si una materia tiene varios horarios deberían
-      //        estar todos bajo el mismo id
-      schedules[Utils.uuidv4()] = {
-        schedules: [ this.state.tempNewSchedule ],
-        name: this.state.tempNewSchedule.name,
-        color: this.state.tempNewSchedule.color,
-      };
-
-      this.setState({
-        schedules,
-        tempNewSchedule: {},
-      });
-
-      const animation = FABAnimationType.RESET_ROTATE;
-      this.animatingFAB = true;
-      this.createScheduleFAB.animate(FABAnimations[animation])
-      .then(() => {
-        this.fabAnimation = animation;
-        this.animatingFAB = false;
-      });
-    })
+    this.configureSaveButtonBehavior();
   }
 
   componentDidMount() {
@@ -150,6 +121,45 @@ export default class TimetablesScreen extends React.Component {
     this.focusListener.remove();
     this.willBlurListener.remove();
     this.didBlurListener.remove();
+  }
+
+  configureSaveButtonBehavior() {
+    setOnSaveButtonPress(() => {
+      // Ocultar el creador de nuevos horarios
+      if (this.revealer.getVisible()) {
+        this.revealer.collapse();
+      }
+
+      // Agregar el nuevo horario creado a la cuadrícula
+      let { schedules } = this.state;
+      schedules = JSON.parse(JSON.stringify(schedules));
+
+      // FIXME: La idea es tener un id único por materia, no por horario de
+      //        clase, es decir, si una materia tiene varios horarios deberían
+      //        estar todos bajo el mismo id
+      schedules[Utils.uuidv4()] = {
+        schedules: [ this.state.tempNewSchedule ],
+        name: this.state.tempNewSchedule.name,
+        color: this.state.tempNewSchedule.color,
+      };
+
+      this.setState({
+        schedules,
+        tempNewSchedule: {},
+      });
+
+      // Guardar los nuevos horarios en el disco
+      Storage.storeValue(Storage.Keys.schedules, JSON.stringify(schedules));
+
+      // Resetear el botón con el signo de +
+      const animation = FABAnimationType.RESET_ROTATE;
+      this.animatingFAB = true;
+      this.createScheduleFAB.animate(FABAnimations[animation])
+      .then(() => {
+        this.fabAnimation = animation;
+        this.animatingFAB = false;
+      });
+    });
   }
 
   resetCreateSchedule() {
