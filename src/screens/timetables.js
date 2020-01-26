@@ -6,6 +6,7 @@ import {
   StyleSheet,
   BackHandler,
   SafeAreaView,
+  TouchableOpacity,
 } from 'react-native';
 import moment from 'moment';
 import ScrollView, { ScrollViewChild } from 'react-native-directed-scrollview';
@@ -25,9 +26,11 @@ import FloatingActionButton from '../components/floating-action-button';
 import CircleTransition from '../components/circle-reveal-view';
 import CreateClassSchedule from '../components/create-class-schedule';
 import {
-  showSaveButton,
+  setSaveButtonVisible,
   enableSaveButton,
   setOnSaveButtonPress,
+  setDeleteButtonVisible,
+  setOnDeleteButtonPress,
 } from './home';
 
 const FABAnimations = {
@@ -75,7 +78,9 @@ export default class TimetablesScreen extends React.Component {
       updated: true,
       schedules: {},
       tempNewSchedule: null,
-    }
+      selectionMode: 'normal',  // 'normal' | 'selecting'
+      selection: {},
+    };
 
     State.subscribeTo(
       'visible-days',
@@ -103,6 +108,7 @@ export default class TimetablesScreen extends React.Component {
     });
 
     this.configureSaveButtonBehavior();
+    this.configureDeleteButtonBehavior();
   }
 
   componentDidMount() {
@@ -173,6 +179,12 @@ export default class TimetablesScreen extends React.Component {
     });
   }
 
+  configureDeleteButtonBehavior() {
+    setOnDeleteButtonPress(() => {
+      this.deleteSelectedClassSchedules();
+    })
+  }
+
   resetCreateSchedule() {
     let revealed = !Utils.emptyValue(this.revealer) && this.revealer.getVisible();
     let rotated = !Utils.emptyValue(this.createScheduleFAB) && this.fabAnimation === FABAnimationType.ROTATE;
@@ -209,7 +221,179 @@ export default class TimetablesScreen extends React.Component {
     return (
       visibleDays.includes(startDay) ||
       visibleDays.includes(endDay)
-    )
+    );
+  }
+
+  /**
+   * Revisa si un horario de clase está actualmente seleccionado.
+   * 
+   * @param {String} id    Id de la materia.
+   * @param {Number} index Índice del horario dentro de la materia.
+   * 
+   * @return {Boolean}
+   */
+  isSelected(id, index) {
+    return Utils.isDefined(this.state.selection[id]) &&
+           this.state.selection[id].includes(index);
+  }
+
+  /**
+   * Selecciona el horario de índice `index` de la materia con id `id`
+   * 
+   * @param {String} id    Id de la materia.
+   * @param {Number} index Índice del horario dentro de la materia.
+   */
+  select(id, index) {
+    if (!this.isSelected(id, index)) {
+      let { selection } = this.state;
+      selection = JSON.parse(JSON.stringify(selection));
+
+      if (!Utils.isDefined(selection[id])) {
+        selection[id] = [];
+      }
+
+      selection[id].push(index);
+
+      setDeleteButtonVisible(true);
+
+      this.setState({
+        selection,
+        selectionMode: 'selecting',
+      });
+    }
+  }
+
+  /**
+   * Deselecciona el horario de índice `index` de la materia con id `id`
+   * 
+   * @param {String} id    Id de la materia.
+   * @param {Number} index Índice del horario dentro de la materia.
+   */
+  unselect(id, index) {
+    if (this.isSelected(id, index)) {
+      let { selection } = this.state;
+      selection = JSON.parse(JSON.stringify(selection));
+
+      if (Utils.isDefined(selection[id])) {
+        selection[id] = selection[id].remove(index);
+      }
+
+      const selectionMode = this.thereIsSelectedClasses(selection) ? 'selecting' : 'normal';
+
+      if (selectionMode === 'normal') {
+        setDeleteButtonVisible(false);
+      }
+
+      this.setState({
+        selection,
+        selectionMode,
+      });
+    }
+  }
+
+  /**
+   * Revisa que haya algún horario seleccionado.
+   * 
+   * @param {Object} selection Opcional, objecto con la estructura
+   *                           de this.state.selection
+   * 
+   * @return {Boolean}
+   */
+  thereIsSelectedClasses(selection=null) {
+    if (!Utils.isDefined(selection)) {
+      selection = this.state.selection;
+    }
+
+    let foundSelectedClassSchedule = false;
+    let keys = Object.keys(selection);
+
+    for (let i=0; i<keys.length && !foundSelectedClassSchedule; i++) {
+      foundSelectedClassSchedule = selection[keys[i]].length > 0;
+    }
+
+    return foundSelectedClassSchedule;
+  }
+
+  /**
+   * Borra todos los horarios seleccionados.
+   */
+  deleteSelectedClassSchedules() {
+    let { schedules } = this.state;
+    schedules = JSON.parse(JSON.stringify(schedules));
+
+    for (let key in this.state.selection) {
+      let selected = this.state.selection[key];
+
+      /**
+       * Es importante ordenar de forma inversa porque al borrar un horario
+       * los horarios con índice mayor cambian de índice (se les reduce en
+       * 1) provocando resultados indeseados y, en según qué casos, errores
+       * por índice fuera de rango, ejemplo:
+       * 
+       * let arr = [ 5, 3, 1, 8, 6 ];
+       * let aBorrar = [ 0, 2, 1 ];
+       * 
+       * for (let index of aBorrar) {
+       *   arr.splice(index, 1)
+       * }
+       * 
+       * Primera iteración:
+       * arr.splice(0, 1)
+       * arr === [ 3, 1, 8, 6 ]
+       * 
+       * Segunda iteracion:
+       * arr.splice(2, 1);
+       * arr === [ 3, 1, 6 ]
+       * 
+       * Tercera iteración:
+       * arr.splice(1, 1);
+       * arr === [ 3, 6 ]
+       * 
+       * Resultado:
+       * arr === [ 3, 6 ]
+       * 
+       * Resultado esperado:
+       * arr === [ 8, 6 ]
+       * 
+       * Si se ordena de forma inversa no se alteran los índices de los
+       * elementos aún por borrar, ejemplo:
+       * 
+       * let arr = [ 5, 3, 1, 8 ];
+       * let aBorrar = [ 0, 2, 1 ].sort().reverse();;
+       * 
+       * for (let index of aBorrar) {
+       *   arr.splice(index, 1)
+       * }
+       * 
+       * Primera iteración:
+       * arr.splice(2, 1);
+       * arr === [ 5, 3, 8, 6 ]
+       * 
+       * Segunda iteración:
+       * arr.splice(1, 1);
+       * arr === [ 5, 8, 6 ]
+       * 
+       * Tercera iteración:
+       * arr.splice(0, 1);
+       * arr === [ 8, 6 ]
+       */
+
+      selected.sort().reverse();
+
+      for (let index of selected) {
+        schedules[key].schedules.splice(index, 1);
+      }
+    }
+
+    Storage.storeValue(Storage.Keys.schedules, JSON.stringify(schedules));
+
+    this.setState({
+      schedules,
+      selectionMode: 'normal',
+      selection: {},
+    });
+
+    setDeleteButtonVisible(false);
   }
 
   renderClassesCells() {
@@ -282,7 +466,12 @@ export default class TimetablesScreen extends React.Component {
                 top: Consts.Sizes.CellHeight / 60 * starts.diff(firstHour, 'minutes') + beforeSurplus + Consts.Sizes.columnLabelHeight,
                 width: Consts.Sizes.CellWidth + Consts.Sizes.CellMargin,
                 height: Consts.Sizes.CellHeight / 60 * diff + betweenSurplus,
-                backgroundColor,
+                left: State.visibleDays.indexOf(day) *
+                      (Consts.Sizes.CellWidth + 2 * Consts.Sizes.CellMargin) +
+                      Consts.Sizes.CellMargin / 2 + Consts.Sizes.rowLabelWidth,
+                backgroundColor,                borderStyle: 'dashed',
+                borderRadius: 1,
+                borderColor: Colors.Themes[State.theme].foreground,
               },
     
               text: {
@@ -290,24 +479,42 @@ export default class TimetablesScreen extends React.Component {
                 color: Colors.getTextColorForBackground(backgroundColor),
               },
             };
-  
-            dynamicStyles.cell.left = State.visibleDays.indexOf(day) *
-                                      (Consts.Sizes.CellWidth + 2 * Consts.Sizes.CellMargin) +
-                                      Consts.Sizes.CellMargin / 2 + Consts.Sizes.rowLabelWidth;
+
+            if (this.isSelected(key, j)) {
+              dynamicStyles.cell.borderWidth = 6;
+            }
 
             children.push(
-              <View
+              <TouchableOpacity
                 key={ day }
                 style={[
                   styles.cell,
                   dynamicStyles.cell
                 ]}
+                onPress={ () => {
+                  if (this.state.selectionMode === 'selecting') {
+                    if (this.isSelected(key, j)) {
+                      this.unselect(key, j);
+                    } else {
+                      this.select(key, j);
+                    }
+                  } else {
+                    console.log('EDITAR', classSchedule);
+                  }
+                }}
+                onLongPress={ () => {
+                  if (this.isSelected(key, j)) {
+                    this.unselect(key, j);
+                  } else {
+                    this.select(key, j);
+                  }
+                }}
               >
   
                 <Text style={ dynamicStyles.text }>
                   { subject.name }
                 </Text>
-              </View>
+              </TouchableOpacity>
             );
           }
 
@@ -400,8 +607,8 @@ export default class TimetablesScreen extends React.Component {
 
         <CircleTransition
           ref={ ref => this.revealer = ref }
-          expandedCallback={ () => { showSaveButton(true) }}
-          collapsedCallback={ () => { showSaveButton(false) }}
+          expandedCallback={ () => { setSaveButtonVisible(true) }}
+          collapsedCallback={ () => { setSaveButtonVisible(false) }}
           bottom={ 41 /* 16 de margen + 50 / 2 de tamaño */ }
           right={ 41 /* 16 de margen + 50 / 2 de tamaño */ }>
 

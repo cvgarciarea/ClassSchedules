@@ -1,4 +1,7 @@
 import React from 'react';
+import {
+  View,
+} from 'react-native';
 import { createMaterialBottomTabNavigator } from 'react-navigation-material-bottom-tabs';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -66,12 +69,15 @@ let tabNavigator = createMaterialBottomTabNavigator({
 let _navigation = null;
 tabNavigator.navigationOptions = ({ navigation }) => {
   _navigation = navigation;
-  let showSaveButton = navigation.getParam('showSaveButton', false);
-  let headerRight = null;
+  const saveButtonVisible = navigation.getParam('saveButtonVisible', false);
+  const deleteButtonVisible = navigation.getParam('deleteButtonVisible', false);
 
-  if (showSaveButton) {
-    headerRight = (
+  let headerRightChildren = [];
+
+  if (saveButtonVisible) {
+    headerRightChildren.push(
       <HeaderButton
+        key={ 'save' }
         iconName={ 'content-save' }
         onPress={ navigation.getParam('onSaveButtonPress', null) }
         disabled={ !navigation.getParam('enableSaveButton', false) }
@@ -79,18 +85,34 @@ tabNavigator.navigationOptions = ({ navigation }) => {
     );
   }
 
+  if (deleteButtonVisible) {
+    headerRightChildren.push(
+      <HeaderButton
+        key={ 'delete' }
+        iconName={ 'delete' }
+        onPress={ navigation.getParam('onDeleteButtonPress', null) }
+      />
+    );
+  }
+
+  let headerRight = (
+    <View>
+      { headerRightChildren }
+    </View>
+  )
+
   return {
     headerStyle: {
       backgroundColor: Colors.primary,
     },
     headerRight,
-  }
+  };
 }
 
-export let showSaveButton = show => {
+export let setSaveButtonVisible = visible => {
   if (!Utils.emptyValue(_navigation)) {
     _navigation.setParams({
-      showSaveButton: show,
+      saveButtonVisible: visible,
       enableSaveButton: false,
     });
   }
@@ -108,6 +130,22 @@ export let setOnSaveButtonPress = callback => {
   if (Utils.isDefined(_navigation)) {
     _navigation.setParams({
       onSaveButtonPress: callback
+    });
+  }
+}
+
+export let setDeleteButtonVisible = visible => {
+  if (!Utils.emptyValue(_navigation)) {
+    _navigation.setParams({
+      deleteButtonVisible: visible,
+    });
+  }
+}
+
+export let setOnDeleteButtonPress = callback => {
+  if (Utils.isDefined(_navigation)) {
+    _navigation.setParams({
+      onDeleteButtonPress: callback,
     });
   }
 }
