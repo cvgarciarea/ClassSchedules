@@ -1,7 +1,6 @@
 import React from 'react';
 import {
   View,
-  StyleSheet,
   ScrollView,
 } from 'react-native';
 import moment from 'moment';
@@ -134,7 +133,10 @@ export default class CreateClassSchedule extends React.Component {
             activeDays={[ this.state.startDay ]}
             single={ true }
             onChange={ days => {
-              this.setState({ startDay: days[0] });
+              this.setState(
+                { startDay: days[0] },
+                () => this.dataChanged()
+              );
             }}
           />
         </View>
@@ -145,7 +147,10 @@ export default class CreateClassSchedule extends React.Component {
           title={ i18n.t('field-end') }
           time={ this.state.endTime }
           onChange={ endTime => {
-            this.setState({ endTime }, () => { this.dataChanged() });
+            this.setState(
+              { endTime },
+              () => this.dataChanged()
+            );
           }}
         />
 
@@ -158,7 +163,10 @@ export default class CreateClassSchedule extends React.Component {
             activeDays={[ this.state.endDay ]}
             single={ true }
             onChange={ days => {
-              this.setState({ endDay: days[0] });
+              this.setState(
+                { endDay: days[0] },
+                () => this.dataChanged()
+              );
             }}
           />
         </View>
@@ -169,12 +177,3 @@ export default class CreateClassSchedule extends React.Component {
     );
   }
 }
-
-let styles = StyleSheet.create({
-  hbox: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-around',
-    paddingHorizontal: 35,
-  },
-});
