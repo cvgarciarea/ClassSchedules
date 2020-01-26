@@ -10,6 +10,8 @@ export default class Storage {
     visibleDays: 'visibledays',
     visibleHours: 'visiblehours',
     theme: 'theme',
+    schedules: 'schedules',
+    recentColors: 'recentcolors',
   };
 
   // ****************************************************************

@@ -73,10 +73,10 @@ tabNavigator.navigationOptions = ({ navigation }) => {
     headerRight = (
       <HeaderButton
         iconName={ 'content-save' }
-        onPress={ () => { console.log('SAVE') }}
+        onPress={ navigation.getParam('onSaveButtonPress', null) }
         disabled={ !navigation.getParam('enableSaveButton', false) }
       />
-    )
+    );
   }
 
   return {
@@ -100,6 +100,14 @@ export let enableSaveButton = enable => {
   if (!Utils.emptyValue(_navigation)) {
     _navigation.setParams({
       enableSaveButton: enable,
+    });
+  }
+}
+
+export let setOnSaveButtonPress = callback => {
+  if (Utils.isDefined(_navigation)) {
+    _navigation.setParams({
+      onSaveButtonPress: callback
     });
   }
 }

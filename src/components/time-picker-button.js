@@ -5,7 +5,7 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from 'react-native';
-import DateTimePicker from 'react-native-modal-datetime-picker';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from 'moment';
 
 import Utils from '../utils/utils';
@@ -23,8 +23,8 @@ export default class TimePickerButton extends React.Component {
 
     this.state = {
       pickerVisible: false,
-      time: this.props.time,
-    }
+      time: moment(this.props.time, 'HH:mm'),
+    };
   }
   
   render() {
@@ -46,31 +46,34 @@ export default class TimePickerButton extends React.Component {
             }
 
             <Text style={ styles.timeText }>
-              { this.props.time }
+              { this.state.time.format('HH:mm') }
             </Text>
           </View>
  
         </TouchableOpacity>
 
-        <DateTimePicker
-          mode={ 'time' }
-          isVisible={ this.state.pickerVisible }
-          onConfirm={ data => {
-            this.setState({
-              pickerVisible: false,
-              // time: moment(data).format('HH:mm'),
-            });
+        {
+          this.state.pickerVisible ?
+            <DateTimePicker
+              value={ this.state.time.toDate() }
+              mode={ 'time' }
+              display={ 'default' }
+              onChange={ (event, time) => {
+                this.setState({ pickerVisible: false });
 
-            if (!Utils.emptyValue(this.props.onChange)) {
-              this.props.onChange(moment(data).format('HH:mm'));
-            }
-          }}
-          onCancel={ () => {
-            this.setState({ pickerVisible: false })
-          }} />
+                if (event.type === 'set') {
+                  let _moment = moment(time);
+                  this.setState({ time: _moment });
+                  Utils.secureCall(this.props.onChange, _moment.format('HH:mm'));
+                }
+              }}
+            />
+          :
+            null
+        }
 
       </View>
-    )
+    );
   }
 }
 

@@ -81,4 +81,18 @@ export default class Utils {
                               // no sé cuál es la primera que funciona
     );
   }
+
+  /**
+   * @return {String} (En teoría) un String único que sirve para nombrar
+   *                   archivos sin tener coliciones de nombres. Los String
+   *                   resultantes tienen la forma:
+   *                   xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx
+   */
+  static uuidv4() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      let r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
+  }
+
 }

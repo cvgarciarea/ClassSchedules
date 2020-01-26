@@ -1,14 +1,11 @@
 import React from 'react';
 import {
   View,
+  UIManager,
 } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 
-import Consts from '../utils/consts';
-import Storage from '../utils/storage';
 import State from '../utils/state';
-
-import WeekdaysPicker from '../components/weekdays-picker';
 
 export default class SplashScreen extends React.Component {
 
@@ -16,6 +13,12 @@ export default class SplashScreen extends React.Component {
     return {
       header: null,
     };
+  }
+
+  constructor(props) {
+    super(props);
+
+    UIManager.setLayoutAnimationEnabledExperimental(true);
   }
 
   async componentDidMount() {
@@ -29,7 +32,7 @@ export default class SplashScreen extends React.Component {
             visibleHours: State.visibleHours,
           },
         })
-      ], 0);  
+      ], 0);
     })
   }
 

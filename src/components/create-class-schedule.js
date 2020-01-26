@@ -2,15 +2,23 @@ import React from 'react';
 import {
   View,
   StyleSheet,
+  ScrollView,
 } from 'react-native';
 import moment from 'moment';
 
 import i18n from '../i18n';
+import Consts from '../utils/consts';
 import Utils from '../utils/utils';
 
 import Field from './field';
 import TimePickerButton from './time-picker-button';
-import { Spacer40, FlexSpacer } from './spacer';
+import WeekdaysPicker from './weekdays-picker';
+import ColorPickerPallete from './color-picker-pallete';
+import {
+  Spacer20,
+  Spacer40,
+  FlexSpacer,
+} from './spacer';
 
 export default class CreateClassSchedule extends React.Component {
 
@@ -28,9 +36,16 @@ export default class CreateClassSchedule extends React.Component {
     this.state = {
       name: this.props.previousName,
       description: this.props.previousDescription,
-      start: this.props.previousStart,
-      end: this.props.previousEnd,
+      startTime: this.props.previousStart,
+      endTime: this.props.previousEnd,
+      startDay: Consts.Days.MONDAY,
+      endDay: Consts.Days.MONDAY,
+      color: null,
     };
+  }
+
+  componentDidMount() {
+    this.dataChanged();
   }
 
   validateFields() {
@@ -38,64 +53,119 @@ export default class CreateClassSchedule extends React.Component {
 
     return (
       !Utils.emptyString(this.state.name) &&
-      !Utils.emptyString(this.state.start) &&
-      !Utils.emptyString(this.state.end) &&
+      !Utils.emptyString(this.state.startTime) &&
+      !Utils.emptyString(this.state.endTime) &&
 
-      moment(this.state.start, format).diff(moment(this.state.end, format) < 0)
-    )
+      this.state.startDay <= this.state.endDay &&
+      moment(this.state.startTime, format).diff(moment(this.state.endTime, format)) < 0
+    );
   }
 
   dataChanged() {
-    if (!Utils.emptyValue(this.props.onDataChange)) {
-      this.props.onDataChange(this.validateFields());
-    }
+    Utils.secureCall(this.props.onDataChange,
+      this.validateFields(),
+      {
+        name: this.state.name,
+        startTime: this.state.startTime,
+        endTime: this.state.endTime,
+        startDay: this.state.startDay,
+        endDay: this.state.endDay,
+        color: this.state.color,
+      },
+    );
   }
 
   render() {
     return (
-      <View style={{ flex: 1 }}>
+      <ScrollView style={{ flex: 1 }}>
         <Field
           value={ this.state.name }
           iconName={ 'book-open-page-variant' }
-          placeholder={ i18n.t('field-class-name') }
+          placeholder={ i18n.t('field-subject-name') }
           onChange={ name => {
-            this.setState({ name }, () => { this.dataChanged() })
+            this.setState(
+              { name },
+              () => this.dataChanged(),
+            );
           }}
         />
 
+        <ColorPickerPallete
+          selectedColor={ this.state.color }
+          onSelect={ color => {
+            this.setState(
+              { color },
+              () => this.dataChanged()
+            );
+          }}
+        />
+
+        {/*
         <Field
           value={ this.state.description }
           placeholder={ i18n.t('field-details') }
-          onChange={ text => { console.log(text) }}
           onChange={ description => {
             this.setState({ description }, () => { this.dataChanged() })
           }}
         />
+        */}
 
         <Spacer40 />
 
-        <View style={ styles.hbox }>
-          <TimePickerButton
-            title={ i18n.t('field-start') }
-            time={ this.state.start }
-            onChange={ start => {
-              this.setState({ start }, () => { this.dataChanged() });
+        <TimePickerButton
+          title={ i18n.t('field-start') }
+          time={ this.state.startTime }
+          onChange={ startTime => {
+            console.log(startTime);
+            this.setState(
+              { startTime },
+              () => this.dataChanged()
+            );
+          }}
+        />
+
+        <Spacer20 />
+
+        <View
+          style={{ alignItems: 'center' }}
+        >
+          <WeekdaysPicker
+            activeDays={[ this.state.startDay ]}
+            single={ true }
+            onChange={ days => {
+              this.setState({ startDay: days[0] });
             }}
           />
+        </View>
 
-          <TimePickerButton
-            title={ i18n.t('field-end') }
-            time={ this.state.end }
-            onChange={ end => {
-              this.setState({ end }, () => { this.dataChanged() });
+        <Spacer40 />
+
+        <TimePickerButton
+          title={ i18n.t('field-end') }
+          time={ this.state.endTime }
+          onChange={ endTime => {
+            this.setState({ endTime }, () => { this.dataChanged() });
+          }}
+        />
+
+        <Spacer20 />
+
+        <View
+          style={{ alignItems: 'center' }}
+        >
+          <WeekdaysPicker
+            activeDays={[ this.state.endDay ]}
+            single={ true }
+            onChange={ days => {
+              this.setState({ endDay: days[0] });
             }}
           />
         </View>
 
         <FlexSpacer />
 
-      </View>
-    )
+      </ScrollView>
+    );
   }
 }
 

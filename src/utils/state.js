@@ -7,6 +7,7 @@ export default class State {
   static theme = Consts.defaultSettings.theme;
   static visibleHours = Consts.defaultSettings.visibleHours;
   static visibleDays = Consts.defaultSettings.visibleDays;
+  static recentColors = Consts.defaultSettings.recentColors;
 
   static _SUBSCRIPTIONS = {};
 
@@ -34,24 +35,28 @@ export default class State {
       visibleDays: visibleDaysKey,
       visibleHours: visibleHoursKey,
       theme: themeKey,
+      recentColors: recentColorsKey,
     } = Storage.Keys;
 
     const defaultValues = {
       [visibleDaysKey]: JSON.stringify(Consts.defaultSettings.visibleDays),
       [visibleHoursKey]: JSON.stringify(Consts.defaultSettings.visibleHours),
       [themeKey]: Consts.defaultSettings.theme,
+      [recentColorsKey]: JSON.stringify(Consts.defaultSettings.recentColors),
     };
 
     let values = await Storage.getMultipleValues([
       visibleDaysKey,
       visibleHoursKey,
       themeKey,
+      recentColorsKey,
     ], defaultValues);
 
     // Hago JSON.parse a los valores que lo necesitan
     const needsParse = [
       visibleDaysKey,
       visibleHoursKey,
+      recentColorsKey,
     ];
 
     for (let i=0; i<needsParse.length; i++) {
@@ -100,5 +105,11 @@ export default class State {
     State.theme = theme;
     Storage.storeValue(Storage.Keys.theme, theme);
     State._trigger('theme', State.theme)
+  }
+
+  setRecentColors(colors) {
+    State.recentColors = colors;
+    Storage.storeValue(Storage.Keys.recentColors, JSON.stringify(colors));
+    State._trigger('recent-colors', State.recentColors);
   }
 }

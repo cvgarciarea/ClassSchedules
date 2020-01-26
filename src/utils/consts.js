@@ -34,5 +34,12 @@ export default class Consts {
       start: 7,
       end: 18,
     },
+    recentColors: [
+      '#E7C14C',
+      '#E98E75',
+      '#D84B95',
+      '#C63DCF',
+      '#4091BC',
+    ]
   }
 }

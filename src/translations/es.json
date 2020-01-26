@@ -14,7 +14,7 @@
   "theme-dark": "Oscuro",
   "theme-amoled": "AMOLED",
 
-  "field-class-name": "Nombre de la clase",
+  "field-subject-name": "Nombre de la materia",
   "field-details": "Detalles",
   "field-start": "Empieza:",
   "field-end": "Termina:",

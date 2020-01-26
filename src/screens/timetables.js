@@ -14,6 +14,7 @@ import i18n from '../i18n';
 
 import Consts from '../utils/consts';
 import Utils from '../utils/utils';
+import Storage from '../utils/storage';
 import State from '../utils/state';
 import Colors from '../utils/colors';
 
@@ -26,6 +27,7 @@ import CreateClassSchedule from '../components/create-class-schedule';
 import {
   showSaveButton,
   enableSaveButton,
+  setOnSaveButtonPress,
 } from './home';
 
 const FABAnimations = {
@@ -71,36 +73,8 @@ export default class TimetablesScreen extends React.Component {
 
     this.state = {
       updated: true,
-      data: {},
-
-      /* debug */
-      data: {
-        "1": {
-          "name": "Prueba",
-          "color": '#aaffaa',
-          "schedules": [
-            {
-              "startTime": "07:00",
-              "endTime": "11:00",
-              "startDay": 1,
-              "endDay": 1,
-              'color': '#ffaaaa',
-            },
-            {
-              "startTime": "14:00",
-              "endTime": "15:45",
-              startDay: 2,
-              endDay: 2,
-            },
-            {
-              "startTime": "09:15",
-              "endTime": "10:45",
-              startDay: 2,
-              endDay: 2,
-            },
-          ]
-        }
-      }
+      schedules: {},
+      tempNewSchedule: null,
     }
 
     State.subscribeTo(
@@ -126,6 +100,37 @@ export default class TimetablesScreen extends React.Component {
 
     this.didBlurListener = this.props.navigation.addListener('didBlur', () => {
       this.resetCreateSchedule();
+    });
+
+    setOnSaveButtonPress(() => {
+      if (this.revealer.getVisible()) {
+        this.revealer.collapse();
+      }
+
+      let { schedules } = this.state;
+      schedules = JSON.parse(JSON.stringify(schedules));
+
+      // FIXME: La idea es tener un id único por materia, no por horario de
+      //        clase, es decir, si una materia tiene varios horarios deberían
+      //        estar todos bajo el mismo id
+      schedules[Utils.uuidv4()] = {
+        schedules: [ this.state.tempNewSchedule ],
+        name: this.state.tempNewSchedule.name,
+        color: this.state.tempNewSchedule.color,
+      };
+
+      this.setState({
+        schedules,
+        tempNewSchedule: {},
+      });
+
+      const animation = FABAnimationType.RESET_ROTATE;
+      this.animatingFAB = true;
+      this.createScheduleFAB.animate(FABAnimations[animation])
+      .then(() => {
+        this.fabAnimation = animation;
+        this.animatingFAB = false;
+      });
     })
   }
 
@@ -133,10 +138,15 @@ export default class TimetablesScreen extends React.Component {
     this.willBlurListener = this.props.navigation.addListener('willBlur', () =>
       BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
     );
+
+    Storage.getValue(Storage.Keys.schedules, '{}')
+    .then(schedules => {
+      this.setState({ schedules: JSON.parse(schedules) });
+    })
   }
 
   componentWillUnmount() {
-    this.removeTimeout();
+    // this.removeTimeout();
     this.focusListener.remove();
     this.willBlurListener.remove();
     this.didBlurListener.remove();
@@ -185,14 +195,19 @@ export default class TimetablesScreen extends React.Component {
     let firstHour = Utils.numberToMomentHour(State.visibleHours.start);
     let lastHour = Utils.numberToMomentHour(State.visibleHours.end);
 
-    return Object.keys(this.state.data).map(key => {
-      let schedule = this.state.data[key];
+    let { schedules: subjects } = this.state;
+    let keys = Object.keys(subjects);
 
-      return schedule.schedules.map((object, j) => {
-        let { color: backgroundColor } = schedule;
 
-        if (!Utils.emptyString(object.color)) {
-          backgroundColor = object.color;
+    return keys.map(key => {
+      let subject = subjects[key];
+      let { schedules } = subject;
+
+      return schedules.map((classSchedule, j) => {
+        let { color: backgroundColor } = subject;
+
+        if (!Utils.emptyString(classSchedule.color)) {
+          backgroundColor = classSchedule.color;
         }
 
         let {
@@ -200,9 +215,9 @@ export default class TimetablesScreen extends React.Component {
           endDay,
           startTime,
           endTime,
-        } = object;
+        } = classSchedule;
 
-        if (this.itsVisible(object)) {
+        if (this.itsVisible(classSchedule)) {
           let children = [];
 
           for (let day=startDay; day<=endDay; day++) {
@@ -259,7 +274,6 @@ export default class TimetablesScreen extends React.Component {
                                       (Consts.Sizes.CellWidth + 2 * Consts.Sizes.CellMargin) +
                                       Consts.Sizes.CellMargin / 2 + Consts.Sizes.rowLabelWidth;
 
-            // console.log(day, State.visibleDays.indexOf(day), dynamicStyles.cell.left);
             children.push(
               <View
                 key={ day }
@@ -270,7 +284,7 @@ export default class TimetablesScreen extends React.Component {
               >
   
                 <Text style={ dynamicStyles.text }>
-                  { schedule.name }
+                  { subject.name }
                 </Text>
               </View>
             );
@@ -334,16 +348,28 @@ export default class TimetablesScreen extends React.Component {
               <GridContent cellsByRow={ cellsByRow } />
             </ScrollViewChild>
 
-            <ScrollViewChild scrollDirection={ 'both' } style={[ styles.cellsContainer, ]}>
+            <ScrollViewChild
+              scrollDirection={ 'both' }
+              style={ styles.cellsContainer }
+            >
+
               { this.renderClassesCells() }
               { /* <Text style={{ fontSize: 30 }}>TEST</Text> */ }
             </ScrollViewChild>
 
-            <ScrollViewChild scrollDirection={ 'vertical' } style={ styles.rowLabelsContainer }>
+            <ScrollViewChild
+              scrollDirection={ 'vertical' }
+              style={ styles.rowLabelsContainer }
+            >
+
               <RowLabels cellsByRow={ cellsByRow } />
             </ScrollViewChild>
 
-            <ScrollViewChild scrollDirection={ 'horizontal' } style={ styles.columnLabelsContainer }>
+            <ScrollViewChild
+              scrollDirection={ 'horizontal' }
+              style={ styles.columnLabelsContainer }
+            >
+
               <ColumnLabels cellsByRow={ cellsByRow } />
             </ScrollViewChild>
 
@@ -359,8 +385,8 @@ export default class TimetablesScreen extends React.Component {
           right={ 41 /* 16 de margen + 50 / 2 de tamaño */ }>
 
           <CreateClassSchedule
-            onDataChange={ correct => {
-              enableSaveButton(correct);
+            onDataChange={ (valid, data) => {
+              this.setState({ tempNewSchedule: data });
             }}
           />
 
@@ -387,11 +413,10 @@ export default class TimetablesScreen extends React.Component {
               .then(() => {
                 this.fabAnimation = animation;
                 this.animatingFAB = false;
-              });  
+              });
             }
-        }}>
-
-        </FloatingActionButton>
+          }}
+        />
 
       </View>
     );

@@ -73,12 +73,14 @@ class DayButton extends React.Component {
 export default class WeekdaysPicker extends React.Component {
 
   static defaultProps = {
-    activeDays: PropTypes.array,
+    activeDays: [],
+    single: false,
     onChange: null,
   };
 
   static propTypes = {
     activeDays: PropTypes.array.isRequired,
+    single: PropTypes.bool,
     onChange: PropTypes.func,
   };
 
@@ -134,12 +136,18 @@ export default class WeekdaysPicker extends React.Component {
                 active={ this.state.activeDays.includes(index) }
                 onChange={ () => {
                   let { activeDays } = this.state;
-                  activeDays = JSON.parse(JSON.stringify(activeDays));
+                  let { single } = this.props;
 
-                  if (activeDays.includes(index)) {
-                    activeDays = activeDays.remove(index);
+                  if (single) {
+                    activeDays = [ index ];
                   } else {
-                    activeDays.push(index);
+                    activeDays = JSON.parse(JSON.stringify(activeDays));
+
+                    if (activeDays.includes(index)) {
+                      activeDays = activeDays.remove(index);
+                    } else {
+                      activeDays.push(index);
+                    }
                   }
 
                   this.setState(
