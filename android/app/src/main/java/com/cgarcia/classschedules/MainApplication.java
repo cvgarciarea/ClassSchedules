@@ -1,4 +1,4 @@
-package com.classschedules;
+package com.cgarcia.classschedules;
 
 import android.app.Application;
 import android.content.Context;

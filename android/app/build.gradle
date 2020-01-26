@@ -126,7 +126,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.classschedules"
+        applicationId "com.cgarcia.classschedules"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

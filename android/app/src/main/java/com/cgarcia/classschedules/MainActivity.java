@@ -1,4 +1,4 @@
-package com.classschedules;
+package com.cgarcia.classschedules;
 
 import com.facebook.react.ReactActivity;
 
