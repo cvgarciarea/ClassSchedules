@@ -73,6 +73,7 @@ export default class TimetablesScreen extends React.Component {
     this.createScheduleFAB = null;
     this.fabAnimation = FABAnimationType.RESET_ROTATE;
     this.animatingFAB = false;
+    this.classScheduleCreatror = null;
 
     this.state = {
       updated: true,
@@ -138,6 +139,34 @@ export default class TimetablesScreen extends React.Component {
 
   configureSaveButtonBehavior() {
     setOnSaveButtonPress(() => {
+      const format = 'HH:mm';
+      const {
+        startTime,
+        endTime,
+        startDay,
+        endDay,
+      } = this.state.tempNewSchedule;
+
+      let startHour = moment(startTime, format);
+      let endHour = moment(endTime, format);
+
+      let correctSchedule = true;
+
+      if (startHour.diff(endHour) === 0 && startDay === endDay) {
+        // Mismo horario de inicio y fin
+        correctSchedule = false;
+        this.classScheduleCreatror.showWarning('no-time-diff');
+
+      } else if (startDay > endDay || (startHour.diff(endHour) > 0 && startDay === endDay)) {
+        // El fin está después del inicio
+        correctSchedule = false;
+        this.classScheduleCreatror.showWarning('end-before-start');
+      }
+
+      if (!correctSchedule) {
+        return;
+      }
+
       // Ocultar el creador de nuevos horarios
       if (this.revealer.getVisible()) {
         this.revealer.collapse();
@@ -619,6 +648,7 @@ export default class TimetablesScreen extends React.Component {
           right={ 41 /* 16 de margen + 50 / 2 de tamaño */ }>
 
           <CreateClassSchedule
+            ref={ component => this.classScheduleCreatror = component }
             onDataChange={ (valid, data) => {
               this.setState({ tempNewSchedule: data });
             }}

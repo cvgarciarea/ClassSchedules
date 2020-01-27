@@ -45,21 +45,29 @@ export default class CircleTransition extends Component {
     return (
       this.state.visible ?
         <View
-          style={{ ...this.props.style, overflow: 'hidden', width: '100%', height: '100%' }}>
-
-          <Animated.View style={{
-            position: 'absolute',
-            backgroundColor: this.props.backgroundColor,
-            bottom: -width / 2 + this.props.bottom,
-            right: -width / 2 + this.props.right,
-            width: width,
-            height: width,
-            borderRadius: width / 2,
-            transform: [{
-              scale: this.scale
-            }]
+          style={{
+            ...this.props.style,
+            overflow: 'hidden',
+            width: '100%',
+            height: '100%',
           }}
-        />
+        >
+
+          <Animated.View
+            style={{
+              position: 'absolute',
+              backgroundColor: this.props.backgroundColor,
+              bottom: -width / 2 + this.props.bottom,
+              right: -width / 2 + this.props.right,
+              width: width,
+              height: width,
+              borderRadius: width / 2,
+              transform: [{
+                scale: this.scale
+              }]
+            }}
+          />
+
           {
             this.state.showChildren &&
             <Animatable.View ref={ref => { this.childContainer = ref }}

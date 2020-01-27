@@ -33,6 +33,7 @@ export default class Colors {
       sectionHeaderBackground: '#eaeaea',
       cellBackground: '#dadada',
       gridBackground: '#fff',
+      warning: '#D93438',
     },
 
     dark: {
@@ -41,6 +42,7 @@ export default class Colors {
       sectionHeaderBackground: '#000',
       cellBackground: '#2a2a2a',
       gridBackground: '#000',
+      warning: '#D93438',
     },
 
     amoled: {
@@ -49,6 +51,7 @@ export default class Colors {
       sectionHeaderBackground: '#000',
       cellBackground: '#000',
       gridBackground: '#2a2a2a',
+      warning: '#D93438',
     },
   }
 

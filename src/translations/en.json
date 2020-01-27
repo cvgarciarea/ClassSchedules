@@ -19,6 +19,9 @@
   "field-start": "Start:",
   "field-end": "End:",
 
+  "warning-no-diff-time": "Same start and end time",
+  "warning-end-before-start": "Start time after end time",
+
   "sunday": "Sunday",
   "monday": "Monday",
   "tuesday": "Tuesday",

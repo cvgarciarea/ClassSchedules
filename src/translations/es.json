@@ -19,6 +19,9 @@
   "field-start": "Empieza:",
   "field-end": "Termina:",
 
+  "warning-no-diff-time": "Mismo horario de inicio y fin",
+  "warning-end-before-start": "Horario de inicio posterior al de fin",
+
   "sunday": "Domingo",
   "monday": "Lunes",
   "tuesday": "Martes",

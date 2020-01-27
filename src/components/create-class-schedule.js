@@ -1,6 +1,7 @@
 import React from 'react';
 import {
   View,
+  Text,
   ScrollView,
 } from 'react-native';
 import moment from 'moment';
@@ -9,6 +10,7 @@ import i18n from '../i18n';
 import Consts from '../utils/consts';
 import Utils from '../utils/utils';
 import State from '../utils/state';
+import Colors from '../utils/colors';
 
 import Field from './field';
 import TimePickerButton from './time-picker-button';
@@ -41,6 +43,8 @@ export default class CreateClassSchedule extends React.Component {
       startDay: Consts.Days.MONDAY,
       endDay: Consts.Days.MONDAY,
       color: State.recentColors[0],
+
+      warnings: [], // 'no-time-diff', 'end-before-start'
     };
   }
 
@@ -75,9 +79,37 @@ export default class CreateClassSchedule extends React.Component {
     );
   }
 
+  showWarning(warningName) {
+    let { warnings } = this.state;
+
+    if (!warnings.includes(warningName)) {
+      warnings = JSON.parse(JSON.stringify(warnings));
+      warnings.push(warningName);
+
+      this.setState({ warnings });
+    }
+  }
+
   render() {
+    let { warnings } = this.state;
+    const noDiffTimeWarning = warnings.includes('no-time-diff');
+    const endBeforeStartWarning = warnings.includes('end-before-start');
+    let timeWarning = noDiffTimeWarning || endBeforeStartWarning;
+
+    let warningText = null;
+    if (noDiffTimeWarning) {
+      warningText = i18n.t('warning-no-diff-time');
+    } else if (endBeforeStartWarning) {
+      warningText = i18n.t('warning-end-before-start');
+    }
+
+    const theme = Colors.Themes[State.theme];
+
     return (
-      <ScrollView style={{ flex: 1 }}>
+      <ScrollView
+        style={{ flex: 1 }}
+      >
+
         <Field
           value={ this.state.name }
           iconName={ 'book-open-page-variant' }
@@ -110,65 +142,118 @@ export default class CreateClassSchedule extends React.Component {
         />
         */}
 
-        <Spacer40 />
-
-        <TimePickerButton
-          title={ i18n.t('field-start') }
-          time={ this.state.startTime }
-          onChange={ startTime => {
-            console.log(startTime);
-            this.setState(
-              { startTime },
-              () => this.dataChanged()
-            );
-          }}
-        />
-
         <Spacer20 />
 
         <View
-          style={{ alignItems: 'center' }}
+          style={{
+            borderWidth: timeWarning ? 2 : 0,
+            marginHorizontal: 10,
+            paddingVertical: 10,
+            borderRadius: 4,
+            borderColor: theme.warning,
+          }}
         >
-          <WeekdaysPicker
-            activeDays={[ this.state.startDay ]}
-            single={ true }
-            onChange={ days => {
+          {
+            timeWarning ?
+              <Text
+                style={{
+                  color: theme.warning,
+                  paddingBottom: 20,
+                  paddingLeft: 10,
+                  fontSize: 16,
+                }}
+              >
+                { warningText }
+              </Text>
+            :
+              null
+          }
+
+          <TimePickerButton
+            title={ i18n.t('field-start') }
+            time={ this.state.startTime }
+            onChange={ startTime => {
+              warnings = JSON.parse(JSON.stringify(warnings));
+              warnings = warnings.remove('no-time-diff')
+                                 .remove('end-before-start');
+
               this.setState(
-                { startDay: days[0] },
+                {
+                  startTime,
+                  warnings,
+                },
                 () => this.dataChanged()
               );
             }}
           />
-        </View>
 
-        <Spacer40 />
+          <Spacer20 />
 
-        <TimePickerButton
-          title={ i18n.t('field-end') }
-          time={ this.state.endTime }
-          onChange={ endTime => {
-            this.setState(
-              { endTime },
-              () => this.dataChanged()
-            );
-          }}
-        />
+          <View
+            style={{ alignItems: 'center' }}
+          >
+            <WeekdaysPicker
+              activeDays={[ this.state.startDay ]}
+              single={ true }
+              onChange={ days => {
+                warnings = JSON.parse(JSON.stringify(warnings));
+                warnings = warnings.remove('no-time-diff')
+                                   .remove('end-before-start');
 
-        <Spacer20 />
+                this.setState(
+                  {
+                    startDay: days[0],
+                    warnings,
+                  },
+                  () => this.dataChanged()
+                );
+              }}
+            />
+          </View>
 
-        <View
-          style={{ alignItems: 'center' }}
-        >
-          <WeekdaysPicker
-            activeDays={[ this.state.endDay ]}
-            single={ true }
-            onChange={ days => {
+          <Spacer40 />
+
+          <TimePickerButton
+            title={ i18n.t('field-end') }
+            time={ this.state.endTime }
+            onChange={ endTime => {
+              warnings = JSON.parse(JSON.stringify(warnings));
+              warnings = warnings.remove('no-time-diff')
+                                 .remove('end-before-start');
+
               this.setState(
-                { endDay: days[0] },
+                {
+                  endTime,
+                  warnings,
+                },
                 () => this.dataChanged()
               );
             }}
           />
+
+          <Spacer20 />
+
+          <View
+            style={{ alignItems: 'center' }}
+          >
+            <WeekdaysPicker
+              activeDays={[ this.state.endDay ]}
+              single={ true }
+              onChange={ days => {
+                warnings = JSON.parse(JSON.stringify(warnings));
+                warnings = warnings.remove('no-time-diff')
+                                   .remove('end-before-start');
+
+                this.setState(
+                  {
+                    endDay: days[0],
+                    warnings,
+                  },
+                  () => this.dataChanged()
+                );
+              }}
+            />
+          </View>
         </View>
 
         <FlexSpacer />
