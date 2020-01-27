@@ -3,6 +3,9 @@ import {
   View,
   Text,
   Modal,
+  Easing,
+  Animated,
+  UIManager,
   StyleSheet,
   ScrollView,
   TouchableNativeFeedback,
@@ -38,52 +41,104 @@ class InputModal extends React.Component {
     onRequestClose: PropTypes.func,
   };
 
+  constructor(props) {
+    super(props);
+
+    this.visibleAnimVal = new Animated.Value(0);
+  }
+
+  componentDidMount() {
+    this.appear();
+  }
+
+  appear() {
+    Animated.timing(
+      this.visibleAnimVal,
+      {
+        toValue: 1,
+        easing: Easing.linear,
+        duration: 100,
+      },
+    ).start();
+  }
+
+  disappear() {
+    return new Promise(resolve => {
+      Animated.timing(
+        this.visibleAnimVal,
+        {
+          toValue: 0,
+          easing: Easing.linear,
+          duration: 100,
+        },
+      ).start(resolve);
+    });
+  }
+
   render() {
     let theme = Colors.Themes[State.theme];
 
+    let backgroundColor = this.visibleAnimVal.interpolate({
+      inputRange: [0, 1],
+      outputRange: ['#00000000', '#0000003f'],
+      extrapolate: 'clamp',
+    });
+
     return (
-      <View>
-        { /* Modal para el fondo */ }
-        <Modal
-          animationType='fade'
-          transparent={ true }
-          style={{
-            width: '100%',
-            height: '100%',
-          }}
-          onRequestClose={ () => Utils.secureCall(this.props.onRequestClose) }
-        >
+      <Modal
+        animationType={ 'none' }
+        style={{
+          width: '100%',
+          height: '100%',
+        }}
+        transparent={ true }
+        onRequestClose={ () => Utils.secureCall(this.props.onRequestClose) }
+      >
 
-          <TouchableWithoutFeedback
-            onPress={ () => { console.log('onPress')} }
+        <TouchableWithoutFeedback
+          onPress={ () => Utils.secureCall(this.props.onRequestClose) }
+        >
+          <Animated.View
+            style={[
+              styles.inputModalMain,
+              { backgroundColor },
+            ]}
           >
-            <View style={ styles.inputModalBackground } />
-          </TouchableWithoutFeedback>
-        </Modal>
 
-        { /* Modal para el input */ }
-        <Modal
-          animationType={ 'slide' }
-          style={{ width: '100%', height: '100%' }}
-          transparent={ true }
-          onRequestClose={ () => Utils.secureCall(this.props.onRequestClose) }
-        >
+            <TouchableWithoutFeedback
+              onPress={ () => {} }
+            >
+              <View
+                style={[
+                  styles.inputModalBox,
+                  {
+                    backgroundColor: theme.background,
+                    borderColor: theme.foreground,
+                  },
+                ]}
+              >
+                <View
+                  style={[
+                    styles.inputModalHeader,
+                    { backgroundColor: theme.background }
+                  ]}
+                >
 
-          <View style={ styles.inputModalMain }>
-            <View style={[ styles.inputModalBox, { backgroundColor: theme.background } ]}>
-              <View style={[ styles.inputModalHeader, { backgroundColor: theme.background } ]}>
-                <Text style={{ color: theme.foreground }}>
-                  { this.props.title }
-                </Text>
+                  <Text style={{ color: theme.foreground }}>
+                    { this.props.title }
+                  </Text>
+                </View>
+
+                <View
+                  style={ styles.inputModalChildBox }
+                >
+                  { this.props.child }
+                </View>
               </View>
-
-              <View style={ styles.inputModalChildBox }>
-                { this.props.child }
-              </View>
-            </View>
-          </View>
-        </Modal>
-      </View>
+            </TouchableWithoutFeedback>
+          </Animated.View>
+        </TouchableWithoutFeedback>
+      </Modal>
     );
   }
 }
@@ -289,6 +344,12 @@ class TimeRangeSettingItem extends SettingItem {
     onChange: PropTypes.func,
   };
 
+  constructor(props) {
+    super(props);
+
+    this.modalRef = null;
+  }
+
   handlePress() {
     let { showUpModal } = this.props;
 
@@ -306,11 +367,12 @@ class TimeRangeSettingItem extends SettingItem {
     }
 
     if (Utils.isFunction(showUpModal)) {
-      let modal = showUpModal(
+      let modalNode = showUpModal(
         <InputModal
           key={ modalsIdx }
-          onRequestClose={ () => { Utils.secureCall(this.props.closeModal, modal) }}
+          onRequestClose={ () => { Utils.secureCall(this.props.closeModal, modalNode, this.modalRef) }}
           title={ this.props.modalTitle }
+          ref={ modal => this.modalRef = modal }
           child={
             <View />
           }
@@ -349,6 +411,8 @@ class SelectionSettingItem extends SettingItem {
       ...this.state,
       selected: this.props.selected,
     };
+
+    this.modalRef = null;
   }
 
   rightChild() {
@@ -389,11 +453,12 @@ class SelectionSettingItem extends SettingItem {
     let { showUpModal } = this.props;
 
     if (Utils.isFunction(showUpModal)) {
-      let modal = showUpModal(
+      let modalNode = showUpModal(
         <InputModal
           key={ modalsIdx }
-          onRequestClose={ () => { Utils.secureCall(this.props.closeModal, modal) }}
+          onRequestClose={ () => { Utils.secureCall(this.props.closeModal, modalNode, this.modalRef) }}
           title={ this.props.modalTitle }
+          ref={ modal => this.modalRef = modal }
           child={
             <SingleChooser
               useIcons={ false }
@@ -401,7 +466,7 @@ class SelectionSettingItem extends SettingItem {
               selected={ this.state.selected }
               onChange={ key => {
                 this.setState({ selected: key });
-                Utils.secureCall(this.props.closeModal, modal)
+                Utils.secureCall(this.props.closeModal, modalNode, this.modalRef)
                 this._onChange(key);
               }}
             />
@@ -482,8 +547,11 @@ export default class SettingsScreen extends React.Component {
     return modal;
   }
 
-  removeModal(modal) {
-    this.setState({ modals: this.state.modals.remove(modal) })
+  removeModal(modalNode, modalRef) {
+    modalRef.disappear()
+    .then(() => {
+      this.setState({ modals: this.state.modals.remove(modalNode) });
+    });
   }
 
   onThemeChanged(theme) {
@@ -589,11 +657,8 @@ const styles = StyleSheet.create({
     left: 20,
     right: 20,
     bottom: 20,
-    // height: '40%',
     borderWidth: 2,
     borderRadius: 4,
-    borderColor: '#000',
-    // backgroundColor: '#aaffaa',
   },
 
   inputModalHeader: {

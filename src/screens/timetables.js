@@ -182,12 +182,13 @@ export default class TimetablesScreen extends React.Component {
   configureDeleteButtonBehavior() {
     setOnDeleteButtonPress(() => {
       this.deleteSelectedClassSchedules();
-    })
+    });
   }
 
   resetCreateSchedule() {
     let revealed = !Utils.emptyValue(this.revealer) && this.revealer.getVisible();
-    let rotated = !Utils.emptyValue(this.createScheduleFAB) && this.fabAnimation === FABAnimationType.ROTATE;
+    let rotated = !Utils.emptyValue(this.createScheduleFAB) &&
+                  this.fabAnimation === FABAnimationType.ROTATE;
 
     if (!this.animatingFAB) {
       if (revealed) {
