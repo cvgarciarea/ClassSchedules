@@ -1,30 +1,16 @@
 import React from 'react';
 import {
   View,
-  Animated,
   StyleSheet,
-  TouchableNativeFeedback,
 } from 'react-native';
-import TimePickerButton from './time-picker-button';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as Animatable from 'react-native-animatable';
 
 import Colors from '../utils/colors';
 import Utils from '../utils/utils';
 
-/*
-<Animated.View>
+import CompatibleTouchable from './compatible-touchable';
 
-  <Animatable.View ref={ value => this.rotateView = value }>
-    <Icon
-      name={ 'plus' }
-      size={ 30 }
-      color={ '#fff' } />
-
-  </Animatable.View>
-
-</Animated.View>
-*/
 export default class FloatingActionButton extends React.Component {
 
   static defaultProps = {
@@ -46,11 +32,6 @@ export default class FloatingActionButton extends React.Component {
   }
 
   render() {
-    let ripple = null;
-    if (Utils.itsRippleCompatibleDevice()) {
-      ripple = TouchableNativeFeedback.Ripple('#000', true);
-    }
-
     let backgroundColor = this.props.color;
     if (Utils.emptyValue(backgroundColor)) {
       backgroundColor = Colors.secondary;
@@ -65,9 +46,9 @@ export default class FloatingActionButton extends React.Component {
           this.props.style,
       ]}>
 
-        <TouchableNativeFeedback
-          background={ ripple }
-          onPress={ this.props.onPress }>
+        <CompatibleTouchable
+          onPress={ this.props.onPress }
+        >
 
           <View
             pointerEvents='box-only'
@@ -85,7 +66,7 @@ export default class FloatingActionButton extends React.Component {
 
           </View>
 
-        </TouchableNativeFeedback>
+        </CompatibleTouchable>
       </Animatable.View>
     )
   }

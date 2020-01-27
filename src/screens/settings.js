@@ -7,7 +7,6 @@ import {
   Animated,
   StyleSheet,
   ScrollView,
-  TouchableNativeFeedback,
   TouchableWithoutFeedback,
 } from 'react-native';
 import MultiSlider from '@ptomasroos/react-native-multi-slider';
@@ -21,6 +20,7 @@ import Utils from '../utils/utils';
 import State from '../utils/state';
 import Colors from '../utils/colors';
 
+import CompatibleTouchable from '../components/compatible-touchable';
 import Toggle from '../components/toggle';
 import {
   SingleChooser,
@@ -211,7 +211,7 @@ class SettingItem extends React.Component {
     let theme = Colors.Themes[State.theme];
 
     return (
-      <TouchableNativeFeedback
+      <CompatibleTouchable
         onPress={ () => this._handlePress() }
         disabled={ !this.props.touchable }
       >
@@ -283,7 +283,7 @@ class SettingItem extends React.Component {
                 null
             }
         </View>
-      </TouchableNativeFeedback>
+      </CompatibleTouchable>
     );
   }
 }

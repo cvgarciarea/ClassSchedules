@@ -3,7 +3,6 @@ import {
   View,
   Text,
   StyleSheet,
-  TouchableNativeFeedback,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -11,6 +10,8 @@ import Consts from '../utils/consts';
 import Colors from '../utils/colors';
 import State from '../utils/state'
 import Utils from '../utils/utils';
+
+import CompatibleTouchable from './compatible-touchable';
 
 import {
   Spacer30,
@@ -45,26 +46,41 @@ class ChooserItem extends React.Component {
       )
     } else if (!Utils.emptyString(this.props.icon)) {
       icon = (
-        <Icon name={ this.props.icon } size={ iconSize } color={ theme.foreground } />
-      )
+        <Icon
+          name={ this.props.icon }
+          size={ iconSize }
+          color={ theme.foreground }
+        />
+      );
     } else {
       icon = (
         <View style={{ width: iconSize }} />
-      )
+      );
     }
 
     return (
-      <TouchableNativeFeedback onPress={ () => {
-        if (!Utils.emptyValue(this.props.onPress)) {
-          this.props.onPress();
-        }
-      }}>
+      <CompatibleTouchable
+        onPress={ () => {
+          if (!Utils.emptyValue(this.props.onPress)) {
+            this.props.onPress();
+          }
+        }}
+      >
 
-        <View style={[ styles.itemContainer, { height: iconSize + 10 } ]}>
+        <View
+          style={[
+            styles.itemContainer,
+            { height: iconSize + 10 },
+          ]}
+        >
           { icon }
 
           <Text
-            style={{ paddingLeft: Consts.Sizes.rowLabelWidth, color: theme.foreground }}>
+            style={{
+              paddingLeft: Consts.Sizes.rowLabelWidth,
+              color: theme.foreground,
+            }}
+          >
             { this.props.title }
           </Text>
 
@@ -75,7 +91,8 @@ class ChooserItem extends React.Component {
               <Icon
                 name={ 'check' }
                 size={ iconSize }
-                color={ theme.foreground } />
+                color={ theme.foreground }
+              />
             :
               null
           }
@@ -83,8 +100,8 @@ class ChooserItem extends React.Component {
           <Spacer30 />
 
         </View>
-      </TouchableNativeFeedback>
-    )
+      </CompatibleTouchable>
+    );
   }
 }
 
