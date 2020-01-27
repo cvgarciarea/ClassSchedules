@@ -9,13 +9,20 @@ import Colors from '../utils/colors';
 export default class ColumnLabels extends Component {
 
   render() {
+    let { cellsByRow } = this.props;
+
     return (
       <View
         style={ styles.container }
         pointerEvents={ 'box-none' }
       >
 
-        { this.props.cellsByRow[1].cells.map((cell) => this.renderColumnLabel(cell)) }
+        {
+          cellsByRow.length > 0 ?
+            this.props.cellsByRow[0].cells.map((cell) => this.renderColumnLabel(cell))
+          :
+            null
+        }
       </View>
     );
   }

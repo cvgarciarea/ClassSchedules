@@ -5,12 +5,12 @@ import {
   Modal,
   Easing,
   Animated,
-  UIManager,
   StyleSheet,
   ScrollView,
   TouchableNativeFeedback,
   TouchableWithoutFeedback,
 } from 'react-native';
+import MultiSlider from '@ptomasroos/react-native-multi-slider';
 import PropTypes from 'prop-types';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -326,21 +326,15 @@ class TimeRangeSettingItem extends SettingItem {
 
   static defaultProps = {
     ...SettingItem.defaultProps,
-    modalTitle: null,
     startHour: null,
     endHour: null,
-    showUpModal: null,
-    closeModal: null,
     onChange: null,
   };
 
   static propTypes = {
     ...SettingItem.propTypes,
-    modalTitle: PropTypes.string,
     startHour: PropTypes.number,
     endHour: PropTypes.number,
-    showUpModal: PropTypes.func,
-    closeModal: PropTypes.func,
     onChange: PropTypes.func,
   };
 
@@ -350,35 +344,84 @@ class TimeRangeSettingItem extends SettingItem {
     this.modalRef = null;
   }
 
-  handlePress() {
-    let { showUpModal } = this.props;
+  renderCustomMarker(position) {
+    const theme = Colors.Themes[State.theme];
+    const markSize = 20;
 
-    let {
-      startHour,
-      endHour,
-    } = this.props;
+    const textStyle = {
+      fontSize: 14,
+      color: theme.foreground,
+      alignSelf: 'center',
+    };
 
-    if (!Utils.isDefined(startHour)) {
-      startHour = 0;
+    let mark = (
+      <View
+        style={{
+          width: markSize,
+          height: markSize,
+          borderRadius: markSize / 2,
+          backgroundColor: theme.foreground,
+        }}
+      />
+    );
+
+    let text = (
+      <Text
+        style={ textStyle }
+      >
+        {
+          position === 'left'
+            ? this.props.startHour
+            : this.props.endHour
+        }
+      </Text>
+    );
+
+    switch (position) {
+      case 'left':
+        return (
+          <View>
+            { text }
+            { mark }
+            <Text style={ textStyle } />
+          </View>
+        );
+
+      case 'right':
+        return (
+          <View>
+            <Text style={ textStyle } />
+            { mark }
+            { text }
+          </View>
+        );
     }
 
-    if (!Utils.isDefined(endHour)) {
-      endHour = startHour + 1;
-    }
+    return null;
+  }
 
-    if (Utils.isFunction(showUpModal)) {
-      let modalNode = showUpModal(
-        <InputModal
-          key={ modalsIdx }
-          onRequestClose={ () => { Utils.secureCall(this.props.closeModal, modalNode, this.modalRef) }}
-          title={ this.props.modalTitle }
-          ref={ modal => this.modalRef = modal }
-          child={
-            <View />
-          }
-        />
-      );
-    }
+  bottomChild() {
+    const theme = Colors.Themes[State.theme];
+
+    return (
+      <MultiSlider
+        min={ 0 }
+        max={ 24 }
+        step={ 1 }
+        snapped={ true }
+        values={[ this.props.startHour, this.props.endHour ]}
+        allowOverlap={ false }
+        selectedStyle={{
+          backgroundColor: theme.foreground,
+        }}
+        isMarkersSeparated={true}
+        customMarkerLeft={ () => this.renderCustomMarker('left') }
+        customMarkerRight={ () => this.renderCustomMarker('right') }
+        onValuesChange={ values => {
+          Utils.secureCall(this.props.onChange, values);
+        }}
+      />
+    );
   }
 }
 
@@ -531,10 +574,17 @@ export default class SettingsScreen extends React.Component {
   componentDidMount() {
     State.subscribeTo(
       'visible-days',
-      days => {
+      () => {
         this.setState({ rendered: false });
       }
-    )
+    );
+
+    State.subscribeTo(
+      'visible-hours',
+      () => {
+        this.setState({ rendered: false });
+      }
+    );
   }
 
   addModal(modal) {
@@ -557,6 +607,10 @@ export default class SettingsScreen extends React.Component {
   onThemeChanged(theme) {
     State.setTheme(theme);
     this.setState({ theme });
+  }
+
+  onVisibleHoursChanged(range) {
+    State.setVisibleHours(range);
   }
 
   onVisibleDaysChanged(days) {
@@ -607,11 +661,12 @@ export default class SettingsScreen extends React.Component {
           <TimeRangeSettingItem
             title={ i18n.t('visible-time-range') }
             icon={ 'clock' }
-            modalTitle={ i18n.t('visible-hours') }
-            showUpModal={ this.addModal }
-            closeModal={ this.removeModal }
-            startHour={ 10 }
-            endHour={ 20 }
+            startHour={ State.visibleHours.start }
+            endHour={ State.visibleHours.end }
+            touchable={ false }
+            onChange={ ([ start, end ]) => {
+              this.onVisibleHoursChanged({ start, end });
+            }}
           />
 
           <WeekdaysSettingItem

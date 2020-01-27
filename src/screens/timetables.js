@@ -83,6 +83,13 @@ export default class TimetablesScreen extends React.Component {
     };
 
     State.subscribeTo(
+      'visible-hours',
+      () => {
+        this.setState({ updated: false });
+      }
+    );
+
+    State.subscribeTo(
       'visible-days',
       () => {
         this.setState({ updated: false });
@@ -434,7 +441,7 @@ export default class TimetablesScreen extends React.Component {
             let starts;
             let ends;
             let visibleStart = moment(State.visibleHours.start, 'HH');
-            let visibleEnd = moment(State.visibleHours.end + 1, 'HH');
+            let visibleEnd = moment(State.visibleHours.end, 'HH');
   
             if (day > startDay) {
               starts = moment(State.visibleHours.start, 'HH');
@@ -534,12 +541,10 @@ export default class TimetablesScreen extends React.Component {
     const theme = Colors.Themes[State.theme];
     const cellsByRow = Utils.getCellsByRow(State.visibleHours, State.visibleDays);
 
-    let dStyles = StyleSheet.create({
-      contentContainer: {
-        height: (Consts.Sizes.CellHeight + Consts.Sizes.CellMargin * 2) * (State.visibleHours.end - State.visibleHours.start) + Consts.Sizes.columnLabelHeight,
-        width: (Consts.Sizes.CellWidth + Consts.Sizes.CellMargin * 2) * State.visibleDays.length + Consts.Sizes.rowLabelWidth,
-      },
-    });
+    let contentContainerStyle = {
+      height: (Consts.Sizes.CellHeight + Consts.Sizes.CellMargin * 2) * (State.visibleHours.end - State.visibleHours.start) + Consts.Sizes.columnLabelHeight,
+      width: (Consts.Sizes.CellWidth + Consts.Sizes.CellMargin * 2) * State.visibleDays.length + Consts.Sizes.rowLabelWidth,
+    };
 
     return (
       <View
@@ -569,7 +574,7 @@ export default class TimetablesScreen extends React.Component {
             minimumZoomScale={ 0.2 }
             showsHorizontalScrollIndicator={ false }
             showsVerticalScrollIndicator={ false }
-            contentContainerStyle={ dStyles.contentContainer }
+            contentContainerStyle={ contentContainerStyle }
             style={ styles.container }
           >
 
@@ -655,6 +660,7 @@ export default class TimetablesScreen extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingBottom: 20,
   },
 
   rowLabelsContainer: {

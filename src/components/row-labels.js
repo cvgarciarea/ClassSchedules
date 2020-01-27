@@ -8,27 +8,6 @@ import Colors from '../utils/colors';
 
 export default class RowLabels extends Component {
 
-  render() {
-    let { cellsByRow: rows } = this.props;
-    rows = JSON.parse(JSON.stringify(rows));
-
-    if (rows.length > 0) {
-      rows.push({
-        id: rows[rows.length - 1].id + 1,
-      });
-    }
-
-    return (
-      <View
-        style={ styles.container }
-        pointerEvents={ 'none' }
-      >
-
-        { rows.map(row => this.renderRowLabel(row)) }
-      </View>
-    );
-  }
-
   renderRowLabel(row) {
     let hour = (row.id) + '';
     if (hour.length === 1) {
@@ -50,7 +29,28 @@ export default class RowLabels extends Component {
           { time }
         </Text>
       </View>
-    )
+    );
+  }
+
+  render() {
+    let { cellsByRow: rows } = this.props;
+    rows = JSON.parse(JSON.stringify(rows));
+
+    if (rows.length > 0) {
+      rows.push({
+        id: rows[rows.length - 1].id + 1,
+      });
+    }
+
+    return (
+      <View
+        style={ styles.container }
+        pointerEvents={ 'none' }
+      >
+
+        { rows.map(row => this.renderRowLabel(row)) }
+      </View>
+    );
   }
 }
 
