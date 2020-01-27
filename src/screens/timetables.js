@@ -645,7 +645,13 @@ export default class TimetablesScreen extends React.Component {
           expandedCallback={ () => { setSaveButtonVisible(true) }}
           collapsedCallback={ () => { setSaveButtonVisible(false) }}
           bottom={ 41 /* 16 de margen + 50 / 2 de tamaño */ }
-          right={ 41 /* 16 de margen + 50 / 2 de tamaño */ }>
+          right={ 41 /* 16 de margen + 50 / 2 de tamaño */ }
+          backgroundColor={ theme.background }  // TODO: Probablemente habría
+                                                //       que diferenciarlo del
+                                                //       fondo, en el tema
+                                                //       oscuro apenas se ve
+                                                //       el círculo
+        >
 
           <CreateClassSchedule
             ref={ component => this.classScheduleCreatror = component }

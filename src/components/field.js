@@ -7,6 +7,8 @@ import {
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import Utils from '../utils/utils';
+import State from '../utils/state';
+import Colors from '../utils/colors';
 
 export default class Field extends React.Component {
 
@@ -18,6 +20,8 @@ export default class Field extends React.Component {
   };
 
   render() {
+    const theme = Colors.Themes[State.theme];
+
     return (
       <View style={ styles.container }>
         {
@@ -26,6 +30,7 @@ export default class Field extends React.Component {
               size={ 32 }
               name={ this.props.iconName }
               style={{ paddingRight: 15 }}
+              color={ theme.foreground }
             />
           :
             <View style={{ width: 47, height: 1 }} />
@@ -33,8 +38,14 @@ export default class Field extends React.Component {
 
         <TextInput
           value={ this.props.value }
-          style={ styles.textInput }
+          style={[
+            styles.textInput,
+            {
+              color: theme.foreground,
+            }
+          ]}
           placeholder={ this.props.placeholder }
+          placeholderTextColor={ theme.foreground }  // TODO: Debería haber una versión más clara de foreground
           onChangeText={ text => {
             if (!Utils.emptyValue(this.props.onChange)) {
               this.props.onChange(text)
@@ -42,7 +53,7 @@ export default class Field extends React.Component {
           }}
         />
       </View>
-    )
+    );
   }
 }
 

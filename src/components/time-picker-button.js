@@ -9,6 +9,8 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from 'moment';
 
 import Utils from '../utils/utils';
+import State from '../utils/state';
+import Colors from '../utils/colors';
 
 export default class TimePickerButton extends React.Component {
 
@@ -28,6 +30,8 @@ export default class TimePickerButton extends React.Component {
   }
   
   render() {
+    const theme = Colors.Themes[State.theme];
+
     return (
       <View>
         <TouchableOpacity
@@ -38,14 +42,24 @@ export default class TimePickerButton extends React.Component {
           <View style={ styles.buttonBox }>
             {
               !Utils.emptyValue(this.props.title) ?
-                <Text style={ styles.title }>
+                <Text
+                  style={[
+                    styles.title,
+                    { color: theme.foreground },
+                  ]}
+                >
                   { this.props.title }
                 </Text>
               :
                 null
             }
 
-            <Text style={ styles.timeText }>
+            <Text
+              style={[
+                styles.timeText,
+                { color: theme.foreground },
+              ]}
+            >
               { this.state.time.format('HH:mm') }
             </Text>
           </View>

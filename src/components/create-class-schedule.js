@@ -107,7 +107,10 @@ export default class CreateClassSchedule extends React.Component {
 
     return (
       <ScrollView
-        style={{ flex: 1 }}
+        style={{
+          flex: 1,
+          backgroundColor: theme.background,
+        }}
       >
 
         <Field

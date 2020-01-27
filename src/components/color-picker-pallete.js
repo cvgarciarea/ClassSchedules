@@ -99,8 +99,6 @@ export default class ColorPickerPallete extends React.Component {
           style={{
             flexDirection: 'row',
             justifyContent: 'space-around',
-            borderBottomColor: '#faa',
-            borderBottomWidth: 0.5,
           }}
         >
           {

@@ -40,7 +40,7 @@ export default class CircleTransition extends Component {
   }
 
   render() {
-    let { width } = Dimensions.get('window')
+    let { width } = Dimensions.get('window');
 
     return (
       this.state.visible ?
