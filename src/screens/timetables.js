@@ -141,10 +141,12 @@ export default class TimetablesScreen extends React.Component {
     setOnSaveButtonPress(() => {
       const format = 'HH:mm';
       const {
+        name,
         startTime,
         endTime,
         startDay,
         endDay,
+        color,
       } = this.state.tempNewSchedule;
 
       let startHour = moment(startTime, format);
@@ -180,11 +182,9 @@ export default class TimetablesScreen extends React.Component {
       //        clase, es decir, si una materia tiene varios horarios deberían
       //        estar todos bajo el mismo id
 
-      let { color } = this.state.tempNewSchedule;
-
       schedules[Utils.uuidv4()] = {
         schedules: [ this.state.tempNewSchedule ],
-        name: this.state.tempNewSchedule.name,
+        name,
         color,
       };
 
@@ -548,9 +548,26 @@ export default class TimetablesScreen extends React.Component {
                 }}
               >
   
-                <Text style={ dynamicStyles.text }>
+                <Text
+                  style={ dynamicStyles.text }
+                >
                   { subject.name }
                 </Text>
+
+                {
+                  !Utils.emptyString(classSchedule.description) ?
+                    <Text
+                      style={[
+                        dynamicStyles.text,
+                        { opacity: 0.75 }
+                      ]}
+                    >
+
+                      { classSchedule.description }
+                    </Text>
+                  :
+                    null
+                }
               </TouchableOpacity>
             );
           }

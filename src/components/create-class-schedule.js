@@ -70,6 +70,7 @@ export default class CreateClassSchedule extends React.Component {
       this.validateFields(),
       {
         name: this.state.name,
+        description: this.state.description,
         startTime: this.state.startTime,
         endTime: this.state.endTime,
         startDay: this.state.startDay,
@@ -125,6 +126,18 @@ export default class CreateClassSchedule extends React.Component {
           }}
         />
 
+        <Field
+          value={ this.state.description }
+          iconName={ 'information-outline' }
+          placeholder={ i18n.t('field-details') }
+          onChange={ description => {
+            this.setState(
+              { description },
+              () => this.dataChanged()
+            );
+          }}
+        />
+
         <ColorPickerPallete
           selectedColor={ this.state.color }
           onSelect={ color => {
@@ -134,16 +147,6 @@ export default class CreateClassSchedule extends React.Component {
             );
           }}
         />
-
-        {/*
-        <Field
-          value={ this.state.description }
-          placeholder={ i18n.t('field-details') }
-          onChange={ description => {
-            this.setState({ description }, () => { this.dataChanged() })
-          }}
-        />
-        */}
 
         <Spacer20 />
 
