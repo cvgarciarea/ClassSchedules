@@ -3,6 +3,7 @@
 import React, { Component } from 'react';
 import { Text, View, StyleSheet } from 'react-native';
 
+import i18n from '../i18n';
 import Consts from '../utils/consts';
 import Colors from '../utils/colors';
 
@@ -28,7 +29,7 @@ export default class ColumnLabels extends Component {
   }
 
   renderColumnLabel(cell) {
-    let names = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+    let names = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
 
     return (
       <View
@@ -37,7 +38,7 @@ export default class ColumnLabels extends Component {
         pointerEvents={ 'box-none' }>
 
         <Text style={styles.columnTitle}>
-          { names[cell.id] }
+          { i18n.t(names[cell.id]) }
         </Text>
       </View>
     );
