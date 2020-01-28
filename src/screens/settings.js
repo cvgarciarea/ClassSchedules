@@ -148,9 +148,18 @@ export default class SettingsScreen extends React.Component {
           />
 
           <SettingItem
-            title={ Consts.APP_VERSION }
+            title={ i18n.t('about') }
+            icon={ 'information' }
+            handlePress={ () => {
+              this.props.navigation.navigate('About');
+            }}
+          />
+
+          <SettingItem
+            title={ `${ i18n.t('version') }: ${ Consts.APP_VERSION }` }
             icon={ 'developer-board' }
           />
+
         </ScrollView>
       </View>
     );

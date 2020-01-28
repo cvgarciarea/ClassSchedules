@@ -5,6 +5,11 @@
   "settings": "Ajustes",
   "theme": "Tema",
   "visible-hours": "Horas visibles",
+  "version": "Version",
+  "about": "Acerca de",
+  "created-by": "Creada por",
+  "license-info": "Esta aplicación se distribuye bajo la Licencia MIT",
+  "source-code-info": "el código fuente puede encontrarse en:",
 
   "visible-time-range": "Rango de tiempo visible",
   "visible-days": "Días visibles",

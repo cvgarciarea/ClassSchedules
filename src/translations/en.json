@@ -5,6 +5,11 @@
   "settings": "Settings",
   "theme": "Theme",
   "visible-hours": "Visible hours",
+  "version": "Version",
+  "about": "About",
+  "created-by": "Created by",
+  "license-info": "This app is distributed under MIT License",
+  "source-code-info": "source code can be found on:",
 
   "visible-time-range": "Visible time range",
   "visible-days": "Visible days",

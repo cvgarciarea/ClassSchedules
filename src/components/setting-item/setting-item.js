@@ -18,12 +18,14 @@ export default class SettingItem extends React.Component {
     title: null,
     icon: null,
     touchable: true,
+    handlePress: null,
   };
 
   static propTypes = {
     title: PropTypes.string,
     icon: PropTypes.string,
     touchable: PropTypes.bool,
+    handlePress: PropTypes.func,
   };
 
   constructor(props) {

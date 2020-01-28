@@ -34,6 +34,7 @@ export default class Colors {
       cellBackground: '#dadada',
       gridBackground: '#fff',
       warning: '#D93438',
+      link: '#363c3d',
     },
 
     dark: {
@@ -43,6 +44,7 @@ export default class Colors {
       cellBackground: '#2a2a2a',
       gridBackground: '#000',
       warning: '#D93438',
+      link: '#fff',
     },
 
     amoled: {
@@ -52,6 +54,7 @@ export default class Colors {
       cellBackground: '#000',
       gridBackground: '#2a2a2a',
       warning: '#D93438',
+      link: '#fff',
     },
   }
 
