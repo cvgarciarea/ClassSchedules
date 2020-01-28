@@ -4,6 +4,7 @@ import {
   Text,
   ScrollView,
 } from 'react-native';
+import PropTypes from 'prop-types';
 import moment from 'moment';
 
 import i18n from '../i18n';
@@ -25,24 +26,49 @@ import {
 export default class CreateClassSchedule extends React.Component {
 
   static defaultProps = {
+    subjectID: null,
+    scheduleID: null,
     previousName: null,
     previousDescription: null,
-    previousStart: '08:00',
-    previousEnd: '10:00',
+    previousStartTime: '08:00',
+    previousEndTime: '10:00',
+    previousStartDay: Consts.Days.MONDAY,
+    previousEndDay: Consts.Days.MONDAY,
+    previousColor: null,
     onDataChange: null,
+  };
+
+  static propTypes = {
+    subjectID: PropTypes.string,
+    scheduleID: PropTypes.string,
+    previousName: PropTypes.string,
+    previousDescription: PropTypes.string,
+    previousStartTime: PropTypes.string,
+    previousEndtime: PropTypes.string,
+    previousStartDay: PropTypes.oneOf(Consts.Days),
+    previousEndDay: PropTypes.oneOf(Consts.Days),
+    onDataChange: PropTypes.func,
   };
 
   constructor(props) {
     super(props);
 
+    let { previousColor } = this.props;
+
+    if (Utils.emptyValue(previousColor)) {
+      previousColor = State.recentColors[0];
+    }
+
     this.state = {
+      subjectID: this.props.subjectID,
+      scheduleID: this.props.scheduleID,
       name: this.props.previousName,
       description: this.props.previousDescription,
-      startTime: this.props.previousStart,
-      endTime: this.props.previousEnd,
-      startDay: Consts.Days.MONDAY,
-      endDay: Consts.Days.MONDAY,
-      color: State.recentColors[0],
+      startTime: this.props.previousStartTime,
+      endTime: this.props.previousEndTime,
+      startDay: this.props.previousStartDay,
+      endDay: this.props.previousEndDay,
+      color: previousColor,
 
       warnings: [], // 'no-time-diff', 'end-before-start'
     };
@@ -69,6 +95,8 @@ export default class CreateClassSchedule extends React.Component {
     Utils.secureCall(this.props.onDataChange,
       this.validateFields(),
       {
+        id: this.state.scheduleID,
+        subjectID: this.state.subjectID,
         name: this.state.name,
         description: this.state.description,
         startTime: this.state.startTime,

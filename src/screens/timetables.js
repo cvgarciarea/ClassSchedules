@@ -81,6 +81,7 @@ export default class TimetablesScreen extends React.Component {
       tempNewSchedule: null,
       selectionMode: 'normal',  // 'normal' | 'selecting'
       selection: {},
+      editingScheduleData: {},
     };
 
     State.subscribeTo(
@@ -140,13 +141,15 @@ export default class TimetablesScreen extends React.Component {
   configureSaveButtonBehavior() {
     setOnSaveButtonPress(() => {
       const format = 'HH:mm';
-      const {
+      let {
         name,
         startTime,
         endTime,
         startDay,
         endDay,
         color,
+        subjectID,
+        id,
       } = this.state.tempNewSchedule;
 
       let startHour = moment(startTime, format);
@@ -178,19 +181,55 @@ export default class TimetablesScreen extends React.Component {
       let { schedules } = this.state;
       schedules = JSON.parse(JSON.stringify(schedules));
 
-      // FIXME: La idea es tener un id único por materia, no por horario de
-      //        clase, es decir, si una materia tiene varios horarios deberían
-      //        estar todos bajo el mismo id
+      // Me aseguro de que el id de materia no esté ya siendo en uso, es muy
+      // poco probable, pero no imposible
+      if (Utils.emptyString(subjectID)) {
+        do {
+          subjectID = Utils.uuidv4();
+        } while (Object.keys(schedules).includes(subjectID))
+      }
 
-      schedules[Utils.uuidv4()] = {
-        schedules: [ this.state.tempNewSchedule ],
+      let newSchedule = {
+        // FIXME: Debería revisar de que no esté en uso este id?
+        id: this.state.tempNewSchedule.id || Utils.uuidv4(),
+        subjectID,
         name,
+        startTime,
+        endTime,
+        startDay,
+        endDay,
         color,
       };
+
+      if (Utils.emptyValue(schedules[subjectID])) {
+        schedules[subjectID] = {
+          schedules: [ newSchedule ],
+          name,
+          color,
+        };
+      } else {
+        let { schedules: _schedules } = schedules[subjectID];
+        let currentIndex = null;
+
+        for (let i=0; i<_schedules.length && Utils.emptyValue(currentIndex); i++) {
+          if (_schedules[i].id === id) {
+            currentIndex = i;
+          }
+        }
+
+        if (Utils.emptyValue(currentIndex)) {
+          // No existía, signifca que estoy creando un horario nuevo
+          _schedules.push(newSchedule);
+        } else {
+          // Ya existía, significa que estoy actualizando los datos
+          _schedules[currentIndex] = this.state.tempNewSchedule;
+        }
+      }
 
       this.setState({
         schedules,
         tempNewSchedule: {},
+        editingScheduleData: {},
       });
 
       // Guardar los nuevos horarios en el disco
@@ -530,13 +569,44 @@ export default class TimetablesScreen extends React.Component {
                 ]}
                 onPress={ () => {
                   if (this.state.selectionMode === 'selecting') {
+                    // Es un toque normal, pero estaba en modo selección así
+                    // que marco este horario como seleccionado
                     if (this.isSelected(key, j)) {
                       this.unselect(key, j);
                     } else {
                       this.select(key, j);
                     }
                   } else {
-                    console.log('EDITAR', classSchedule);
+                    // Edito este horario
+                    this.setState(
+                      {
+                        editingScheduleData: {
+                          subjectID: classSchedule.subjectID,
+                          scheduleID: classSchedule.id,
+                          previousName: classSchedule.name,
+                          previousDescription: classSchedule.description,
+                          previousStartTime: classSchedule.startTime,
+                          previousEndTime: classSchedule.endTime,
+                          previousStartDay: classSchedule.startDay,
+                          previousEndDay: classSchedule.endDay,
+                          previousColor: backgroundColor,
+                        },
+                      },
+                      () => {
+                        // Cambio el estado del FAB
+                        this.fabAnimation = animation = FABAnimationType.ROTATE;
+                        this.animatingFAB = true;
+                        this.createScheduleFAB.animate(FABAnimations[this.fabAnimation])
+                        .then(() => {
+                          this.animatingFAB = false;
+                        });
+
+                        // Muestro el creador de materias
+                        if (!this.revealer.getVisible()) {
+                          this.revealer.expand();
+                        }
+                      }
+                    )
                   }
                 }}
                 onLongPress={ () => {
@@ -672,6 +742,7 @@ export default class TimetablesScreen extends React.Component {
 
           <CreateClassSchedule
             ref={ component => this.classScheduleCreatror = component }
+            {...this.state.editingScheduleData}
             onDataChange={ (valid, data) => {
               this.setState({ tempNewSchedule: data });
             }}
@@ -684,6 +755,10 @@ export default class TimetablesScreen extends React.Component {
           ref={ fab => this.createScheduleFAB = fab }
           onPress={ () => {
             if (!Utils.emptyValue(this.revealer)) {
+              if (this.revealer.getVisible()) {
+                this.setState({ editingScheduleData: {} });
+              }
+
               this.revealer.toggle();
             }
 
