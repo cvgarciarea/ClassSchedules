@@ -2,7 +2,7 @@ import React from 'react';
 import {
   View,
   Text,
-  StatusBar,
+  Dimensions,
   StyleSheet,
   BackHandler,
   SafeAreaView,
@@ -10,8 +10,6 @@ import {
 } from 'react-native';
 import moment from 'moment';
 import ScrollView, { ScrollViewChild } from 'react-native-directed-scrollview';
-
-import i18n from '../i18n';
 
 import Consts from '../utils/consts';
 import Utils from '../utils/utils';
@@ -24,7 +22,6 @@ import FocusListenerScreen from './focus-listener';
 import GridContent from '../components/grid-content';
 import RowLabels from '../components/row-labels';
 import ColumnLabels from '../components/column-labels';
-import FloatingActionButton from '../components/floating-action-button';
 import CircleTransition from '../components/circle-reveal-view';
 import CreateClassSchedule from '../components/create-class-schedule';
 import {
@@ -32,7 +29,6 @@ import {
   animatingFAB,
   setOnFABPress,
   setSaveButtonVisible,
-  enableSaveButton,
   setOnSaveButtonPress,
   setDeleteButtonVisible,
   setOnDeleteButtonPress,
@@ -681,8 +677,8 @@ export default class TimetablesScreen extends FocusListenerScreen {
           ref={ ref => this.revealer = ref }
           expandedCallback={ () => { setSaveButtonVisible(true) }}
           collapsedCallback={ () => { setSaveButtonVisible(false) }}
-          bottom={ 41 /* 16 de margen + 50 / 2 de tamaño */ }
-          right={ 41 /* 16 de margen + 50 / 2 de tamaño */ }
+          bottom={ -20 }
+          right={ Dimensions.get('window').width / 2 }
           backgroundColor={ theme.background }  // TODO: Probablemente habría
                                                 //       que diferenciarlo del
                                                 //       fondo, en el tema
