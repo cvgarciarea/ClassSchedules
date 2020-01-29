@@ -110,7 +110,7 @@ export default class SettingsScreen extends React.Component {
 
           <SelectionSettingItem
             title={ i18n.t('theme') }
-            icon={ 'eye' }
+            icon={ 'circle-slice-4' }
             modalTitle={ i18n.t('theme') }
             options={ themes }
             selected={ this.state.theme }
