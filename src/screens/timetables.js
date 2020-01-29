@@ -101,8 +101,14 @@ export default class TimetablesScreen extends FocusListenerScreen {
     BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
   }
 
-  didblur() {
+  didBlur() {
     this.resetCreateSchedule();
+
+    this.setState({
+      selectionMode: 'normal',
+      selection: {},
+      editingScheduleData: {},
+    });
   }
 
   onFABPress() {
