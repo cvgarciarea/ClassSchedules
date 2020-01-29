@@ -1,21 +1,210 @@
 import React from 'react';
 import {
   View,
+  Text,
+  Easing,
+  Animated,
+  TouchableOpacity,
 } from 'react-native';
-import { createMaterialBottomTabNavigator } from 'react-navigation-material-bottom-tabs';
+import { createBottomTabNavigator } from 'react-navigation';
+// import { createMaterialBottomTabNavigator } from 'react-navigation-material-bottom-tabs';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import i18n from '../i18n';
 import Utils from '../utils/utils';
+import State from '../utils/state';
 import Colors from '../utils/colors';
 
 import TimetablesScreen from './timetables';
-import TestsScreen from './tests';
+import RemindersScreen from './reminders';
 import SettingsScreen from './settings';
 
 import HeaderButton from '../components/header-button';
 
-let tabNavigator = createMaterialBottomTabNavigator({
+export let animateFAB = null;
+export let animatingFAB = false;
+
+class BottomTabBar extends React.Component {
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      rendered: false,
+    };
+
+    this.FABModeAnimValue = new Animated.Value(0);
+    this.FABMode = 'create';  // 'create' | 'cancel'
+    animateFAB = this.animateFAB.bind(this);
+
+    this.timetablesRoute = null;
+  }
+
+  componentDidMount() {
+    State.subscribeTo(
+      'theme',
+      () => this.setState({ rendered: false }),
+    );
+  }
+
+  animateFAB(mode) {
+    if (mode === this.FABMode) {
+      return;
+    }
+
+    this.FABMode = mode;
+    let toValue = mode === 'create' ? 0 : 1;
+    animatingFAB = true;
+
+    Animated.timing(
+      this.FABModeAnimValue,
+      {
+        toValue,
+        easing: Easing.quad,
+        duration: 250,
+      },
+    ).start(() => {
+      animatingFAB = false;
+    });
+  }
+
+  render() {
+    this.state.rendered = true;
+
+    const theme = Colors.Themes[State.theme];
+
+    let {
+      navigation,
+      renderIcon,
+      getLabelText,
+      onTabPress,
+      onTabLongPress,
+      getAccessibilityLabel,
+    } = this.props;
+
+    let {
+      routes,
+      index,
+    } = navigation.state;
+
+    const activeTintColor = '#fff';
+    const inactiveTintColor = '#ffffffab';
+
+    let FABBackgroundColor = this.FABModeAnimValue.interpolate({
+      inputRange: [ 0, 1 ],
+      outputRange: [ Colors.Action.CONSTRUCTIVE, Colors.Action.DESTRICTIVE ],
+      extrapolate: 'clamp',
+    });
+
+    let FABRotateVal = this.FABModeAnimValue.interpolate({
+      inputRange: [ 0, 1 ],
+      outputRange: [ '0deg', '135deg' ],
+      extrapolate: 'clamp',
+    });
+
+    return (
+      <View
+        style={{
+          flexDirection: 'row',
+          height: 52,
+          backgroundColor: '#0096A6',
+        }}
+      >
+        {
+          routes.map((route, routeIndex) => {
+            if (route.key === 'Timetables') {
+              this.timetablesRoute = route;
+            } else if (route.key === 'FAB') {
+              const size = 50;
+
+              return (
+                <View
+                  key={ 10 }
+                  style={{ flex: 4, alignItems: 'center' }}
+                >
+                  <Animated.View
+                    iconName={ 'plus' }
+                    style={{
+                      position: 'relative',
+                      bottom: 10,
+                      right: 0,
+                      backgroundColor: FABBackgroundColor,
+                      width: size,
+                      height: size,
+                      borderRadius: size / 2,
+                      elevation: 4,
+                      transform: [
+                        { rotate: FABRotateVal },
+                      ],
+                    }}
+                  >
+                    <TouchableOpacity
+                      style={{
+                        flex: 1,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}
+                      onPress={ () => {
+                        onTabPress({ route: this.timetablesRoute });
+                        this.animateFAB(this.FABMode === 'create' ? 'cancel' : 'create');
+
+                        let callback = navigation.getParam('onCreateSchedulePress', null);
+                        Utils.secureCall(callback);
+                      }}
+                    >
+
+                      <Icon
+                        size={ 25 }
+                        name={ 'plus' }
+                        style={{ color: '#fff' }}
+                      />
+                    </TouchableOpacity>
+                  </Animated.View>
+                </View>
+              );
+            }
+
+            const isActive = index === routeIndex;
+            const tintColor = isActive ? activeTintColor : inactiveTintColor;
+
+            return (
+              <TouchableOpacity
+                key={ routeIndex }
+                accessibilityLabel={ getAccessibilityLabel({ route }) }
+                style={{
+                  flex: 3,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+                onPress={ () => {
+                  onTabPress({ route });
+                }}
+                onLongPress={ () => {
+                  onTabLongPress({ route });
+                }}
+              >
+
+                { renderIcon({ route, focused: isActive, tintColor }) }
+
+                <Text
+                  style={{
+                    color: tintColor,
+                    fontSize: 12,
+                  }}
+                >
+                  { getLabelText({ route }) }
+                </Text>
+
+              </TouchableOpacity>
+            );
+          })
+        }
+      </View>
+    );
+  }
+}
+
+let tabNavigator = createBottomTabNavigator({
   Timetables: {
     screen: TimetablesScreen,
     navigationOptions: {
@@ -25,37 +214,55 @@ let tabNavigator = createMaterialBottomTabNavigator({
         <Icon
           size={ 25 }
           name={ 'calendar-multiselect' }
-          style={{ color: '#fff' }}
+          style={{ color: tintColor }}
         />
-      )
+      ),
     },
   },
 
-  Tests: {
-    screen: TestsScreen,
+  Reminders: {
+    screen: RemindersScreen,
     navigationOptions: {
-      tabBarLabel: i18n.t('tests'),
-      tabBarColor: Colors.tests,
+      tabBarLabel: i18n.t('reminders'),
       tabBarIcon: ({ tintColor, focused }) => (
         <Icon
           size={ 25 }
           name={ 'pencil' }
-          style={{ color: '#fff' }}
+          style={{ color: tintColor }}
         />
-      )
-    }
+      ),
+    },
+  },
+
+  FAB: {
+    screen: View,
+  },
+
+  GoalsScreen: {
+    screen: View,
+    navigationOptions: {
+      tabBarLabel: i18n.t('goals'),
+      tabBarColor: Colors.settings,
+      tabBarIcon: ({ tintColor, focused }) => (
+        <Icon
+          size={ 25 }
+          name={ 'trophy' }
+          style={{ color: tintColor }}
+        />
+      ),
+    },
   },
 
   Settings: {
     screen: SettingsScreen,
     navigationOptions: {
-      tabBarLabel: i18n.t('settings'),
+      tabBarLabel: i18n.t('more'),
       tabBarColor: Colors.settings,
       tabBarIcon: ({ tintColor, focused }) => (
         <Icon
           size={ 25 }
-          name={ 'settings' }
-          style={{ color: '#fff' }}
+          name={ 'dots-horizontal' }
+          style={{ color: tintColor }}
         />
       )
     }
@@ -63,7 +270,7 @@ let tabNavigator = createMaterialBottomTabNavigator({
 },
 {
   activeTintColor: '#fff',
-  shifting: true,
+  tabBarComponent: BottomTabBar,
 });
 
 let _navigation = null;
@@ -99,7 +306,7 @@ tabNavigator.navigationOptions = ({ navigation }) => {
     <View>
       { headerRightChildren }
     </View>
-  )
+  );
 
   return {
     headerStyle: {
@@ -107,6 +314,14 @@ tabNavigator.navigationOptions = ({ navigation }) => {
     },
     headerRight,
   };
+}
+
+export let setOnFABPress = callback => {
+  if (Utils.isDefined(_navigation)) {
+    _navigation.setParams({
+      onCreateSchedulePress: callback,
+    });
+  }
 }
 
 export let setSaveButtonVisible = visible => {

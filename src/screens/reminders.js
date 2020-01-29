@@ -7,7 +7,7 @@ import {
 import State from '../utils/state';
 import Colors from '../utils/colors';
 
-export default class TestsScreen extends React.Component {
+export default class RemindersScreen extends React.Component {
 
   constructor(props) {
     super(props);

@@ -1,8 +1,11 @@
 {
   "app-name": "Horarios de clase",
   "timetables": "Horarios",
+  "reminders": "Notas",
+  "goals": "Objetivos",
   "tests": "Pruebas",
   "settings": "Ajustes",
+  "more": "Más",
   "theme": "Tema",
   "visible-hours": "Horas visibles",
   "version": "Version",

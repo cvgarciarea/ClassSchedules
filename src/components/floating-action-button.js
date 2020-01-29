@@ -4,7 +4,6 @@ import {
   StyleSheet,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import * as Animatable from 'react-native-animatable';
 
 import Colors from '../utils/colors';
 import Utils from '../utils/utils';
@@ -19,18 +18,6 @@ export default class FloatingActionButton extends React.Component {
     color: null,
   }
 
-  constructor(props) {
-    super(props);
-
-    this._animatableView = null;
-  }
-
-  async animate(animation) {
-    if (!Utils.emptyValue(this._animatableView)) {
-      return await this._animatableView.animate(animation);
-    }
-  }
-
   render() {
     let backgroundColor = this.props.color;
     if (Utils.emptyValue(backgroundColor)) {
@@ -38,13 +25,13 @@ export default class FloatingActionButton extends React.Component {
     }
 
     return (
-      <Animatable.View
-        ref={ view => this._animatableView = view }
+      <View
         style={[
           styles.floatingActionButton,
           { backgroundColor },
           this.props.style,
-      ]}>
+        ]}
+      >
 
         <CompatibleTouchable
           onPress={ this.props.onPress }
@@ -67,8 +54,8 @@ export default class FloatingActionButton extends React.Component {
           </View>
 
         </CompatibleTouchable>
-      </Animatable.View>
-    )
+      </View>
+    );
   }
 }
 

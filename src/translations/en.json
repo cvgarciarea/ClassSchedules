@@ -1,8 +1,11 @@
 {
   "app-name": "Class Schedules",
   "timetables": "Timetables",
+  "reminders": "Reminders",
+  "goals": "Goals",
   "tests": "Tests",
   "settings": "Settings",
+  "more": "More",
   "theme": "Theme",
   "visible-hours": "Visible hours",
   "version": "Version",

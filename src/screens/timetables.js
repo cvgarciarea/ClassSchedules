@@ -26,41 +26,15 @@ import FloatingActionButton from '../components/floating-action-button';
 import CircleTransition from '../components/circle-reveal-view';
 import CreateClassSchedule from '../components/create-class-schedule';
 import {
+  animateFAB,
+  animatingFAB,
+  setOnFABPress,
   setSaveButtonVisible,
   enableSaveButton,
   setOnSaveButtonPress,
   setDeleteButtonVisible,
   setOnDeleteButtonPress,
 } from './home';
-
-const FABAnimations = {
-  rotate: {
-    0: {
-      rotate: '0deg',
-      backgroundColor: Colors.Action.CONSTRUCTIVE,
-    },
-    1: {
-      rotate: '135deg',
-      backgroundColor: Colors.Action.DESTRICTIVE,
-    }
-  },
-
-  reset_rotate: {
-    0: {
-      rotate: '135deg',
-      backgroundColor: Colors.Action.DESTRICTIVE,
-    },
-    1: {
-      rotate: '0deg',
-      backgroundColor: Colors.Action.CONSTRUCTIVE,
-    },
-  }
-}
-
-const FABAnimationType = {
-  ROTATE: 'rotate',
-  RESET_ROTATE: 'reset_rotate',
-}
 
 export default class TimetablesScreen extends React.Component {
 
@@ -70,9 +44,6 @@ export default class TimetablesScreen extends React.Component {
     const { getParam } = this.props.navigation;
 
     this.revealer = null;
-    this.createScheduleFAB = null;
-    this.fabAnimation = FABAnimationType.RESET_ROTATE;
-    this.animatingFAB = false;
     this.classScheduleCreatror = null;
 
     this.state = {
@@ -116,6 +87,7 @@ export default class TimetablesScreen extends React.Component {
       this.resetCreateSchedule();
     });
 
+    this.configureFABBehavior();
     this.configureSaveButtonBehavior();
     this.configureDeleteButtonBehavior();
   }
@@ -128,7 +100,7 @@ export default class TimetablesScreen extends React.Component {
     Storage.getValue(Storage.Keys.schedules, '{}')
     .then(schedules => {
       this.setState({ schedules: JSON.parse(schedules) });
-    })
+    });
   }
 
   componentWillUnmount() {
@@ -136,6 +108,18 @@ export default class TimetablesScreen extends React.Component {
     this.focusListener.remove();
     this.willBlurListener.remove();
     this.didBlurListener.remove();
+  }
+
+  configureFABBehavior() {
+    setOnFABPress(() => {
+      if (!Utils.emptyValue(this.revealer)) {
+        if (this.revealer.getVisible()) {
+          this.setState({ editingScheduleData: {} });
+        }
+
+        this.revealer.toggle();
+      }
+    });
   }
 
   configureSaveButtonBehavior() {
@@ -244,13 +228,7 @@ export default class TimetablesScreen extends React.Component {
       }
 
       // Resetear el botón con el signo de +
-      const animation = FABAnimationType.RESET_ROTATE;
-      this.animatingFAB = true;
-      this.createScheduleFAB.animate(FABAnimations[animation])
-      .then(() => {
-        this.fabAnimation = animation;
-        this.animatingFAB = false;
-      });
+      animateFAB('create');
     });
   }
 
@@ -261,26 +239,19 @@ export default class TimetablesScreen extends React.Component {
   }
 
   resetCreateSchedule() {
-    let revealed = !Utils.emptyValue(this.revealer) && this.revealer.getVisible();
-    let rotated = !Utils.emptyValue(this.createScheduleFAB) &&
-                  this.fabAnimation === FABAnimationType.ROTATE;
+    let revealed = !Utils.emptyValue(this.revealer) &&
+                   this.revealer.getVisible();
 
-    if (!this.animatingFAB) {
-      if (revealed) {
-        this.revealer.collapse();
-      }
-
-      if (rotated) {
-        this.fabAnimation = FABAnimationType.RESET_ROTATE;
-        this.createScheduleFAB.animate(FABAnimations[this.fabAnimation]);
-      }
+    if (!animatingFAB && revealed) {
+      this.revealer.collapse();
+      animateFAB('create');
     }
 
-    return revealed || rotated;
+    return revealed;
   }
 
   onBackButtonPressAndroid() {
-    return this.resetCreateSchedule() || this.animatingFAB;
+    return this.resetCreateSchedule() || animatingFAB;
   }
 
   itsVisible(schedule) {
@@ -594,12 +565,7 @@ export default class TimetablesScreen extends React.Component {
                       },
                       () => {
                         // Cambio el estado del FAB
-                        this.fabAnimation = animation = FABAnimationType.ROTATE;
-                        this.animatingFAB = true;
-                        this.createScheduleFAB.animate(FABAnimations[this.fabAnimation])
-                        .then(() => {
-                          this.animatingFAB = false;
-                        });
+                        animateFAB('cancel');
 
                         // Muestro el creador de materias
                         if (!this.revealer.getVisible()) {
@@ -749,36 +715,6 @@ export default class TimetablesScreen extends React.Component {
           />
 
         </CircleTransition>
-
-        <FloatingActionButton
-          iconName={ 'plus' }
-          ref={ fab => this.createScheduleFAB = fab }
-          onPress={ () => {
-            if (!Utils.emptyValue(this.revealer)) {
-              if (this.revealer.getVisible()) {
-                this.setState({ editingScheduleData: {} });
-              }
-
-              this.revealer.toggle();
-            }
-
-            if (!Utils.emptyValue(this.createScheduleFAB)) {
-              let animation;
-              if (this.fabAnimation === FABAnimationType.RESET_ROTATE) {
-                animation = FABAnimationType.ROTATE;
-              } else {
-                animation = FABAnimationType.RESET_ROTATE;
-              }
-
-              this.animatingFAB = true;
-              this.createScheduleFAB.animate(FABAnimations[animation])
-              .then(() => {
-                this.fabAnimation = animation;
-                this.animatingFAB = false;
-              });
-            }
-          }}
-        />
 
       </View>
     );

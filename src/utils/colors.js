@@ -30,6 +30,7 @@ export default class Colors {
     light: {
       background: '#f6f6f6',
       foreground: '#363c3d',
+      foregroundLight: '#495052',
       sectionHeaderBackground: '#eaeaea',
       cellBackground: '#dadada',
       gridBackground: '#fff',
@@ -40,6 +41,7 @@ export default class Colors {
     dark: {
       background: '#2a2a2a',
       foreground: '#f6f6f6',
+      foregroundLight: '#fcfcfc',
       sectionHeaderBackground: '#000',
       cellBackground: '#2a2a2a',
       gridBackground: '#000',
@@ -50,6 +52,7 @@ export default class Colors {
     amoled: {
       background: '#000',
       foreground: '#f6f6f6',
+      foregroundLight: '#fcfcfc',
       sectionHeaderBackground: '#000',
       cellBackground: '#000',
       gridBackground: '#2a2a2a',
