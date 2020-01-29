@@ -294,11 +294,14 @@ tabNavigator.navigationOptions = ({ navigation }) => {
 
   let headerRightChildren = [];
 
+  const theme = Colors.Themes[State.theme];
+
   if (saveButtonVisible) {
     headerRightChildren.push(
       <HeaderButton
         key={ 'save' }
         iconName={ 'content-save' }
+        color={ theme.foreground }
         onPress={ navigation.getParam('onSaveButtonPress', null) }
         disabled={ !navigation.getParam('enableSaveButton', false) }
       />
@@ -310,6 +313,7 @@ tabNavigator.navigationOptions = ({ navigation }) => {
       <HeaderButton
         key={ 'delete' }
         iconName={ 'delete' }
+        color={ theme.foreground }
         onPress={ navigation.getParam('onDeleteButtonPress', null) }
       />
     );
@@ -320,8 +324,6 @@ tabNavigator.navigationOptions = ({ navigation }) => {
       { headerRightChildren }
     </View>
   );
-
-  const theme = Colors.Themes[State.theme];
 
   return {
     title,
