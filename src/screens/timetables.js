@@ -19,6 +19,8 @@ import Storage from '../utils/storage';
 import State from '../utils/state';
 import Colors from '../utils/colors';
 
+import FocusListenerScreen from './focus-listener';
+
 import GridContent from '../components/grid-content';
 import RowLabels from '../components/row-labels';
 import ColumnLabels from '../components/column-labels';
@@ -36,7 +38,7 @@ import {
   setOnDeleteButtonPress,
 } from './home';
 
-export default class TimetablesScreen extends React.Component {
+export default class TimetablesScreen extends FocusListenerScreen {
 
   constructor(props) {
     super(props);
@@ -54,6 +56,18 @@ export default class TimetablesScreen extends React.Component {
       selection: {},
       editingScheduleData: {},
     };
+
+    this.onBackButtonPressAndroid = this.onBackButtonPressAndroid.bind(this);
+    this.onFABPress = this.onFABPress.bind(this);
+    this.onSaveButtonPress = this.onSaveButtonPress.bind(this);
+    this.deleteSelectedClassSchedules = this.deleteSelectedClassSchedules.bind(this);
+  }
+
+  componentDidMount() {
+    Storage.getValue(Storage.Keys.schedules, '{}')
+    .then(schedules => {
+      this.setState({ schedules: JSON.parse(schedules) });
+    });
 
     State.subscribeTo(
       'visible-hours',
@@ -76,166 +90,142 @@ export default class TimetablesScreen extends React.Component {
       }
     );
 
-    this.onBackButtonPressAndroid = this.onBackButtonPressAndroid.bind(this);
-
-    this.focusListener = this.props.navigation.addListener('didFocus', () => {
-      this.resetCreateSchedule();
-      BackHandler.addEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
-    });
-
-    this.didBlurListener = this.props.navigation.addListener('didBlur', () => {
-      this.resetCreateSchedule();
-    });
-
-    this.configureFABBehavior();
-    this.configureSaveButtonBehavior();
-    this.configureDeleteButtonBehavior();
   }
 
-  componentDidMount() {
-    this.willBlurListener = this.props.navigation.addListener('willBlur', () =>
-      BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
-    );
+  didFocus() {
+    setOnFABPress(this.onFABPress);
+    setOnSaveButtonPress(this.onSaveButtonPress);
+    setOnDeleteButtonPress(this.deleteSelectedClassSchedules);
 
-    Storage.getValue(Storage.Keys.schedules, '{}')
-    .then(schedules => {
-      this.setState({ schedules: JSON.parse(schedules) });
-    });
+    this.resetCreateSchedule();
+    BackHandler.addEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
   }
 
-  componentWillUnmount() {
-    // this.removeTimeout();
-    this.focusListener.remove();
-    this.willBlurListener.remove();
-    this.didBlurListener.remove();
+  willBlur() {
+    BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
   }
 
-  configureFABBehavior() {
-    setOnFABPress(() => {
-      if (!Utils.emptyValue(this.revealer)) {
-        if (this.revealer.getVisible()) {
-          this.setState({ editingScheduleData: {} });
-        }
-
-        this.revealer.toggle();
-      }
-    });
+  didblur() {
+    this.resetCreateSchedule();
   }
 
-  configureSaveButtonBehavior() {
-    setOnSaveButtonPress(() => {
-      const format = 'HH:mm';
-      let {
-        name,
-        startTime,
-        endTime,
-        startDay,
-        endDay,
-        color,
-        subjectID,
-        id,
-      } = this.state.tempNewSchedule;
-
-      let startHour = moment(startTime, format);
-      let endHour = moment(endTime, format);
-
-      let correctSchedule = true;
-
-      if (startHour.diff(endHour) === 0 && startDay === endDay) {
-        // Mismo horario de inicio y fin
-        correctSchedule = false;
-        this.classScheduleCreatror.showWarning('no-time-diff');
-
-      } else if (startDay > endDay || (startHour.diff(endHour) > 0 && startDay === endDay)) {
-        // El fin está después del inicio
-        correctSchedule = false;
-        this.classScheduleCreatror.showWarning('end-before-start');
-      }
-
-      if (!correctSchedule) {
-        return;
-      }
-
-      // Ocultar el creador de nuevos horarios
+  onFABPress() {
+    if (!Utils.emptyValue(this.revealer)) {
       if (this.revealer.getVisible()) {
-        this.revealer.collapse();
+        this.setState({ editingScheduleData: {} });
       }
 
-      // Agregar el nuevo horario creado a la cuadrícula
-      let { schedules } = this.state;
-      schedules = JSON.parse(JSON.stringify(schedules));
+      this.revealer.toggle();
+    }
+  }
 
-      // Me aseguro de que el id de materia no esté ya siendo en uso, es muy
-      // poco probable, pero no imposible
-      if (Utils.emptyString(subjectID)) {
-        do {
-          subjectID = Utils.uuidv4();
-        } while (Object.keys(schedules).includes(subjectID))
-      }
+  onSaveButtonPress() {
+    const format = 'HH:mm';
 
-      let newSchedule = {
-        // FIXME: Debería revisar de que no esté en uso este id?
-        id: this.state.tempNewSchedule.id || Utils.uuidv4(),
-        subjectID,
+    let {
+      name,
+      startTime,
+      endTime,
+      startDay,
+      endDay,
+      color,
+      subjectID,
+      id,
+    } = this.state.tempNewSchedule;
+
+    let startHour = moment(startTime, format);
+    let endHour = moment(endTime, format);
+
+    let correctSchedule = true;
+
+    if (startHour.diff(endHour) === 0 && startDay === endDay) {
+      // Mismo horario de inicio y fin
+      correctSchedule = false;
+      this.classScheduleCreatror.showWarning('no-time-diff');
+
+    } else if (startDay > endDay || (startHour.diff(endHour) > 0 && startDay === endDay)) {
+      // El fin está después del inicio
+      correctSchedule = false;
+      this.classScheduleCreatror.showWarning('end-before-start');
+    }
+
+    if (!correctSchedule) {
+      return;
+    }
+
+    // Ocultar el creador de nuevos horarios
+    if (this.revealer.getVisible()) {
+      this.revealer.collapse();
+    }
+
+    // Agregar el nuevo horario creado a la cuadrícula
+    let { schedules } = this.state;
+    schedules = JSON.parse(JSON.stringify(schedules));
+
+    // Me aseguro de que el id de materia no esté ya siendo en uso, es muy
+    // poco probable, pero no imposible
+    if (Utils.emptyString(subjectID)) {
+      do {
+        subjectID = Utils.uuidv4();
+      } while (Object.keys(schedules).includes(subjectID))
+    }
+
+    let newSchedule = {
+      // FIXME: Debería revisar de que no esté en uso este id?
+      id: this.state.tempNewSchedule.id || Utils.uuidv4(),
+      subjectID,
+      name,
+      startTime,
+      endTime,
+      startDay,
+      endDay,
+      color,
+    };
+
+    if (Utils.emptyValue(schedules[subjectID])) {
+      schedules[subjectID] = {
+        schedules: [ newSchedule ],
         name,
-        startTime,
-        endTime,
-        startDay,
-        endDay,
         color,
       };
+    } else {
+      let { schedules: _schedules } = schedules[subjectID];
+      let currentIndex = null;
 
-      if (Utils.emptyValue(schedules[subjectID])) {
-        schedules[subjectID] = {
-          schedules: [ newSchedule ],
-          name,
-          color,
-        };
+      for (let i=0; i<_schedules.length && Utils.emptyValue(currentIndex); i++) {
+        if (_schedules[i].id === id) {
+          currentIndex = i;
+        }
+      }
+
+      if (Utils.emptyValue(currentIndex)) {
+        // No existía, signifca que estoy creando un horario nuevo
+        _schedules.push(newSchedule);
       } else {
-        let { schedules: _schedules } = schedules[subjectID];
-        let currentIndex = null;
-
-        for (let i=0; i<_schedules.length && Utils.emptyValue(currentIndex); i++) {
-          if (_schedules[i].id === id) {
-            currentIndex = i;
-          }
-        }
-
-        if (Utils.emptyValue(currentIndex)) {
-          // No existía, signifca que estoy creando un horario nuevo
-          _schedules.push(newSchedule);
-        } else {
-          // Ya existía, significa que estoy actualizando los datos
-          _schedules[currentIndex] = this.state.tempNewSchedule;
-        }
+        // Ya existía, significa que estoy actualizando los datos
+        _schedules[currentIndex] = this.state.tempNewSchedule;
       }
+    }
 
-      this.setState({
-        schedules,
-        tempNewSchedule: {},
-        editingScheduleData: {},
-      });
-
-      // Guardar los nuevos horarios en el disco
-      Storage.storeValue(Storage.Keys.schedules, JSON.stringify(schedules));
-
-      // Registrar este color como reciente
-      if (!State.recentColors.includes(color)) {
-        let recentColors = [ color ].concat(State.recentColors);
-        recentColors.pop();
-
-        State.setRecentColors(recentColors);
-      }
-
-      // Resetear el botón con el signo de +
-      animateFAB('create');
+    this.setState({
+      schedules,
+      tempNewSchedule: {},
+      editingScheduleData: {},
     });
-  }
 
-  configureDeleteButtonBehavior() {
-    setOnDeleteButtonPress(() => {
-      this.deleteSelectedClassSchedules();
-    });
+    // Guardar los nuevos horarios en el disco
+    Storage.storeValue(Storage.Keys.schedules, JSON.stringify(schedules));
+
+    // Registrar este color como reciente
+    if (!State.recentColors.includes(color)) {
+      let recentColors = [ color ].concat(State.recentColors);
+      recentColors.pop();
+
+      State.setRecentColors(recentColors);
+    }
+
+    // Resetear el botón con el signo de +
+    animateFAB('create');
   }
 
   resetCreateSchedule() {
@@ -635,12 +625,6 @@ export default class TimetablesScreen extends React.Component {
           backgroundColor: theme.gridBackground
         }}
       >
-
-        <StatusBar
-          backgroundColor={ Colors.primaryDark }
-          barStyle="light-content"
-          hidden={ false }
-        />
 
         <SafeAreaView
           style={{ flex: 1 }}

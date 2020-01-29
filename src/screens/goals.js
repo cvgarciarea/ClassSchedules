@@ -1,7 +1,6 @@
 import React from 'react';
 import {
   View,
-  StatusBar,
 } from 'react-native';
 
 import State from '../utils/state';
@@ -19,7 +18,7 @@ import {
   setOnDeleteButtonPress,
 } from './home';
 
-export default class RemindersScreen extends FocusListenerScreen {
+export default class GoalsScreen extends FocusListenerScreen {
 
   constructor(props) {
     super(props);
@@ -41,21 +40,16 @@ export default class RemindersScreen extends FocusListenerScreen {
   }
 
   didFocus() {
-    setOnFABPress(this.onFABPress);
-
-    this.resetCreateReminder();
+    this.resetCreateGoal();
   }
 
-  resetCreateReminder() {
+  resetCreateGoal() {
     animateFAB('create');
-    setOnSaveButtonPress(this.onSaveButtonPress);
-    setOnDeleteButtonPress(this.onDeleteButtonPress);
     setSaveButtonVisible(false);
     setDeleteButtonVisible(false);
   }
 
   onFABPress() {
-    console.log('test');
   }
 
   onSaveButtonPress() {
@@ -68,16 +62,14 @@ export default class RemindersScreen extends FocusListenerScreen {
     this.state.rendered = true;
 
     const theme = Colors.Themes[State.theme];
-    console.log(State.theme);
 
     return (
       <View
         style={{
-          backgroundColor: theme.background,
           flex: 1,
+          backgroundColor: theme.background,
         }}
       >
-
       </View>
     );
   }

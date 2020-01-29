@@ -4,6 +4,7 @@ import {
   Text,
   Easing,
   Animated,
+  StatusBar,
   TouchableOpacity,
 } from 'react-native';
 import { createBottomTabNavigator } from 'react-navigation';
@@ -17,6 +18,7 @@ import Colors from '../utils/colors';
 
 import TimetablesScreen from './timetables';
 import RemindersScreen from './reminders';
+import GoalsScreen from './goals';
 import SettingsScreen from './settings';
 
 import HeaderButton from '../components/header-button';
@@ -110,6 +112,12 @@ class BottomTabBar extends React.Component {
           backgroundColor: '#0096A6',
         }}
       >
+
+        <StatusBar
+          backgroundColor={ theme.background }
+          barStyle={ theme.statusBarStyle }
+        />
+
         {
           routes.map((route, routeIndex) => {
             if (route.key === 'Timetables') {
@@ -145,10 +153,10 @@ class BottomTabBar extends React.Component {
                         alignItems: 'center',
                       }}
                       onPress={ () => {
-                        onTabPress({ route: this.timetablesRoute });
+                        // onTabPress({ route: this.timetablesRoute });
                         this.animateFAB(this.FABMode === 'create' ? 'cancel' : 'create');
 
-                        let callback = navigation.getParam('onCreateSchedulePress', null);
+                        let callback = navigation.getParam('onCreatePress', null);
                         Utils.secureCall(callback);
                       }}
                     >
@@ -178,9 +186,15 @@ class BottomTabBar extends React.Component {
                 }}
                 onPress={ () => {
                   onTabPress({ route });
+                  navigation.setParams({
+                    screenName: getLabelText({ route }),
+                  });
                 }}
                 onLongPress={ () => {
                   onTabLongPress({ route });
+                  navigation.setParams({
+                    screenName: getLabelText({ route }),
+                  });
                 }}
               >
 
@@ -209,7 +223,6 @@ let tabNavigator = createBottomTabNavigator({
     screen: TimetablesScreen,
     navigationOptions: {
       tabBarLabel: i18n.t('timetables'),
-      tabBarColor: Colors.primary,
       tabBarIcon: ({ tintColor, focused }) => (
         <Icon
           size={ 25 }
@@ -227,7 +240,7 @@ let tabNavigator = createBottomTabNavigator({
       tabBarIcon: ({ tintColor, focused }) => (
         <Icon
           size={ 25 }
-          name={ 'pencil' }
+          name={ 'notebook' }
           style={{ color: tintColor }}
         />
       ),
@@ -238,11 +251,10 @@ let tabNavigator = createBottomTabNavigator({
     screen: View,
   },
 
-  GoalsScreen: {
-    screen: View,
+  Goals: {
+    screen: GoalsScreen,
     navigationOptions: {
       tabBarLabel: i18n.t('goals'),
-      tabBarColor: Colors.settings,
       tabBarIcon: ({ tintColor, focused }) => (
         <Icon
           size={ 25 }
@@ -257,7 +269,6 @@ let tabNavigator = createBottomTabNavigator({
     screen: SettingsScreen,
     navigationOptions: {
       tabBarLabel: i18n.t('more'),
-      tabBarColor: Colors.settings,
       tabBarIcon: ({ tintColor, focused }) => (
         <Icon
           size={ 25 }
@@ -275,6 +286,8 @@ let tabNavigator = createBottomTabNavigator({
 
 let _navigation = null;
 tabNavigator.navigationOptions = ({ navigation }) => {
+  const title = navigation.getParam('screenName', i18n.t('timetables'));
+
   _navigation = navigation;
   const saveButtonVisible = navigation.getParam('saveButtonVisible', false);
   const deleteButtonVisible = navigation.getParam('deleteButtonVisible', false);
@@ -308,24 +321,42 @@ tabNavigator.navigationOptions = ({ navigation }) => {
     </View>
   );
 
+  const theme = Colors.Themes[State.theme];
+
   return {
+    title,
+    headerTintColor: theme.foreground,
     headerStyle: {
-      backgroundColor: Colors.primary,
+      backgroundColor: theme.background,
+    },
+    headerTitleStyle: {
+      fontWeight: 'bold',
     },
     headerRight,
   };
 }
 
+State.subscribeTo(
+  'theme',
+  theme => {
+    if (Utils.isDefined(_navigation)) {
+      _navigation.setParams({
+        theme,
+      });
+    }
+  }
+)
+
 export let setOnFABPress = callback => {
   if (Utils.isDefined(_navigation)) {
     _navigation.setParams({
-      onCreateSchedulePress: callback,
+      onCreatePress: callback,
     });
   }
 }
 
 export let setSaveButtonVisible = visible => {
-  if (!Utils.emptyValue(_navigation)) {
+  if (Utils.isDefined(_navigation)) {
     _navigation.setParams({
       saveButtonVisible: visible,
       enableSaveButton: false,
@@ -334,7 +365,7 @@ export let setSaveButtonVisible = visible => {
 }
 
 export let enableSaveButton = enable => {
-  if (!Utils.emptyValue(_navigation)) {
+  if (Utils.isDefined(_navigation)) {
     _navigation.setParams({
       enableSaveButton: enable,
     });
@@ -350,7 +381,7 @@ export let setOnSaveButtonPress = callback => {
 }
 
 export let setDeleteButtonVisible = visible => {
-  if (!Utils.emptyValue(_navigation)) {
+  if (Utils.isDefined(_navigation)) {
     _navigation.setParams({
       deleteButtonVisible: visible,
     });

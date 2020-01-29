@@ -6,6 +6,7 @@ import {
 import { NavigationActions } from 'react-navigation';
 
 import State from '../utils/state';
+import Colors from '../utils/colors';
 
 export default class SplashScreen extends React.Component {
 

@@ -28,6 +28,7 @@ export default class Colors {
 
   static Themes = {
     light: {
+      statusBarStyle: 'dark-content',
       background: '#f6f6f6',
       foreground: '#363c3d',
       foregroundLight: '#495052',
@@ -39,6 +40,7 @@ export default class Colors {
     },
 
     dark: {
+      statusBarStyle: 'light-content',
       background: '#2a2a2a',
       foreground: '#f6f6f6',
       foregroundLight: '#fcfcfc',
@@ -50,6 +52,7 @@ export default class Colors {
     },
 
     amoled: {
+      statusBarStyle: 'light-content',
       background: '#000',
       foreground: '#f6f6f6',
       foregroundLight: '#fcfcfc',
