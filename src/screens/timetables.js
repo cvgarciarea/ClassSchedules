@@ -89,6 +89,7 @@ export default class TimetablesScreen extends FocusListenerScreen {
   }
 
   didFocus() {
+    animateFAB('create');
     setOnFABPress(this.onFABPress);
     setOnSaveButtonPress(this.onSaveButtonPress);
     setOnDeleteButtonPress(this.deleteSelectedClassSchedules);
@@ -236,9 +237,8 @@ export default class TimetablesScreen extends FocusListenerScreen {
     let revealed = !Utils.emptyValue(this.revealer) &&
                    this.revealer.getVisible();
 
-    if (!animatingFAB && revealed) {
+    if (revealed) {
       this.revealer.collapse();
-      animateFAB('create');
     }
 
     return revealed;
