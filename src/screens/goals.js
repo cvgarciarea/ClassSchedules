@@ -12,10 +12,10 @@ import {
   animatingFAB,
   setOnFABPress,
   setSaveButtonVisible,
-  enableSaveButton,
   setOnSaveButtonPress,
   setDeleteButtonVisible,
   setOnDeleteButtonPress,
+  setShowSubButtons,
 } from './home';
 
 export default class GoalsScreen extends FocusListenerScreen {
@@ -40,7 +40,9 @@ export default class GoalsScreen extends FocusListenerScreen {
   }
 
   didFocus() {
+    setOnFABPress(this.onFABPress);
     this.resetCreateGoal();
+    setShowSubButtons(false);
   }
 
   resetCreateGoal() {
@@ -50,6 +52,7 @@ export default class GoalsScreen extends FocusListenerScreen {
   }
 
   onFABPress() {
+    console.log('goals')
   }
 
   onSaveButtonPress() {

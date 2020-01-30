@@ -13,10 +13,10 @@ import {
   animatingFAB,
   setOnFABPress,
   setSaveButtonVisible,
-  enableSaveButton,
   setOnSaveButtonPress,
   setDeleteButtonVisible,
   setOnDeleteButtonPress,
+  setShowSubButtons,
 } from './home';
 
 export default class RemindersScreen extends FocusListenerScreen {
@@ -42,6 +42,7 @@ export default class RemindersScreen extends FocusListenerScreen {
 
   didFocus() {
     setOnFABPress(this.onFABPress);
+    setShowSubButtons(false);
 
     this.resetCreateReminder();
   }
@@ -55,7 +56,7 @@ export default class RemindersScreen extends FocusListenerScreen {
   }
 
   onFABPress() {
-    console.log('test');
+    console.log('reminders');
   }
 
   onSaveButtonPress() {
@@ -68,7 +69,6 @@ export default class RemindersScreen extends FocusListenerScreen {
     this.state.rendered = true;
 
     const theme = Colors.Themes[State.theme];
-    console.log(State.theme);
 
     return (
       <View

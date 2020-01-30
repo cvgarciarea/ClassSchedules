@@ -8,8 +8,8 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { createBottomTabNavigator } from 'react-navigation';
-// import { createMaterialBottomTabNavigator } from 'react-navigation-material-bottom-tabs';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import PropTypes from 'prop-types';
 
 import i18n from '../i18n';
 import Utils from '../utils/utils';
@@ -25,6 +25,234 @@ import HeaderButton from '../components/header-button';
 
 export let animateFAB = null;
 export let animatingFAB = false;
+
+class CreateButton extends React.Component {
+
+  static defaultProps = {
+    showSubButtons: false,
+    onPress: null,
+    onFirstButtonPress: null,
+    onSecondButtonPress: null,
+    onThirdbuttonPress: null,
+  };
+
+  static propTypes = {
+    showSubButtons: PropTypes.bool,
+    onPress: PropTypes.func,
+    onFirstButtonPress: PropTypes.func,
+    onSecondButtonPress: PropTypes.func,
+    onThirdbuttonPress: PropTypes.func,
+  };
+
+  render() {
+    // Todas las interpolaciones para los sub botones están fuertemente
+    // inspiradas en el siguiente ejemplo:
+    // https://itnext.io/react-native-tab-bar-is-customizable-c3c37dcf711f
+
+    const size = 50;
+    const subButtonSize = size * 0.75;
+
+    const {
+      animatedValue,
+      showSubButtons,
+      onPress,
+      onFirstButtonPress,
+      onSecondButtonPress,
+      onThirdbuttonPress,
+    } = this.props;
+
+    const mainBackgroundColor = animatedValue.interpolate({
+      inputRange: [ 0, 1 ],
+      outputRange: [ Colors.Action.CONSTRUCTIVE, Colors.Action.DESTRICTIVE ],
+    });
+
+    const mainRotate = animatedValue.interpolate({
+      inputRange: [ 0, 1 ],
+      outputRange: [ '0deg', '135deg' ],
+    });
+
+    const firstX = animatedValue.interpolate({
+      inputRange: [ 0, 1 ],
+      outputRange: [ -subButtonSize / 2, -60 - subButtonSize / 2 ],
+    });
+
+    const firstY = animatedValue.interpolate({
+      inputRange: [ 0, 1 ],
+      outputRange: [ 0, -subButtonSize / 2 - 30 ],
+    });
+
+    const secondX = animatedValue.interpolate({
+      inputRange: [ 0, 1 ],
+      outputRange: [ -subButtonSize / 2, -subButtonSize / 2 ],
+    });
+
+    const secondY = animatedValue.interpolate({
+      inputRange: [ 0, 1 ],
+      outputRange: [ 0, -subButtonSize / 2 - 50 ],
+    });
+
+    const thirdX = animatedValue.interpolate({
+      inputRange: [ 0, 1 ],
+      outputRange: [ -subButtonSize / 2, 60 - subButtonSize / 2 ],
+    });
+
+    const thirdY = animatedValue.interpolate({
+      inputRange: [ 0, 1 ],
+      outputRange: [ 0, -subButtonSize / 2 - 30 ],
+    });
+
+    const opacity = animatedValue.interpolate({
+      inputRange: [ 0, 1 ],
+      outputRange: [ 0, 1 ], 
+    });
+
+    // FIXME: Los sub botones no detectan toques (onPress nunca se triggerea)
+
+    return (
+      <View
+        style={{
+          flex: 4,
+          alignItems: 'center',
+        }}
+      >
+
+        {
+          showSubButtons ?
+            <View>
+              { /* Primer sub botón */ }
+              <Animated.View
+                style={{
+                  position: 'absolute',
+                  left: firstX,
+                  top: firstY,
+                  opacity,
+                }}
+              >
+
+                <TouchableOpacity
+                  onPress={ onFirstButtonPress }
+                  onFocus={ () => console.log('testing10') }
+                  style={{
+                    elevation: 4,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: subButtonSize,
+                    height: subButtonSize,
+                    borderRadius: subButtonSize / 2,
+                    backgroundColor: '#48A2F8'
+                  }}
+                >
+                  <Icon
+                    name={ 'calendar-multiselect' }
+                    size={ 16 }
+                    color={ '#F8F8F8' }
+                  />
+                </TouchableOpacity>
+              </Animated.View>
+
+              { /* Segundo sub botón */ }
+              <Animated.View
+                style={{
+                  position: 'absolute',
+                  left: secondX,
+                  top: secondY,
+                  opacity,
+                }}
+              >
+
+                <TouchableOpacity
+                  onPress={ onSecondButtonPress }
+                  style={{
+                    elevation: 4,
+                    position: 'absolute',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: subButtonSize,
+                    height: subButtonSize,
+                    borderRadius: subButtonSize / 2,
+                    backgroundColor: '#48A2F8'
+                  }}
+                >
+                  <Icon
+                    name={ 'notebook' }
+                    size={ 16 }
+                    color={ '#F8F8F8' }
+                  />
+                </TouchableOpacity>
+              </Animated.View>
+
+              { /* Tercer sub botón */ }
+              <Animated.View
+                style={{
+                  position: 'absolute',
+                  left: thirdX,
+                  top: thirdY,
+                  opacity,
+                }}
+              >
+
+                <TouchableOpacity
+                  onPress={ onThirdbuttonPress }
+                  style={{
+                    elevation: 4,
+                    position: 'absolute',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: subButtonSize,
+                    height: subButtonSize,
+                    borderRadius: subButtonSize / 2,
+                    backgroundColor: '#48A2F8'
+                  }}
+                >
+                  <Icon
+                    name={ 'trophy' }
+                    size={ 16 }
+                    color={ '#F8F8F8' }
+                  />
+                </TouchableOpacity>
+              </Animated.View>
+            </View>
+          :
+            null
+        }
+
+        { /* El botón con el signo de más, que siempre está visible */ }
+        <Animated.View
+          iconName={ 'plus' }
+          style={{
+            position: 'relative',
+            bottom: 10,
+            right: 0,
+            backgroundColor: mainBackgroundColor,
+            width: size,
+            height: size,
+            borderRadius: size / 2,
+            elevation: 4,
+            transform: [
+              { rotate: mainRotate },
+            ],
+          }}
+        >
+          <TouchableOpacity
+            style={{
+              flex: 1,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+            onPress={ onPress }
+          >
+
+            <Icon
+              size={ 25 }
+              name={ 'plus' }
+              color={ '#fff' }
+            />
+          </TouchableOpacity>
+        </Animated.View>
+      </View>
+    );
+  }
+}
 
 class BottomTabBar extends React.Component {
 
@@ -65,7 +293,8 @@ class BottomTabBar extends React.Component {
         easing: Easing.quad,
         duration: 250,
       },
-    ).start(() => {
+    )
+    .start(() => {
       animatingFAB = false;
     });
   }
@@ -92,18 +321,6 @@ class BottomTabBar extends React.Component {
     const activeTintColor = '#fff';
     const inactiveTintColor = '#ffffffab';
 
-    let FABBackgroundColor = this.FABModeAnimValue.interpolate({
-      inputRange: [ 0, 1 ],
-      outputRange: [ Colors.Action.CONSTRUCTIVE, Colors.Action.DESTRICTIVE ],
-      extrapolate: 'clamp',
-    });
-
-    let FABRotateVal = this.FABModeAnimValue.interpolate({
-      inputRange: [ 0, 1 ],
-      outputRange: [ '0deg', '135deg' ],
-      extrapolate: 'clamp',
-    });
-
     return (
       <View
         style={{
@@ -111,6 +328,7 @@ class BottomTabBar extends React.Component {
           height: 52,
           backgroundColor: '#0096A6',
         }}
+        removeClippedSubviews={ false }
       >
 
         <StatusBar
@@ -123,52 +341,23 @@ class BottomTabBar extends React.Component {
             if (route.key === 'Timetables') {
               this.timetablesRoute = route;
             } else if (route.key === 'FAB') {
-              const size = 50;
+              const { navigate } = this.props.navigation;
 
               return (
-                <View
+                <CreateButton
                   key={ 10 }
-                  style={{ flex: 4, alignItems: 'center' }}
-                >
-                  <Animated.View
-                    iconName={ 'plus' }
-                    style={{
-                      position: 'relative',
-                      bottom: 10,
-                      right: 0,
-                      backgroundColor: FABBackgroundColor,
-                      width: size,
-                      height: size,
-                      borderRadius: size / 2,
-                      elevation: 4,
-                      transform: [
-                        { rotate: FABRotateVal },
-                      ],
-                    }}
-                  >
-                    <TouchableOpacity
-                      style={{
-                        flex: 1,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                      }}
-                      onPress={ () => {
-                        // onTabPress({ route: this.timetablesRoute });
-                        this.animateFAB(this.FABMode === 'create' ? 'cancel' : 'create');
-
-                        let callback = navigation.getParam('onCreatePress', null);
-                        Utils.secureCall(callback);
-                      }}
-                    >
-
-                      <Icon
-                        size={ 25 }
-                        name={ 'plus' }
-                        style={{ color: '#fff' }}
-                      />
-                    </TouchableOpacity>
-                  </Animated.View>
-                </View>
+                  animatedValue={ this.FABModeAnimValue }
+                  showSubButtons={ this.props.navigation.getParam('showSubButtons', false) }
+                  onFirstButtonPress={ () => navigate('Timetables', { craete: true }) }
+                  onSecondButtonPress={ () => navigate('Reminders', { craete: true }) }
+                  onThirdButtonPress={ () => navigate('Goals', { craete: true }) }
+                  onPress={ () => {
+                    this.animateFAB(this.FABMode === 'create' ? 'cancel' : 'create');
+      
+                    let callback = navigation.getParam('onCreatePress', null);
+                    Utils.secureCall(callback);
+                  }}
+                />
               );
             }
 
@@ -303,7 +492,6 @@ tabNavigator.navigationOptions = ({ navigation }) => {
         iconName={ 'content-save' }
         color={ theme.foreground }
         onPress={ navigation.getParam('onSaveButtonPress', null) }
-        disabled={ !navigation.getParam('enableSaveButton', false) }
       />
     );
   }
@@ -349,53 +537,34 @@ State.subscribeTo(
   }
 )
 
-export let setOnFABPress = callback => {
+const setParams = params => {
   if (Utils.isDefined(_navigation)) {
-    _navigation.setParams({
-      onCreatePress: callback,
-    });
+    _navigation.setParams(params);
   }
+}
+
+export let setOnFABPress = callback => {
+  setParams({ onCreatePress: callback });
 }
 
 export let setSaveButtonVisible = visible => {
-  if (Utils.isDefined(_navigation)) {
-    _navigation.setParams({
-      saveButtonVisible: visible,
-      enableSaveButton: false,
-    });
-  }
-}
-
-export let enableSaveButton = enable => {
-  if (Utils.isDefined(_navigation)) {
-    _navigation.setParams({
-      enableSaveButton: enable,
-    });
-  }
+  setParams({ saveButtonVisible: visible });
 }
 
 export let setOnSaveButtonPress = callback => {
-  if (Utils.isDefined(_navigation)) {
-    _navigation.setParams({
-      onSaveButtonPress: callback
-    });
-  }
+  setParams({ onSaveButtonPress: callback });
 }
 
 export let setDeleteButtonVisible = visible => {
-  if (Utils.isDefined(_navigation)) {
-    _navigation.setParams({
-      deleteButtonVisible: visible,
-    });
-  }
+  setParams({ deleteButtonVisible: visible });
 }
 
 export let setOnDeleteButtonPress = callback => {
-  if (Utils.isDefined(_navigation)) {
-    _navigation.setParams({
-      onDeleteButtonPress: callback,
-    });
-  }
+  setParams({ onDeleteButtonPress: callback });
+}
+
+export let setShowSubButtons = show => {
+  setParams({ showSubButtons: show });
 }
 
 export default tabNavigator;

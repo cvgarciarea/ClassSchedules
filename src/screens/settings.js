@@ -10,6 +10,14 @@ import Consts from '../utils/consts';
 import State from '../utils/state';
 import Colors from '../utils/colors';
 
+import FocusListenerScreen from './focus-listener';
+import {
+  animateFAB,
+  animatingFAB,
+  setOnFABPress,
+  setShowSubButtons,
+} from './home';
+
 import {
   SettingItem,
   BooleanSettingItem,
@@ -19,7 +27,7 @@ import {
   SettingsSectionHeader,
 } from '../components/setting-item';
 
-export default class SettingsScreen extends React.Component {
+export default class SettingsScreen extends FocusListenerScreen {
 
   constructor(props) {
     super(props);
@@ -32,6 +40,7 @@ export default class SettingsScreen extends React.Component {
 
     this.addModal = this.addModal.bind(this);
     this.removeModal = this.removeModal.bind(this);
+    this.onFABPress = this.onFABPress.bind(this);
   }
 
   componentDidMount() {
@@ -50,6 +59,12 @@ export default class SettingsScreen extends React.Component {
     );
   }
 
+  didFocus() {
+    animateFAB('create');
+    setOnFABPress(this.onFABPress);
+    setShowSubButtons(true);
+  }
+
   addModal(modal) {
     let modals = this.state.modals.slice();
     modals.push(modal);
@@ -63,6 +78,10 @@ export default class SettingsScreen extends React.Component {
     .then(() => {
       this.setState({ modals: this.state.modals.remove(modalNode) });
     });
+  }
+
+  onFABPress() {
+    console.log('settings');
   }
 
   onThemeChanged(theme) {

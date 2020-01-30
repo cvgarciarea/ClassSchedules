@@ -32,6 +32,7 @@ import {
   setOnSaveButtonPress,
   setDeleteButtonVisible,
   setOnDeleteButtonPress,
+  setShowSubButtons,
 } from './home';
 
 export default class TimetablesScreen extends FocusListenerScreen {
@@ -93,6 +94,7 @@ export default class TimetablesScreen extends FocusListenerScreen {
     setOnFABPress(this.onFABPress);
     setOnSaveButtonPress(this.onSaveButtonPress);
     setOnDeleteButtonPress(this.deleteSelectedClassSchedules);
+    setShowSubButtons(false);
 
     this.resetCreateSchedule();
     BackHandler.addEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
