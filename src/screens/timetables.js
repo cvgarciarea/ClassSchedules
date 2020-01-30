@@ -126,6 +126,7 @@ export default class TimetablesScreen extends FocusListenerScreen {
 
     let {
       name,
+      description,
       startTime,
       endTime,
       startDay,
@@ -177,6 +178,7 @@ export default class TimetablesScreen extends FocusListenerScreen {
       id: this.state.tempNewSchedule.id || Utils.uuidv4(),
       subjectID,
       name,
+      description,
       startTime,
       endTime,
       startDay,
