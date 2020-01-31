@@ -41,6 +41,8 @@ export default class NotesScreen extends FocusListenerScreen {
   didFocus() {
     setOnFABPress(this.onFABPress);
     this.resetCreateReminder();
+
+    this.props.navigation.setParams({ create: false });
   }
 
   resetCreateReminder() {

@@ -40,6 +40,8 @@ export default class GoalsScreen extends FocusListenerScreen {
   didFocus() {
     setOnFABPress(this.onFABPress);
     this.resetCreateGoal();
+
+    this.props.navigation.setParams({ create: false });
   }
 
   resetCreateGoal() {

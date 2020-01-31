@@ -101,6 +101,7 @@ export default class TimetablesScreen extends FocusListenerScreen {
     setOnSaveButtonPress(this.onSaveButtonPress);
     setOnDeleteButtonPress(this.deleteSelectedClassSchedules);
 
+    this.props.navigation.setParams({ create: false });
     BackHandler.addEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
   }
 
