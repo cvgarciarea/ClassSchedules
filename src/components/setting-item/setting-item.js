@@ -55,8 +55,9 @@ export default class SettingItem extends React.Component {
 
     return (
       <CompatibleTouchable
-        onPress={ () => this._handlePress() }
+        itsRounded={ false }
         disabled={ !this.props.touchable }
+        onPress={ () => this._handlePress() }
       >
 
         <View>
@@ -93,6 +94,8 @@ export default class SettingItem extends React.Component {
                 <Text
                   style={{
                     color: theme.foreground,
+                    flexWrap: 'wrap',
+                    flex: 1,
                   }}
                 >
                   { this.props.title }
