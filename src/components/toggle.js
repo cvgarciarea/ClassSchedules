@@ -1,32 +1,54 @@
-import React from "react"
-import PropTypes from "prop-types"
+import React from 'react';
 import {
-  Animated,
   Easing,
+  Animated,
   TouchableOpacity,
-} from "react-native"
+} from 'react-native';
+import PropTypes from 'prop-types';
 
-// Inspired on: https://jonsuh.com/blog/animated-toggle-react-native/
-const knobOffset = 22
+import Utils from '../utils/utils';
+
+// Inspirado en: https://jonsuh.com/blog/animated-toggle-react-native/
+const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
+const knobOffset = 22;
 
 export default class Toggle extends React.Component {
-  static propTypes = {
-    active: PropTypes.bool,
-    onToggle: PropTypes.func.isRequired,
-  }
 
   static defaultProps = {
     active: false,
+    onToggle: null,
+  };
+
+  static propTypes = {
+    active: PropTypes.bool,
+    onToggle: PropTypes.func,
+  };
+
+  constructor(props) {
+    super(props);
+
+    this.handlePress = this.handlePress.bind(this);
+    this.animate = this.animate.bind(this);
+
+    this.state = {
+      active: this.props.active,
+      animatedValue: new Animated.Value(this.props.active ? knobOffset : 0),
+
+      // Guardo esta función para poder usarla en getDerivedStateFromProps
+      animate: this.animate,
+    };
   }
 
-  state = {
-    active: this.props.active,
-    animatedValue: new Animated.Value(this.props.active ? knobOffset : 0),
-  }
+  static getDerivedStateFromProps(props, state) {
+    if (props.active !== state.active) {
+      state.animate(props.active);
 
-  componentDidUpdate(prevProps, prevState) {
-    if (prevProps.active !== this.props.active) {
+      return {
+        active: props.active,
+      };
     }
+
+    return null;
   }
 
   handlePress() {
@@ -35,43 +57,55 @@ export default class Toggle extends React.Component {
     this.setState(
       { active: newState },
       () => {
-        // this.props.onToggle(this.state.active)
+        Utils.secureCall(this.props.onToggle, this.state.active);
       }
-    )
+    );
 
+    this.animate(newState);
+  }
+
+  animate(value) {
     Animated.timing(
       this.state.animatedValue,
       {
-        toValue: newState ? knobOffset : 0,
+        toValue: value ? knobOffset : 0,
         easing: Easing.elastic(0),
         duration: 500,
       }
-    ).start()
+    ).start();
   }
 
   render() {
+    let backgroundColor = this.state.animatedValue.interpolate({
+      inputRange: [ 0, knobOffset ],
+      outputRange: [ 'gray', 'limegreen' ],
+    });
+
     return (
-      <TouchableOpacity
+      <AnimatedTouchableOpacity
         activeOpacity={ 0.5 }
         style={{
-          backgroundColor: this.state.active ? "limegreen" : "gray",
+          backgroundColor,
           width: 50,
           height: 28,
           borderRadius: 32,
           padding: 2,
         }}
-        onPress={ () => this.handlePress() } >
+        onPress={ this.handlePress }
+      >
 
-        <Animated.View style={{
-          backgroundColor: '#fff',
-          width: 24,
-          height: 24,
-          borderRadius: 32,
-          transform: [{
-            translateX: this.state.animatedValue,
-          }]
-        }} />
-      </TouchableOpacity>
-    )
+        <Animated.View
+          style={{
+            backgroundColor: '#fff',
+            width: 24,
+            height: 24,
+            borderRadius: 32,
+            transform: [
+              { translateX: this.state.animatedValue }
+            ],
+          }}
+        />
+      </AnimatedTouchableOpacity>
+    );
   }
 }
