@@ -102,15 +102,16 @@ export default class TimetablesScreen extends FocusListenerScreen {
     setOnDeleteButtonPress(this.deleteSelectedClassSchedules);
 
     this.props.navigation.setParams({ create: false });
-    BackHandler.addEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
+    BackHandler.addEventListener('hardwareBackPress', this.onBackButtonPressAndroid);
   }
 
   willBlur() {
-    BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
+    BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressAndroid);
   }
 
   didBlur() {
     this.resetCreateSchedule();
+    setDeleteButtonVisible(false);
 
     this.setState({
       selectionMode: 'normal',
