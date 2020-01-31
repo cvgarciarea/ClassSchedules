@@ -15,7 +15,7 @@ export default class CompatibleTouchable extends React.Component {
     if (Utils.itsTouchableNativeFeedbackCompatibleDevice()) {
       Touchable = TouchableNativeFeedback;
 
-      if (Utils.itsRippleCompatibleDevice()) {
+      if (props.itsRounded && Utils.itsRippleCompatibleDevice()) {
         props.background = TouchableNativeFeedback.Ripple('#000', true);
       }
 
