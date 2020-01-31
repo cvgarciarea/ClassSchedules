@@ -23,7 +23,7 @@ import {
   FlexSpacer,
 } from './spacer';
 
-export default class CreateClassSchedule extends React.Component {
+export default class ClassScheduleCreator extends React.Component {
 
   static defaultProps = {
     subjectID: null,
@@ -71,6 +71,7 @@ export default class CreateClassSchedule extends React.Component {
       color: previousColor,
 
       warnings: [], // 'no-time-diff', 'end-before-start'
+      endDayModified: false,
     };
   }
 
@@ -237,6 +238,7 @@ export default class CreateClassSchedule extends React.Component {
                 this.setState(
                   {
                     startDay: days[0],
+                    endDay: this.state.endDayModified ? this.state.endDay : days[0],
                     warnings,
                   },
                   () => this.dataChanged()
@@ -281,6 +283,7 @@ export default class CreateClassSchedule extends React.Component {
                 this.setState(
                   {
                     endDay: days[0],
+                    endDayModified: true,
                     warnings,
                   },
                   () => this.dataChanged()

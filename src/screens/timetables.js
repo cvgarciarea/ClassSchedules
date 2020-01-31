@@ -23,7 +23,7 @@ import GridContent from '../components/grid-content';
 import RowLabels from '../components/row-labels';
 import ColumnLabels from '../components/column-labels';
 import CircleTransition from '../components/circle-reveal-view';
-import CreateClassSchedule from '../components/create-class-schedule';
+import ClassScheduleCreator from '../components/class-schedule-creator';
 import {
   animateFAB,
   setOnFABPress,
@@ -703,7 +703,7 @@ export default class TimetablesScreen extends FocusListenerScreen {
                                                 //       el círculo
         >
 
-          <CreateClassSchedule
+          <ClassScheduleCreator
             ref={ component => this.classScheduleCreatror = component }
             {...this.state.editingScheduleData}
             onDataChange={ (valid, data) => {
