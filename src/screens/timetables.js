@@ -246,6 +246,7 @@ export default class TimetablesScreen extends FocusListenerScreen {
 
     if (revealed) {
       this.revealer.collapse();
+      animateFAB('create');
     }
 
     return revealed;
