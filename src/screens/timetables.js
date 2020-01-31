@@ -26,13 +26,11 @@ import CircleTransition from '../components/circle-reveal-view';
 import CreateClassSchedule from '../components/create-class-schedule';
 import {
   animateFAB,
-  animatingFAB,
   setOnFABPress,
   setSaveButtonVisible,
   setOnSaveButtonPress,
   setDeleteButtonVisible,
   setOnDeleteButtonPress,
-  setShowSubButtons,
 } from './home';
 
 export default class TimetablesScreen extends FocusListenerScreen {
@@ -90,13 +88,19 @@ export default class TimetablesScreen extends FocusListenerScreen {
   }
 
   didFocus() {
-    animateFAB('create');
+    let create = this.props.navigation.getParam('create');
+    if (create) {
+      this.revealer.expand();
+    } else {
+      animateFAB('create');
+      this.resetCreateSchedule();
+    }
+
+    setSaveButtonVisible(create);
     setOnFABPress(this.onFABPress);
     setOnSaveButtonPress(this.onSaveButtonPress);
     setOnDeleteButtonPress(this.deleteSelectedClassSchedules);
-    setShowSubButtons(false);
 
-    this.resetCreateSchedule();
     BackHandler.addEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
   }
 
@@ -247,7 +251,7 @@ export default class TimetablesScreen extends FocusListenerScreen {
   }
 
   onBackButtonPressAndroid() {
-    return this.resetCreateSchedule() || animatingFAB;
+    return this.resetCreateSchedule();
   }
 
   itsVisible(schedule) {

@@ -12,10 +12,11 @@ import Colors from '../utils/colors';
 
 import FocusListenerScreen from './focus-listener';
 import {
+  FABMode,
   animateFAB,
-  animatingFAB,
   setOnFABPress,
   setShowSubButtons,
+  setOnFABAnimationFinish,
 } from './home';
 
 import {
@@ -60,9 +61,33 @@ export default class SettingsScreen extends FocusListenerScreen {
   }
 
   didFocus() {
+    // Tengo que ver si se está reseteando la animación del botón del signo de
+    // más porque sino aparecen los tres botones como cuando se toca por
+    // segunda vez en esta pantalla, es decir, escondiéndose.
+
+    if (FABMode === 'create') {
+      setShowSubButtons(true);
+    } else {
+      let set = false;
+
+      setOnFABAnimationFinish(mode => {
+        if (!set && mode === 'create') {
+          set = true;
+          setShowSubButtons(true);
+        }
+      })
+    }
+
     animateFAB('create');
     setOnFABPress(this.onFABPress);
-    setShowSubButtons(true);
+  }
+
+  willBlur() {
+    // Por ahora esta es la única pantalla que va a usar esta función, así que
+    // es más fácil/rápido si me deshago de esta función acá y no el didFocus
+    // del resto de pantallas.
+    setOnFABAnimationFinish(() => {});
+    setShowSubButtons(false);
   }
 
   addModal(modal) {
@@ -81,7 +106,6 @@ export default class SettingsScreen extends FocusListenerScreen {
   }
 
   onFABPress() {
-    console.log('settings');
   }
 
   onThemeChanged(theme) {

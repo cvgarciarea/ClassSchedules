@@ -2,10 +2,13 @@ import React from 'react';
 import {
   View,
   Text,
+  Modal,
   Easing,
   Animated,
   StatusBar,
+  Dimensions,
   TouchableOpacity,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import { createBottomTabNavigator } from 'react-navigation';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -17,14 +20,62 @@ import State from '../utils/state';
 import Colors from '../utils/colors';
 
 import TimetablesScreen from './timetables';
-import RemindersScreen from './reminders';
+import NotesScreen from './notes';
 import GoalsScreen from './goals';
 import SettingsScreen from './settings';
 
 import HeaderButton from '../components/header-button';
 
 export let animateFAB = null;
-export let animatingFAB = false;
+export let FABMode = null;
+
+const BOTTOMBAR_HEIGHT = 52;
+
+class SubButton extends React.Component {
+
+  render() {
+    let {
+      left,
+      top,
+      opacity,
+      iconName,
+      color,
+      size,
+      onPress,
+    } = this.props;
+
+    return (
+      <Animated.View
+        style={{
+          position: 'absolute',
+          left,
+          top,
+          opacity,
+        }}
+      >
+
+        <TouchableOpacity
+          style={{
+            elevation: 4,
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: size,
+            height: size,
+            borderRadius: size / 2,
+            backgroundColor: color,
+          }}
+          onPress={ onPress }
+        >
+          <Icon
+            name={ iconName }
+            size={ 16 }
+            color={ '#F8F8F8' }
+          />
+        </TouchableOpacity>
+      </Animated.View>
+    );
+  }
+}
 
 class CreateButton extends React.Component {
 
@@ -34,6 +85,7 @@ class CreateButton extends React.Component {
     onFirstButtonPress: null,
     onSecondButtonPress: null,
     onThirdbuttonPress: null,
+    onHideButtons: null,
   };
 
   static propTypes = {
@@ -42,6 +94,7 @@ class CreateButton extends React.Component {
     onFirstButtonPress: PropTypes.func,
     onSecondButtonPress: PropTypes.func,
     onThirdbuttonPress: PropTypes.func,
+    onHideButtons: PropTypes.func,
   };
 
   render() {
@@ -51,6 +104,10 @@ class CreateButton extends React.Component {
 
     const size = 50;
     const subButtonSize = size * 0.75;
+    const {
+      width: screenWidth,
+      height: screenHeight,
+    } = Dimensions.get('window');
 
     const {
       animatedValue,
@@ -58,8 +115,15 @@ class CreateButton extends React.Component {
       onPress,
       onFirstButtonPress,
       onSecondButtonPress,
-      onThirdbuttonPress,
+      onThirdButtonPress,
     } = this.props;
+
+    const startX = (screenWidth - subButtonSize) / 2;
+    const startY = screenHeight -
+                   BOTTOMBAR_HEIGHT -
+                   StatusBar.currentHeight -
+                   size / 2 +
+                   subButtonSize / 2;
 
     const mainBackgroundColor = animatedValue.interpolate({
       inputRange: [ 0, 1 ],
@@ -73,32 +137,34 @@ class CreateButton extends React.Component {
 
     const firstX = animatedValue.interpolate({
       inputRange: [ 0, 1 ],
-      outputRange: [ -subButtonSize / 2, -60 - subButtonSize / 2 ],
+      // outputRange: [ -subButtonSize / 2, -60 - subButtonSize / 2 ],
+      outputRange: [ startX, startX - 60 ],
     });
 
     const firstY = animatedValue.interpolate({
       inputRange: [ 0, 1 ],
-      outputRange: [ 0, -subButtonSize / 2 - 30 ],
+      // outputRange: [ 0, -subButtonSize / 2 - 30 ],
+      outputRange: [ startY, startY - 45 ],
     });
 
     const secondX = animatedValue.interpolate({
       inputRange: [ 0, 1 ],
-      outputRange: [ -subButtonSize / 2, -subButtonSize / 2 ],
+      outputRange: [ startX, startX ],
     });
 
     const secondY = animatedValue.interpolate({
       inputRange: [ 0, 1 ],
-      outputRange: [ 0, -subButtonSize / 2 - 50 ],
+      outputRange: [ startY, startY - 65 ],
     });
 
     const thirdX = animatedValue.interpolate({
       inputRange: [ 0, 1 ],
-      outputRange: [ -subButtonSize / 2, 60 - subButtonSize / 2 ],
+      outputRange: [ startX, startX + 60 ],
     });
 
     const thirdY = animatedValue.interpolate({
       inputRange: [ 0, 1 ],
-      outputRange: [ 0, -subButtonSize / 2 - 30 ],
+      outputRange: [ startY, startY - 45 ],
     });
 
     const opacity = animatedValue.interpolate({
@@ -106,132 +172,27 @@ class CreateButton extends React.Component {
       outputRange: [ 0, 1 ], 
     });
 
-    // FIXME: Los sub botones no detectan toques (onPress nunca se triggerea)
+    const overlayBackground = animatedValue.interpolate({
+      inputRange: [ 0, 1 ],
+      outputRange: [ '#00000000', '#000000ab' ],
+    });
 
-    return (
-      <View
-        style={{
-          flex: 4,
-          alignItems: 'center',
-        }}
-      >
-
-        {
-          showSubButtons ?
-            <View>
-              { /* Primer sub botón */ }
-              <Animated.View
-                style={{
-                  position: 'absolute',
-                  left: firstX,
-                  top: firstY,
-                  opacity,
-                }}
-              >
-
-                <TouchableOpacity
-                  onPress={ onFirstButtonPress }
-                  onFocus={ () => console.log('testing10') }
-                  style={{
-                    elevation: 4,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    width: subButtonSize,
-                    height: subButtonSize,
-                    borderRadius: subButtonSize / 2,
-                    backgroundColor: '#48A2F8'
-                  }}
-                >
-                  <Icon
-                    name={ 'calendar-multiselect' }
-                    size={ 16 }
-                    color={ '#F8F8F8' }
-                  />
-                </TouchableOpacity>
-              </Animated.View>
-
-              { /* Segundo sub botón */ }
-              <Animated.View
-                style={{
-                  position: 'absolute',
-                  left: secondX,
-                  top: secondY,
-                  opacity,
-                }}
-              >
-
-                <TouchableOpacity
-                  onPress={ onSecondButtonPress }
-                  style={{
-                    elevation: 4,
-                    position: 'absolute',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    width: subButtonSize,
-                    height: subButtonSize,
-                    borderRadius: subButtonSize / 2,
-                    backgroundColor: '#48A2F8'
-                  }}
-                >
-                  <Icon
-                    name={ 'notebook' }
-                    size={ 16 }
-                    color={ '#F8F8F8' }
-                  />
-                </TouchableOpacity>
-              </Animated.View>
-
-              { /* Tercer sub botón */ }
-              <Animated.View
-                style={{
-                  position: 'absolute',
-                  left: thirdX,
-                  top: thirdY,
-                  opacity,
-                }}
-              >
-
-                <TouchableOpacity
-                  onPress={ onThirdbuttonPress }
-                  style={{
-                    elevation: 4,
-                    position: 'absolute',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    width: subButtonSize,
-                    height: subButtonSize,
-                    borderRadius: subButtonSize / 2,
-                    backgroundColor: '#48A2F8'
-                  }}
-                >
-                  <Icon
-                    name={ 'trophy' }
-                    size={ 16 }
-                    color={ '#F8F8F8' }
-                  />
-                </TouchableOpacity>
-              </Animated.View>
-            </View>
-          :
-            null
-        }
-
-        { /* El botón con el signo de más, que siempre está visible */ }
+    let renderPlusButton = styles => {
+      return (
         <Animated.View
           iconName={ 'plus' }
-          style={{
-            position: 'relative',
-            bottom: 10,
-            right: 0,
-            backgroundColor: mainBackgroundColor,
-            width: size,
-            height: size,
-            borderRadius: size / 2,
-            elevation: 4,
-            transform: [
-              { rotate: mainRotate },
-            ],
-          }}
+          style={[
+            {
+              backgroundColor: mainBackgroundColor,
+              width: size,
+              height: size,
+              borderRadius: size / 2,
+              transform: [
+                { rotate: mainRotate },
+              ],
+            },
+            styles,
+          ]}
         >
           <TouchableOpacity
             style={{
@@ -249,6 +210,105 @@ class CreateButton extends React.Component {
             />
           </TouchableOpacity>
         </Animated.View>
+      );
+    }
+
+    return (
+      <View
+        style={{
+          flex: 4,
+          alignItems: 'center',
+        }}
+      >
+
+        {
+          showSubButtons ?
+            <Modal
+              transparent={ true }
+              onRequestClose={ this.props.onHideButtons }
+            >
+              <TouchableWithoutFeedback
+                onPress={ this.props.onHideButtons }
+              >
+
+                <View
+                  style={{
+                    width: screenWidth,
+                    height: screenHeight,
+                  }}
+                >
+
+                  {
+                    /**
+                     * Un botón de más falso que solo se ve con el modal, da
+                     * la impresión de que es el otro porque se encuentra en
+                     * la misma posición.
+                     */
+                    renderPlusButton({
+                      position: 'absolute',
+                      left: (screenWidth - size) / 2,
+                      bottom: 35,
+                      zIndex: 100,
+                    })
+                  }
+
+                  <Animated.View
+                    style={{
+                      backgroundColor: overlayBackground,
+                      width: screenWidth,
+                      height: screenHeight - BOTTOMBAR_HEIGHT - StatusBar.currentHeight,
+                    }}
+                  >
+                    { /* Primer sub botón, horarios */ }
+                    <SubButton
+                      left={ firstX }
+                      top={ firstY }
+                      opacity={ opacity }
+                      iconName={ 'calendar-multiselect' }
+                      color={ Colors.timetables }
+                      size={ subButtonSize }
+                      onPress={ onFirstButtonPress }
+                    />
+
+                    { /* Segundo sub botón, notas */ }
+                    <SubButton
+                      left={ secondX }
+                      top={ secondY }
+                      opacity={ opacity }
+                      iconName={ 'notebook' }
+                      color={ Colors.notes }
+                      size={ subButtonSize }
+                      onPress={ onSecondButtonPress }
+                    />
+
+                    { /* Tercer sub botón, objetivos */ }
+                    <SubButton
+                      left={ thirdX }
+                      top={ thirdY }
+                      opacity={ opacity }
+                      iconName={ 'trophy' }
+                      color={ Colors.goals }
+                      size={ subButtonSize }
+                      onPress={ onThirdButtonPress }
+                    />
+                  </Animated.View>
+                </View>
+              </TouchableWithoutFeedback>
+            </Modal>
+          :
+            null
+        }
+
+        { /* El botón con el signo de más, que siempre está visible */ }
+
+        {
+          renderPlusButton({ 
+            position: 'relative',
+            bottom: 10,
+            elevation: 4,
+          })
+        }
+
       </View>
     );
   }
@@ -259,12 +319,15 @@ class BottomTabBar extends React.Component {
   constructor(props) {
     super(props);
 
+    FABMode = 'create';  // 'create' | 'cancel'
+
     this.state = {
       rendered: false,
+      animatingFAB: false,
+      FABMode,
     };
 
     this.FABModeAnimValue = new Animated.Value(0);
-    this.FABMode = 'create';  // 'create' | 'cancel'
     animateFAB = this.animateFAB.bind(this);
 
     this.timetablesRoute = null;
@@ -278,13 +341,18 @@ class BottomTabBar extends React.Component {
   }
 
   animateFAB(mode) {
-    if (mode === this.FABMode) {
+    // FIXME: El valor animado de los sub botones debería ser independiente
+    //        del valor del botón del signo de más, por como funciona ahora
+    //        cuando navego a otra pantalla los sub botones simplemente
+    //        desaparecen, no hay animación de esconderse.
+
+    if (mode === FABMode) {
       return;
     }
 
-    this.FABMode = mode;
+    FABMode = mode;
     let toValue = mode === 'create' ? 0 : 1;
-    animatingFAB = true;
+    this.setState({ animatingFAB: true });
 
     Animated.timing(
       this.FABModeAnimValue,
@@ -295,7 +363,13 @@ class BottomTabBar extends React.Component {
       },
     )
     .start(() => {
-      animatingFAB = false;
+      this.setState({
+        animatingFAB: false,
+        FABMode: FABMode,
+      });
+
+      let callback = this.props.navigation.getParam('fabAnimationFinish', () => {});
+      callback(FABMode);
     });
   }
 
@@ -325,7 +399,7 @@ class BottomTabBar extends React.Component {
       <View
         style={{
           flexDirection: 'row',
-          height: 52,
+          height: BOTTOMBAR_HEIGHT,
           backgroundColor: '#0096A6',
         }}
         removeClippedSubviews={ false }
@@ -347,12 +421,16 @@ class BottomTabBar extends React.Component {
                 <CreateButton
                   key={ 10 }
                   animatedValue={ this.FABModeAnimValue }
-                  showSubButtons={ this.props.navigation.getParam('showSubButtons', false) }
-                  onFirstButtonPress={ () => navigate('Timetables', { craete: true }) }
-                  onSecondButtonPress={ () => navigate('Reminders', { craete: true }) }
-                  onThirdButtonPress={ () => navigate('Goals', { craete: true }) }
+                  showSubButtons={
+                    this.props.navigation.getParam('showSubButtons', false) &&
+                    (this.state.FABMode === 'cancel' || this.state.animatingFAB)
+                  }
+                  onHideButtons={ () => this.animateFAB('create') }
+                  onFirstButtonPress={ () => navigate('Timetables', { create: true }) }
+                  onSecondButtonPress={ () => navigate('Notes', { create: true }) }
+                  onThirdButtonPress={ () => navigate('Goals', { create: true }) }
                   onPress={ () => {
-                    this.animateFAB(this.FABMode === 'create' ? 'cancel' : 'create');
+                    this.animateFAB(FABMode === 'create' ? 'cancel' : 'create');
       
                     let callback = navigation.getParam('onCreatePress', null);
                     Utils.secureCall(callback);
@@ -422,10 +500,10 @@ let tabNavigator = createBottomTabNavigator({
     },
   },
 
-  Reminders: {
-    screen: RemindersScreen,
+  Notes: {
+    screen: NotesScreen,
     navigationOptions: {
-      tabBarLabel: i18n.t('reminders'),
+      tabBarLabel: i18n.t('notes'),
       tabBarIcon: ({ tintColor, focused }) => (
         <Icon
           size={ 25 }
@@ -565,6 +643,14 @@ export let setOnDeleteButtonPress = callback => {
 
 export let setShowSubButtons = show => {
   setParams({ showSubButtons: show });
+}
+
+export let setOnFABAnimationFinish = callback => {
+  setParams({ fabAnimationFinish: callback });
+}
+
+export let getCurrentFABMode = callback => {
+  setParams({ getCurrentFABMode: callback });
 }
 
 export default tabNavigator;

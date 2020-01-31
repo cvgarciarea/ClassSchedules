@@ -9,13 +9,11 @@ import Colors from '../utils/colors';
 import FocusListenerScreen from './focus-listener';
 import {
   animateFAB,
-  animatingFAB,
   setOnFABPress,
   setSaveButtonVisible,
   setOnSaveButtonPress,
   setDeleteButtonVisible,
   setOnDeleteButtonPress,
-  setShowSubButtons,
 } from './home';
 
 export default class GoalsScreen extends FocusListenerScreen {
@@ -42,17 +40,19 @@ export default class GoalsScreen extends FocusListenerScreen {
   didFocus() {
     setOnFABPress(this.onFABPress);
     this.resetCreateGoal();
-    setShowSubButtons(false);
   }
 
   resetCreateGoal() {
-    animateFAB('create');
-    setSaveButtonVisible(false);
+    let create = this.props.navigation.getParam('create', false);
+    if (!create) {
+      animateFAB('create');
+    }
+
+    setSaveButtonVisible(create);
     setDeleteButtonVisible(false);
   }
 
   onFABPress() {
-    console.log('goals')
   }
 
   onSaveButtonPress() {

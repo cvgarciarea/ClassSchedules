@@ -10,16 +10,14 @@ import Colors from '../utils/colors';
 import FocusListenerScreen from './focus-listener';
 import {
   animateFAB,
-  animatingFAB,
   setOnFABPress,
   setSaveButtonVisible,
   setOnSaveButtonPress,
   setDeleteButtonVisible,
   setOnDeleteButtonPress,
-  setShowSubButtons,
 } from './home';
 
-export default class RemindersScreen extends FocusListenerScreen {
+export default class NotesScreen extends FocusListenerScreen {
 
   constructor(props) {
     super(props);
@@ -42,21 +40,22 @@ export default class RemindersScreen extends FocusListenerScreen {
 
   didFocus() {
     setOnFABPress(this.onFABPress);
-    setShowSubButtons(false);
-
     this.resetCreateReminder();
   }
 
   resetCreateReminder() {
-    animateFAB('create');
+    let create = this.props.navigation.getParam('create', false);
+    if (!create) {
+      animateFAB('create');
+    }
+
+    setSaveButtonVisible(create);
+    setDeleteButtonVisible(false);
     setOnSaveButtonPress(this.onSaveButtonPress);
     setOnDeleteButtonPress(this.onDeleteButtonPress);
-    setSaveButtonVisible(false);
-    setDeleteButtonVisible(false);
   }
 
   onFABPress() {
-    console.log('reminders');
   }
 
   onSaveButtonPress() {
