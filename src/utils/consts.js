@@ -40,6 +40,7 @@ export default class Consts {
       '#D84B95',
       '#C63DCF',
       '#4091BC',
-    ]
-  }
+    ],
+    createScheduleAtEmptyHour: false,
+  };
 }

@@ -121,6 +121,10 @@ export default class SettingsScreen extends FocusListenerScreen {
     State.setVisibleDays(days);
   }
 
+  onCreateScheduleAtEmptyHoursChanged(value) {
+    State.setCreateScheduleAtEmptyHour(value);
+  }
+
   render() {
     this.state.rendered = true;
 
@@ -179,6 +183,13 @@ export default class SettingsScreen extends FocusListenerScreen {
             touchable={ false }
             activeDays={ State.visibleDays }
             onChange={ days => this.onVisibleDaysChanged(days) }
+          />
+
+          <BooleanSettingItem
+            title={ i18n.t('create-schedule-at-empty-hour') }
+            icon={ 'gesture-tap' }
+            value={ State.createScheduleAtEmptyHour }
+            onToggle={ val => this.onCreateScheduleAtEmptyHoursChanged(val) }
           />
 
           <SettingItem

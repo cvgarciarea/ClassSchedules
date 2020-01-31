@@ -1,32 +1,44 @@
-/* @flow */
-
-import React, { Component } from 'react';
+import React from 'react';
 import {
   View,
+  Text,
   StyleSheet,
   TouchableOpacity,
 } from 'react-native';
+import PropTypes from 'prop-types';
 
 import Consts from '../utils/consts';
+import Utils from '../utils/utils';
 import State from '../utils/state';
 import Colors from '../utils/colors';
 
-export default class GridContent extends Component {
+export default class GridContent extends React.Component {
 
   static defaultProps = {
     cellsByRow: [],
-  }
+  };
+
+  static propTypes = {
+    cellsByRow: PropTypes.array,
+  };
 
   constructor(props) {
     super(props);
 
     this.state = {
       updated: true,
-    }
+    };
 
     State.subscribeTo(
       'theme',
       theme => {
+        this.setState({ updated: false });
+      },
+    );
+
+    State.subscribeTo(
+      'create-schedule-at-empty-hour',
+      val => {
         this.setState({ updated: false });
       },
     );
@@ -35,6 +47,9 @@ export default class GridContent extends Component {
   render() {
     this.state.updated = true;
     let theme = Colors.Themes[State.theme];
+
+    let { cellsByRow } = this.props;
+    cellsByRow = cellsByRow || [];
 
     return (
       <View
@@ -45,32 +60,48 @@ export default class GridContent extends Component {
         }}
       >
 
-        { this.props.cellsByRow.map(row => this._renderRow(row)) }
+        {
+          this.props.cellsByRow.map(row => {
+            return this.renderRow(row);
+          })
+        }
       </View>
     );
   }
 
-  _renderRow(row) {
+  renderRow(row) {
     return (
       <View
         key={ row.id }
         style={ styles.rowContainer }
       >
-        { row.cells.map(cell => this._renderCell(cell)) }
+        {
+          row.cells.map(cell => {
+            return this.renderCell(row.id, cell);
+          })
+        }
       </View>
     );
   }
 
-  _renderCell(cell) {
+  renderCell(row, cell) {
     let theme = Colors.Themes[State.theme];
 
     return (
       <TouchableOpacity 
         key={ cell.id }
-        style={[ styles.cellContainer, { backgroundColor: theme.cellBackground } ]}
-        onPress={ () => { } }>
+        style={[
+          styles.cellContainer,
+          { backgroundColor: theme.cellBackground }
+        ]}
+        disabled={ !State.createScheduleAtEmptyHour }
+        onPress={ () => {
+          const hour = Number(row);
+          const day = Number(cell.id);
 
-      </TouchableOpacity>
+          Utils.secureCall(this.props.onCreateClassSchedule, day, hour);
+        }}
+      />
     );
   }
 }
@@ -81,8 +112,6 @@ const styles = StyleSheet.create({
   },
 
   cellContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
     height: Consts.Sizes.CellHeight,
     width: Consts.Sizes.CellWidth,
     margin: Consts.Sizes.CellMargin,

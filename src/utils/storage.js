@@ -12,6 +12,7 @@ export default class Storage {
     theme: 'theme',
     schedules: 'schedules',
     recentColors: 'recentcolors',
+    createScheduleAtEmptyHour: 'createscheduleatemptyhour',
   };
 
   // ****************************************************************

@@ -17,7 +17,6 @@ export default class Utils {
       for (let columnIndex=0; columnIndex < visibleDays.length; columnIndex++) {
         row.cells.push({
           id: visibleDays[columnIndex],
-          title: 'Cell',
         });
       }
 
@@ -47,6 +46,12 @@ export default class Utils {
     return typeof value === 'boolean';
   }
 
+  /**
+   * Recibe una posible función como primer elemento de arguments, en caso de
+   * que efectivamente se trate de una función se llama y se pasan el resto de
+   * parámetros como argumentos a esta y se devuelve lo que la función
+   * devuelva, en caso de no tratarse de funa función no se hace nada.
+   */
   static secureCall() {
     let func = arguments[0];
 
@@ -59,6 +64,37 @@ export default class Utils {
 
       return func(...params);
     }
+  }
+
+  /**
+   * Recibe un valor y se intenta interpretar como un booleano, si se trata de
+   * un booleano se devuelve tal cual, si es una cadena se ve de que valga
+   * 'false', 'true', '0' o '1', etc...
+   * 
+   * @param {Any} value 
+   * 
+   * @return {Boolean}
+   */
+  static parseBoolean(value) {
+    if (Utils.emptyValue(value)) {
+      return false;
+    } else if (typeof(value) === 'boolean') {
+      return value;
+    } else if (typeof(value) === 'string') {
+      if (value === 'true') {
+        return true;
+      } else if (value === 'false') {
+        return false;
+      } else if (['0', '1'].includes(value)) {
+        return Boolean(Number(value));
+      } else {
+        return null;
+      }
+    } else if (typeof(value) === 'number') {
+      return Boolean(value);
+    }
+
+    return null;
   }
 
   static numberToMomentHour(value) {

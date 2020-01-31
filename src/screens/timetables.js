@@ -121,7 +121,7 @@ export default class TimetablesScreen extends FocusListenerScreen {
   }
 
   onFABPress() {
-    if (!Utils.emptyValue(this.revealer)) {
+    if (Utils.isDefined(this.revealer)) {
       if (this.revealer.getVisible()) {
         this.setState({ editingScheduleData: {} });
       }
@@ -539,7 +539,8 @@ export default class TimetablesScreen extends FocusListenerScreen {
                 key={ day }
                 style={[
                   styles.cell,
-                  dynamicStyles.cell
+                  dynamicStyles.cell,
+                  { zIndex: 1000 }
                 ]}
                 onPress={ () => {
                   if (this.state.selectionMode === 'selecting') {
@@ -627,7 +628,9 @@ export default class TimetablesScreen extends FocusListenerScreen {
     const cellsByRow = Utils.getCellsByRow(State.visibleHours, State.visibleDays);
 
     let contentContainerStyle = {
-      height: (Consts.Sizes.CellHeight + Consts.Sizes.CellMargin * 2) * (State.visibleHours.end - State.visibleHours.start) + Consts.Sizes.columnLabelHeight,
+      height: (Consts.Sizes.CellHeight + Consts.Sizes.CellMargin * 2) *
+              (State.visibleHours.end - State.visibleHours.start) +
+              Consts.Sizes.columnLabelHeight,
       width: (Consts.Sizes.CellWidth + Consts.Sizes.CellMargin * 2) * State.visibleDays.length + Consts.Sizes.rowLabelWidth,
     };
 
@@ -651,23 +654,42 @@ export default class TimetablesScreen extends FocusListenerScreen {
             bouncesZoom={ true }
             maximumZoomScale={ 2 }
             minimumZoomScale={ 0.2 }
-            showsHorizontalScrollIndicator={ false }
-            showsVerticalScrollIndicator={ false }
             contentContainerStyle={ contentContainerStyle }
             style={ styles.container }
           >
 
-            <ScrollViewChild scrollDirection={ 'both' }>
-              <GridContent cellsByRow={ cellsByRow } />
-            </ScrollViewChild>
-
             <ScrollViewChild
               scrollDirection={ 'both' }
-              style={ styles.cellsContainer }
             >
+              <GridContent
+                cellsByRow={ cellsByRow }
+                onCreateClassSchedule={ (day, hour) => {
+                  const timeFormat = 'HH:mm';
+
+                  // Creo horario de clase con los datos de la celda
+                  this.setState(
+                    {
+                      editingScheduleData: {
+                        previousStartTime: Utils.numberToMomentHour(hour).format(timeFormat),
+                        previousEndTime: Utils.numberToMomentHour(hour + 1).format(timeFormat),
+                        previousStartDay: day,
+                        previousEndDay: day,
+                      },
+                    },
+                    () => {
+                      // Cambio el estado del FAB
+                      animateFAB('cancel');
+
+                      // Muestro el creador de materias
+                      if (!this.revealer.getVisible()) {
+                        this.revealer.expand();
+                      }
+                    }
+                  );
+                }}
+              />
 
               { this.renderClassesCells() }
-              { /* <Text style={{ fontSize: 30 }}>TEST</Text> */ }
             </ScrollViewChild>
 
             <ScrollViewChild
@@ -746,7 +768,7 @@ const styles = StyleSheet.create({
     bottom: -Consts.Sizes.CellHeight,
     left: 0,
     right: 0,
-    // backgroundColor: '#aaffaa',
+    backgroundColor: '#aaffaa',
   },
 
   cell: {

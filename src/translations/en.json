@@ -8,6 +8,7 @@
   "more": "More",
   "theme": "Theme",
   "visible-hours": "Visible hours",
+  "create-schedule-at-empty-hour": "Create class schedule at empty hours",
   "version": "Version",
   "about": "About",
   "created-by": "Created by",
