@@ -1,30 +1,33 @@
 export default class Colors {
 
-  static primary = '#ff5722'
-  static primaryDark = '#c41C00'
-  static primaryLight = '#ffC3b7'
+  static primary = '#ff5722';
+  static primaryDark = '#c41C00';
+  static primaryLight = '#ffC3b7';
 
-  static secondary = '#8bc34a'
-  static secondaryDark = '#5a9216'
-  static secondaryLight = '#5a9216'
+  static secondary = '#8bc34a';
+  static secondaryDark = '#5a9216';
+  static secondaryLight = '#5a9216';
 
-  static tests = '#7cb342'
-  static testsDark = '#4b830d'
-  static testsLight = '#aee571'
+  static tests = '#7cb342';
+  static testsDark = '#4b830d';
+  static testsLight = '#aee571';
 
-  static settings = '#1976d2'
-  static settingsDark = '#004ba0'
-  static settingsLight = '#63a4ff'
+  static settings = '#1976d2';
+  static settingsDark = '#004ba0';
+  static settingsLight = '#63a4ff';
 
-  static dayNameBackground = '#4b830d'
-  static hourBackground = '#004ba0'
+  static dayNameBackground = '#4b830d';
+  static hourBackground = '#004ba0';
+
+  static timetables = '#6DAD31';
+  static notes = '#00A383';
+  static goals = '#E37F32';
 
   static Action = {
     CONSTRUCTIVE: '#8bc34a',
     DESTRICTIVE: '#c34a4a',
-  }
+  };
 
-  static THEME = 'dark';
 
   static Themes = {
     light: {
