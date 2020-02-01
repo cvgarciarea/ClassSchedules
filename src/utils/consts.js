@@ -21,6 +21,17 @@ export default class Consts {
     SATURDAY: 6,
   };
 
+  // Debería hacer un objeto con la relación: [Consts.Days.X] -> 'name' ?
+  static dayNames = [
+    'sunday',
+    'monday',
+    'tuesday',
+    'wednesday',
+    'thursday',
+    'friday',
+    'saturday',
+  ];
+
   static defaultSettings = {
     theme: 'light',
     visibleDays: [

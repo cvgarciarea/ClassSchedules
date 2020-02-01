@@ -7,6 +7,7 @@ import {
 } from 'react-native';
 import PropTypes from 'prop-types';
 
+import i18n from '../i18n';
 import Utils from '../utils/utils';
 import State from '../utils/state';
 import Colors from '../utils/colors';
@@ -30,6 +31,13 @@ export default class Hyperlink extends React.Component {
 
     return (
       <TouchableOpacity
+        accessible={ true }
+        accessibilityLabel={ `${ i18n.t('link-to') } ${ this.props.url }`}
+        accessibilityRole={ 'link' }
+        style={{
+          minHeight: 30,
+          justifyContent: 'center',
+        }}
         onPress={ () => {
           let {
             url,

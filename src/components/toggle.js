@@ -6,6 +6,7 @@ import {
 } from 'react-native';
 import PropTypes from 'prop-types';
 
+import i18n from '../i18n';
 import Utils from '../utils/utils';
 
 // Inspirado en: https://jonsuh.com/blog/animated-toggle-react-native/
@@ -83,6 +84,12 @@ export default class Toggle extends React.Component {
 
     return (
       <AnimatedTouchableOpacity
+        accessible={ true }
+        accessibilityRole={ 'checkbox' }
+        accessibilityLabel={ i18n.t('checkbox') }
+        accessibilityState={{
+          checked: this.state.active,
+        }}
         activeOpacity={ 0.5 }
         style={{
           backgroundColor,

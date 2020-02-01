@@ -9,6 +9,7 @@ import {
 import PropTypes from 'prop-types';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
+import i18n from '../i18n';
 import Utils from '../utils/utils';
 import State from '../utils/state';
 import Colors from '../utils/colors';
@@ -37,6 +38,12 @@ class ColorDot extends React.Component {
 
     return (
       <TouchableOpacity
+        accessible={ true }
+        accessibilityRole={ 'radio' }
+        accessibilityLabel={ i18n.t(Colors.names[color] || '') }
+        accessibilityState={{
+          selected: this.props.selected,
+        }}
         style={{
           width: size,
           height: size,
@@ -96,6 +103,9 @@ export default class ColorPickerPallete extends React.Component {
     return (
       <View>
         <View
+          accessible={ true }
+          accessibilityRole={ 'radiogroup' }
+          accessibilityLabel={ i18n.t('recent-colors') }
           style={{
             flexDirection: 'row',
             justifyContent: 'space-around',
@@ -118,6 +128,13 @@ export default class ColorPickerPallete extends React.Component {
           }
 
           <TouchableOpacity
+            accessible={ true }
+            accessibilityRole={ 'button' }
+            accessibilityLabel={ i18n.t('see-more-colors') }
+            accessibilityHint={ i18n.t(this.state.palleteVisible ? 'hide-color-pallete' : 'show-color-palette') }
+            accessibilityState={{
+              expanded: this.state.palleteVisible,
+            }}
             style={{
               width: circleSize,
               height: circleSize,
@@ -145,6 +162,12 @@ export default class ColorPickerPallete extends React.Component {
         </View>
 
         <View
+          accessible={ true }
+          accessibilityRole={ 'radiogroup' }
+          accessibilityLabel={ i18n.t('color-pallete') }
+          accessibilityState={{
+            expanded: this.state.palleteVisible,
+          }}
           showsVerticalScrollIndicator={ false }
           style={{
             overflow: 'hidden',

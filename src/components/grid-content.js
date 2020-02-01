@@ -1,12 +1,12 @@
 import React from 'react';
 import {
   View,
-  Text,
   StyleSheet,
   TouchableOpacity,
 } from 'react-native';
 import PropTypes from 'prop-types';
 
+import i18n from '../i18n';
 import Consts from '../utils/consts';
 import Utils from '../utils/utils';
 import State from '../utils/state';
@@ -86,19 +86,26 @@ export default class GridContent extends React.Component {
 
   renderCell(row, cell) {
     let theme = Colors.Themes[State.theme];
+    const hour = Number(row);
+    const day = Number(cell.id);
+    const accessibilityLabel = Utils.makeCellAccessibilityLabel(day, hour);
 
     return (
-      <TouchableOpacity 
+      <TouchableOpacity
         key={ cell.id }
+        accessible={ true }
+        accessibilityRole={ 'button' }
+        accessibilityLabel={ accessibilityLabel }
+        accessibilityHint={ i18n.t('creates-class-schedule-at-this-moment') }
+        accessibilityState={{
+          disabled: !State.createScheduleAtEmptyHour,
+        }}
+        disabled={ !State.createScheduleAtEmptyHour }
         style={[
           styles.cellContainer,
           { backgroundColor: theme.cellBackground }
         ]}
-        disabled={ !State.createScheduleAtEmptyHour }
         onPress={ () => {
-          const hour = Number(row);
-          const day = Number(cell.id);
-
           Utils.secureCall(this.props.onCreateClassSchedule, day, hour);
         }}
       />

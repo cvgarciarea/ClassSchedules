@@ -29,8 +29,6 @@ export default class ColumnLabels extends Component {
   }
 
   renderColumnLabel(cell) {
-    let names = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-
     return (
       <View
         key={ cell.id }
@@ -38,7 +36,7 @@ export default class ColumnLabels extends Component {
         pointerEvents={ 'box-none' }>
 
         <Text style={styles.columnTitle}>
-          { i18n.t(names[cell.id]) }
+          { i18n.t(Consts.dayNames[cell.id]) }
         </Text>
       </View>
     );
