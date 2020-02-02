@@ -4,20 +4,20 @@ import {
   ScrollView,
 } from 'react-native';
 
-import i18n from '../i18n';
+import i18n from '../../i18n';
 
-import Consts from '../utils/consts';
-import State from '../utils/state';
-import Colors from '../utils/colors';
+import Consts from '../../utils/consts';
+import State from '../../utils/state';
+import Colors from '../../utils/colors';
 
-import FocusListenerScreen from './focus-listener';
+import FocusListenerScreen from '../focus-listener';
 import {
   FABMode,
   animateFAB,
   setOnFABPress,
   setShowSubButtons,
   setOnFABAnimationFinish,
-} from './home';
+} from '../home';
 
 import {
   SettingItem,
@@ -25,8 +25,9 @@ import {
   SelectionSettingItem,
   TimeRangeSettingItem,
   WeekdaysSettingItem,
+  NestedScreenSettingItem,
   SettingsSectionHeader,
-} from '../components/setting-item';
+} from '../../components/setting-item';
 
 export default class SettingsScreen extends FocusListenerScreen {
 
@@ -192,21 +193,33 @@ export default class SettingsScreen extends FocusListenerScreen {
             onToggle={ val => this.onCreateScheduleAtEmptyHoursChanged(val) }
           />
 
-          <SettingItem
+          <NestedScreenSettingItem
             title={ i18n.t('notifications') }
             icon={ 'bell' }
+            navigation={ this.props.navigation }
+            screenName={ 'Test' }
+          />
+
+          <SettingsSectionHeader
+            title={ i18n.t('backup') }
+          />
+
+          <NestedScreenSettingItem
+            title={ i18n.t('backup-and-restorations') }
+            icon={ 'cloud-sync' }
+            // navigation={ this.props.navigation }
+            screenName={ 'Backup' }
           />
 
           <SettingsSectionHeader
             title={ i18n.t('section-app-info') }
           />
 
-          <SettingItem
+          <NestedScreenSettingItem
             title={ i18n.t('about') }
             icon={ 'information' }
-            handlePress={ () => {
-              this.props.navigation.navigate('About');
-            }}
+            navigation={ this.props.navigation }
+            screenName={ 'About' }
           />
 
           <SettingItem

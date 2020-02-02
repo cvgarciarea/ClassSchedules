@@ -6,11 +6,11 @@ import {
   ScrollView,
 } from 'react-native';
 
-import i18n from '../i18n';
-import State from '../utils/state';
-import Colors from '../utils/colors';
+import i18n from '../../i18n';
+import State from '../../utils/state';
+import Colors from '../../utils/colors';
 
-import Hyperlink from '../components/hyperlink';
+import Hyperlink from '../../components/hyperlink';
 
 class Paragraph extends React.Component {
 

@@ -7,13 +7,15 @@ import {
   createStackNavigator,
 } from 'react-navigation';
 
-import i18n from './src/i18n';
 import Primitives from './src/utils/primitives';
 
 import SplashScreen from './src/screens/splash';
 import HomeScreen from './src/screens/home';
 import EditClassScheduleScreen from './src/screens/edit-class-schedule';
-import AboutScreen from './src/screens/about';
+import {
+  BackupScreen,
+  AboutScreen,
+} from './src/screens/settings';
 
 YellowBox.ignoreWarnings([
   'Warning: componentWillMount',
@@ -25,6 +27,7 @@ let App = createAppContainer(
     Splash: { screen: SplashScreen },
     Home: { screen: HomeScreen },
     EditClassSchedule: { screen: EditClassScheduleScreen },
+    Backup: { screen: BackupScreen },
     About: { screen: AboutScreen },
   })
 );

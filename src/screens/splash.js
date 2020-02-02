@@ -6,7 +6,6 @@ import {
 import { NavigationActions } from 'react-navigation';
 
 import State from '../utils/state';
-import Colors from '../utils/colors';
 
 export default class SplashScreen extends React.Component {
 
@@ -28,10 +27,6 @@ export default class SplashScreen extends React.Component {
       this.props.navigation.reset([
         NavigationActions.navigate({
           routeName: 'Home',
-          params: {
-            visibleDays: State.visibleDays,
-            visibleHours: State.visibleHours,
-          },
         })
       ], 0);
     })
