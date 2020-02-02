@@ -1,6 +1,6 @@
 export default class Consts {
 
-  static APP_VERSION = '0.1.3';
+  static APP_VERSION = '0.1.4';
 
   static Sizes = {
     CellWidth: 175,
