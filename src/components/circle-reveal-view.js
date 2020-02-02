@@ -6,20 +6,25 @@ import {
   Animated,
   Dimensions,
 } from 'react-native';
-import * as Animatable from 'react-native-animatable';
+import PropTypes from 'prop-types';
 
 import Utils from '../utils/utils';
 
 export default class CircleTransition extends Component {
-
-  scale = new Animated.Value(0.00001)
 
   static defaultProps = {
     backgroundColor: '#fff',
     duration: 250,
     expandedCallback: null,
     collapsedCallback: null,
-  }
+  };
+
+  static propTypes = {
+    backgroundColor: PropTypes.string,
+    duration: PropTypes.number,
+    expandedCallback: PropTypes.func,
+    collapsedCallback: PropTypes.func,
+  };
 
   constructor(props) {
     super(props);
@@ -28,7 +33,9 @@ export default class CircleTransition extends Component {
       visible: false,
       showChildren: true,
       animating: false,
-    }
+    };
+
+    this.scale = new Animated.Value(0.00001);
 
     this.collapse = this.collapse.bind(this);
     this.expand = this.expand.bind(this);
@@ -39,8 +46,60 @@ export default class CircleTransition extends Component {
     return this.state.visible;
   }
 
+  expand() {
+    if (!this.state.animating) {
+      this.setState({ visible: true, animating: true }, () => {
+        if (!Utils.emptyValue(this.props.expandedCallback)) {
+          this.props.expandedCallback();
+        }
+
+        Animated.timing(
+          this.scale,
+          {
+            toValue: 5,
+            duration: this.props.duration,
+          }
+        ).start(endResult => {
+          if (endResult.finished) {
+            this.setState({ animating: false });
+          }
+        });
+      })
+    }
+  }
+
+  collapse() {
+    if (!this.state.animating) {
+      if (!Utils.emptyValue(this.props.expandedCallback)) {
+        this.props.collapsedCallback();
+      }
+
+      this.setState({ animating: true });
+
+      Animated.timing(
+        this.scale,
+        {
+          toValue: 0,
+          duration: this.props.duration,
+        }
+      ).start(endResult => {
+        if (endResult.finished) {
+          this.setState({ visible: false, animating: false });
+        }
+      });
+    }
+  }
+
+  toggle() {
+    !this.state.visible ? this.expand() : this.collapse()
+  }
+
   render() {
     let { width } = Dimensions.get('window');
+    let opacity = this.scale.interpolate({
+      inputRange: [ 4, 5 ],
+      outputRange: [ 0, 1 ],
+    });
 
     return (
       this.state.visible ?
@@ -63,80 +122,28 @@ export default class CircleTransition extends Component {
               height: width,
               borderRadius: width / 2,
               transform: [{
-                scale: this.scale
-              }]
+                scale: this.scale,
+              }],
             }}
           />
 
           {
-            this.state.showChildren &&
-            <Animatable.View ref={ref => { this.childContainer = ref }}
-              style={{
-                opacity: 0,
-                width: '100%',
-                height: '100%',
-              }}>
+            this.state.showChildren ?
+              <Animated.View
+                style={{
+                  opacity,
+                  flex: 1,
+                }}
+              >
 
-              { this.props.children }
-            </Animatable.View>
+                { this.props.children }
+              </Animated.View>
+            :
+              null
           }
         </View>
       :
         null
-    )
-  }
-
-  expand() {
-    if (!this.state.animating) {
-      this.setState({ visible: true, animating: true }, () => {
-        if (!Utils.emptyValue(this.props.expandedCallback)) {
-          this.props.expandedCallback();
-        }
-
-        Animated.timing(
-          this.scale, {
-            useNativeDriver: true,
-            fromValue: 0,
-            toValue: 5,
-            duration: this.props.duration,
-          }
-        ).start(e => {
-          if (e.finished) {
-            if (!Utils.emptyValue(this.childContainer) && !Utils.emptyValue(this.childContainer)) {
-              this.childContainer.fadeIn(200).then(() => this.setState({ animating: false }));
-            }
-          }
-        })
-      })
-    }
-  }
-
-  collapse() {
-    if (!this.state.animating) {
-      if (!Utils.emptyValue(this.props.expandedCallback)) {
-        this.props.collapsedCallback();
-      }
-
-      this.setState({ animating: true });
-      if (!Utils.emptyValue(this.childContainer) && !Utils.emptyValue(this.childContainer)) {
-        this.childContainer.fadeOut(200);
-      }
-
-      Animated.timing(
-        this.scale, {
-          useNativeDriver: true,
-          toValue: 0,
-          duration: this.props.duration,
-        }
-      ).start(e => {
-        if (e.finished) {
-          this.setState({ visible: false, animating: false });
-        }
-      })
-    }
-  }
-
-  toggle() {
-    !this.state.visible ? this.expand() : this.collapse()
+    );
   }
 }
