@@ -67,7 +67,7 @@ export default class Colors {
     },
   }
 
-  static colorNames = {
+  static names = {
     '#E7C14C': 'color-ronchi',
     '#E1A834': 'color-golden-grass',
     '#E37E2F': 'color-zest',
