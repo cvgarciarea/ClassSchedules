@@ -3,6 +3,7 @@ import BooleanSettingItem from './boolean';
 import SelectionSettingItem from './selection';
 import TimeRangeSettingItem from './time-range';
 import WeekdaysSettingItem from './weekdays';
+import NestedScreenSettingItem from './nested-screen';
 import SettingsSectionHeader from './section-header';
 
 export {
@@ -11,5 +12,6 @@ export {
   SelectionSettingItem,
   TimeRangeSettingItem,
   WeekdaysSettingItem,
+  NestedScreenSettingItem,
   SettingsSectionHeader,
 };
