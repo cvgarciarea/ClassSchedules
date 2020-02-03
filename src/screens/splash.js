@@ -6,6 +6,7 @@ import {
 import { NavigationActions } from 'react-navigation';
 
 import State from '../utils/state';
+import initFirebase, { Notifications } from '../utils/firebase';
 
 export default class SplashScreen extends React.Component {
 
@@ -22,6 +23,13 @@ export default class SplashScreen extends React.Component {
   }
 
   async componentDidMount() {
+    initFirebase();
+
+    setTimeout(() => {
+      Notifications.requestPermission();
+      // Notifications.createReminder();
+    }, 500);
+
     State.loadFromStorage()
     .then(() => {
       this.props.navigation.reset([

@@ -18,6 +18,7 @@
     "react": "16.9.0",
     "react-native": "0.61.5",
     "react-native-directed-scrollview": "git+https://github.com/chrisfisher/react-native-directed-scrollview.git#master",
+    "react-native-firebase": "5.6.0",
     "react-native-gesture-handler": "1.5.3",
     "react-native-i18n": "2.0.15",
     "react-native-languages": "3.0.2",

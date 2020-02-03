@@ -1,13 +1,23 @@
 package com.cgarcia.classschedules;
 
+// android
 import android.app.Application;
 import android.content.Context;
+
+// react-native
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.soloader.SoLoader;
 
+// firebase
+import io.invertase.firebase.storage.RNFirebaseStoragePackage;
+import io.invertase.firebase.firestore.RNFirebaseFirestorePackage;
+import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
+import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage;
+
+// java
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
@@ -26,6 +36,13 @@ public class MainApplication extends Application implements ReactApplication {
       List<ReactPackage> packages = new PackageList(this).getPackages();
       // Packages that cannot be autolinked yet can be added manually here, for example:
       // packages.add(new MyReactNativePackage());
+
+      // Firebase
+      packages.add(new RNFirebaseStoragePackage());
+      packages.add(new RNFirebaseFirestorePackage());
+      packages.add(new RNFirebaseMessagingPackage());
+      packages.add(new RNFirebaseNotificationsPackage());
+
       return packages;
     }
 

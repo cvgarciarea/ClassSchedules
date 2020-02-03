@@ -50,6 +50,9 @@
   "friday": "Viernes",
   "saturday": "Sábado",
 
+  "notification-channel-today-classes-name": "Clases de hoy",
+  "notification-channel-today-classes-description": "Usado para mostrarte tus clases de forma diaria",
+
   "color-ronchi": "Color Ronchi",
   "color-golden-grass": "Color Hierva Dorada",
   "color-zest": "Color Ralladura",

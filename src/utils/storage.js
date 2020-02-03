@@ -13,6 +13,8 @@ export default class Storage {
     schedules: 'schedules',
     recentColors: 'recentcolors',
     createScheduleAtEmptyHour: 'createscheduleatemptyhour',
+    dailyReminderIDs: 'dailyremindersids',
+    notificationIDs: 'notificationids',
   };
 
   // ****************************************************************
