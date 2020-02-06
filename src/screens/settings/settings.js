@@ -197,7 +197,7 @@ export default class SettingsScreen extends FocusListenerScreen {
             title={ i18n.t('notifications') }
             icon={ 'bell' }
             navigation={ this.props.navigation }
-            screenName={ 'Test' }
+            screenName={ 'Notifications' }
           />
 
           <SettingsSectionHeader

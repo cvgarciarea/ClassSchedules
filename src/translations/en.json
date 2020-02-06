@@ -25,6 +25,7 @@
   "link-to": "Link to",
   "backup": "Backup",
   "backup-and-restorations": "Backup and restorations",
+  "daily": "Daily",
 
   "visible-time-range": "Visible time range",
   "visible-days": "Visible days",
@@ -52,6 +53,9 @@
 
   "notification-channel-today-classes-name": "Today classes",
   "notification-channel-today-classes-description": "Used for showing your classes daily",
+
+  "notify-me-daily-about-classes": "Notify me daily about my classes",
+  "daily-classes-notification-time": "Time",
 
   "color-ronchi": "Ronchi Color",
   "color-golden-grass": "Golden Grass Color",

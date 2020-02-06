@@ -21,16 +21,15 @@ export default class Consts {
     SATURDAY: 6,
   };
 
-  // Debería hacer un objeto con la relación: [Consts.Days.X] -> 'name' ?
-  static dayNames = [
-    'sunday',
-    'monday',
-    'tuesday',
-    'wednesday',
-    'thursday',
-    'friday',
-    'saturday',
-  ];
+  static dayNames = {
+    [Consts.Days.SUNDAY]:    'sunday',
+    [Consts.Days.MONDAY]:    'monday',
+    [Consts.Days.TUESDAY]:   'tuesday',
+    [Consts.Days.WEDNESDAY]: 'wednesday',
+    [Consts.Days.THURSDAY]:  'thursday',
+    [Consts.Days.FRIDAY]:    'friday',
+    [Consts.Days.SATURDAY]:  'saturday',
+  };
 
   static defaultSettings = {
     theme: 'light',
@@ -53,5 +52,7 @@ export default class Consts {
       '#4091BC',
     ],
     createScheduleAtEmptyHour: false,
+    dailySubjectsNotifications: false,
+    dailySubjectsNotificationTime: '08:00',
   };
 }

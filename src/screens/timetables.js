@@ -84,7 +84,6 @@ export default class TimetablesScreen extends FocusListenerScreen {
         this.setState({ updated: false });
       }
     );
-
   }
 
   didFocus() {
@@ -225,6 +224,8 @@ export default class TimetablesScreen extends FocusListenerScreen {
       tempNewSchedule: {},
       editingScheduleData: {},
     });
+
+    // TODO: Actualizar notificaciones diarias
 
     // Guardar los nuevos horarios en el disco
     Storage.storeValue(Storage.Keys.schedules, JSON.stringify(schedules));
@@ -437,6 +438,7 @@ export default class TimetablesScreen extends FocusListenerScreen {
 
     Storage.storeValue(Storage.Keys.schedules, JSON.stringify(schedules));
 
+    // TODO: Actualizar notificaciones diarias
     this.setState({
       schedules,
       selectionMode: 'normal',

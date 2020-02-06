@@ -1,6 +1,7 @@
 import Consts from './consts';
 import Utils from './utils';
 import Storage from './storage';
+import { Notifications } from './firebase';
 
 export default class State {
 
@@ -9,6 +10,9 @@ export default class State {
   static visibleDays = Consts.defaultSettings.visibleDays;
   static recentColors = Consts.defaultSettings.recentColors;
   static createScheduleAtEmptyHour = Consts.defaultSettings.createScheduleAtEmptyHour;
+
+  static dailySubjectsNotifications = Consts.defaultSettings.dailySubjectsNotifications;
+  static dailySubjectsNotificationTime = Consts.defaultSettings.dailySubjectsNotificationTime;
 
   static _SUBSCRIPTIONS = {};
 
@@ -38,6 +42,8 @@ export default class State {
       theme: themeKey,
       recentColors: recentColorsKey,
       createScheduleAtEmptyHour: createScheduleAtEmptyHourKey,
+      dailySubjectsNotifications: dailySubjectsNotificationsKey,
+      dailySubjectsNotificationTime: dailySubjectsNotificationTimeKey,
     } = Storage.Keys;
 
     const defaultValues = {
@@ -45,7 +51,9 @@ export default class State {
       [visibleHoursKey]: JSON.stringify(Consts.defaultSettings.visibleHours),
       [themeKey]: Consts.defaultSettings.theme,
       [recentColorsKey]: JSON.stringify(Consts.defaultSettings.recentColors),
-      [createScheduleAtEmptyHourKey]: String(Consts.defaultSettings.createScheduleAtEmptyHourKey),
+      [createScheduleAtEmptyHourKey]: String(Consts.defaultSettings.createScheduleAtEmptyHour),
+      [dailySubjectsNotificationsKey]: String(Consts.defaultSettings.dailySubjectsNotifications),
+      [dailySubjectsNotificationTimeKey]: String(Consts.defaultSettings.dailySubjectsNotificationTime),
     };
 
     let values = await Storage.getMultipleValues([
@@ -54,6 +62,8 @@ export default class State {
       themeKey,
       recentColorsKey,
       createScheduleAtEmptyHourKey,
+      dailySubjectsNotificationsKey,
+      dailySubjectsNotificationTimeKey,
     ], defaultValues);
 
     // Hago JSON.parse a los valores que lo necesitan
@@ -70,6 +80,7 @@ export default class State {
     // Cambio de tipo a los valores booleanos
     const booleans = [
       createScheduleAtEmptyHourKey,
+      dailySubjectsNotificationsKey,
     ];
 
     for (let i=0; i<booleans.length; i++) {
@@ -91,8 +102,14 @@ export default class State {
     if (values[recentColorsKey] !== State.recentColors)
       stateVars['recent-colors'] = values[recentColorsKey];
 
-    if (values[createScheduleAtEmptyHourKey] !== State.createScheduleAtEmptyHourKey)
+    if (values[createScheduleAtEmptyHourKey] !== State.createScheduleAtEmptyHour)
       stateVars['create-schedule-at-empty-hour'] = values[createScheduleAtEmptyHourKey];
+
+    if (values[dailySubjectsNotificationsKey] !== State.dailySubjectsNotifications)
+      stateVars['daily-subject-notifications'] = values[dailySubjectsNotificationsKey];
+
+    if (values[dailySubjectsNotificationTimeKey] !== State.dailySubjectsNotificationTime)
+      stateVars['daily-subject-notification-time'] = values[dailySubjectsNotificationTimeKey];
 
     // Establezco los valores leídos
     State.visibleDays = values[visibleDaysKey];
@@ -100,6 +117,8 @@ export default class State {
     State.theme = values[themeKey];
     State.recentColors = values[recentColorsKey];
     State.createScheduleAtEmptyHour = values[createScheduleAtEmptyHourKey];
+    State.dailySubjectsNotifications = values[dailySubjectsNotificationsKey];
+    State.dailySubjectsNotificationTime = values[dailySubjectsNotificationTimeKey];
 
     // Llamo a las funciones que detectan los cambios de estao
     if (triggerCallbacks) {
@@ -136,7 +155,29 @@ export default class State {
 
   static setCreateScheduleAtEmptyHour(value) {
     State.createScheduleAtEmptyHour = value;
-    Storage.storeValue(Storage.Keys.createScheduleAtEmptyHour, String(value));
+    Storage.storeValue(Storage.Keys.createScheduleAtEmptyHour, value);
     State._trigger('create-schedule-at-empty-hour', State.createScheduleAtEmptyHour);
+  }
+
+  static setDailySubjectsNotifications(value) {
+    State.dailySubjectsNotifications = value;
+    Storage.storeValue(Storage.Keys.dailySubjectsNotifications, value);
+    State._trigger('daily-subject-notifications', State.dailySubjectsNotifications);
+
+    if (State.dailySubjectsNotifications) {
+      Notifications.buildDailyClassesNotifications();
+    } else {
+      Notifications.clearDailyClassesNotifications();
+    }
+  }
+
+  static setDailySubjectsNotificationTime(time) {
+    State.dailySubjectsNotificationTime = time;
+    Storage.storeValue(Storage.Keys.dailySubjectsNotificationTime, time);
+    State._trigger('daily-subject-notification-time', State.dailySubjectsNotificationTime);
+
+    if (State.dailySubjectsNotifications) {
+      Notifications.buildDailyClassesNotifications();
+    }
   }
 }

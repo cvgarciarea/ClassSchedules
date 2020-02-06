@@ -28,6 +28,7 @@ export default class SplashScreen extends React.Component {
     setTimeout(() => {
       Notifications.requestPermission();
       // Notifications.createReminder();
+      // Notifications.buildDailyClassesNotifications();
     }, 500);
 
     State.loadFromStorage()

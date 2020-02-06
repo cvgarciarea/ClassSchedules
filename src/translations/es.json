@@ -25,6 +25,7 @@
   "link-to": "Enlace a",
   "backup": "Copia de seguridad",
   "backup-and-restorations": "Copias de seguridad y restauraciones",
+  "daily": "Diariamente",
 
   "visible-time-range": "Rango de tiempo visible",
   "visible-days": "Días visibles",
@@ -52,6 +53,9 @@
 
   "notification-channel-today-classes-name": "Clases de hoy",
   "notification-channel-today-classes-description": "Usado para mostrarte tus clases de forma diaria",
+
+  "notify-me-daily-about-classes": "Notificarme sobre mis clases diariamente",
+  "daily-classes-notification-time": "Hora",
 
   "color-ronchi": "Color Ronchi",
   "color-golden-grass": "Color Hierva Dorada",
