@@ -19,6 +19,7 @@ export default class SettingItem extends React.Component {
     icon: null,
     touchable: true,
     handlePress: null,
+    style: null,
   };
 
   static propTypes = {
@@ -60,7 +61,9 @@ export default class SettingItem extends React.Component {
         onPress={ () => this._handlePress() }
       >
 
-        <View>
+        <View
+          style={ this.props.style }
+        >
           <View
             style={{
               padding: 10,
