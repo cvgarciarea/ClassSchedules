@@ -178,6 +178,8 @@ export default class State {
 
     if (State.dailySubjectsNotifications) {
       Notifications.buildDailyClassesNotifications();
+    } else {
+      Notifications.clearDailyClassesNotifications();
     }
   }
 }

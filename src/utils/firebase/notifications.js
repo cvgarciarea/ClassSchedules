@@ -64,8 +64,8 @@ export default class Notifications {
     return notification;
   }
 
-  static cancelNotification(notificationID) {
-    firebase.notifications().cancelNotification(notificationID);
+  static async cancelNotification(notificationID) {
+    await firebase.notifications().cancelNotification(notificationID);
   }
 
   /**
@@ -86,8 +86,8 @@ export default class Notifications {
       let id = dailyNotifications[key];
 
       if (Utils.isDefined(id)) {
-        Notifications.cancelNotification(id);
-        dailyNotifications = dailyNotifications.removeAll(id);
+        await Notifications.cancelNotification(id);
+        delete dailyNotifications[id];
         notificationIDs = notificationIDs.removeAll(id);
       }
     }
@@ -161,7 +161,7 @@ export default class Notifications {
           notificationID = Utils.uuidv4();
         } while (notificationIDs.includes(notificationID));
 
-        dailyNotificationIDs[day] = notificationID;
+        dailyNotificationIDs[`day-${ day }`] = notificationID;
         notificationIDs.push(notificationID);
 
         // Construyo la notificación en sí
@@ -195,7 +195,7 @@ export default class Notifications {
 
         firebase.notifications()
         .scheduleNotification(notification, {
-          fireDate: now.toDate().getTime(),
+          fireDate: fireDate.toDate().getTime(),
           exact: true,
           repeatInterval: 'week',
         });
