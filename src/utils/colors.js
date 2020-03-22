@@ -28,11 +28,11 @@ export default class Colors {
     DESTRICTIVE: '#c34a4a',
   };
 
-
   static Themes = {
     light: {
       statusBarStyle: 'dark-content',
       background: '#f6f6f6',
+      backgroundLight: '#e0e0e0',
       foreground: '#363c3d',
       foregroundLight: '#495052',
       sectionHeaderBackground: '#eaeaea',
@@ -45,6 +45,7 @@ export default class Colors {
     dark: {
       statusBarStyle: 'light-content',
       background: '#2a2a2a',
+      backgroundLight: '#424242',
       foreground: '#f6f6f6',
       foregroundLight: '#fcfcfc',
       sectionHeaderBackground: '#000',
@@ -57,15 +58,16 @@ export default class Colors {
     amoled: {
       statusBarStyle: 'light-content',
       background: '#000',
+      backgroundLight: '#303030',
       foreground: '#f6f6f6',
       foregroundLight: '#fcfcfc',
       sectionHeaderBackground: '#000',
       cellBackground: '#000',
-      gridBackground: '#2a2a2a',
+      gridBackground: '#000',
       warning: '#D93438',
       link: '#fff',
     },
-  }
+  };
 
   static names = {
     '#E7C14C': 'color-ronchi',
