@@ -13,7 +13,7 @@ import Colors from '../../utils/colors';
 export default class ImageSection extends React.Component {
 
   static propTypes = {
-    sources: PropTypes.arrayOf(PropTypes.string).isRequired,
+    sources: PropTypes.arrayOf(PropTypes.object).isRequired,
     size: PropTypes.number,
     margin: PropTypes.number,
   };
@@ -31,7 +31,7 @@ export default class ImageSection extends React.Component {
     if (sources.length === 1) {
       return (
         <Image
-          source={{ uri: sources[0] }}
+          source={{ uri: sources[0].src }}
           style={[
             styles.basicImage,
             {
@@ -51,7 +51,7 @@ export default class ImageSection extends React.Component {
             }}
           >
             <Image
-              source={{ uri: source }}
+              source={{ uri: source.src }}
               style={[
                 styles.basicImage,
                 {
