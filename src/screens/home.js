@@ -84,7 +84,7 @@ class CreateButton extends React.Component {
     onPress: null,
     onFirstButtonPress: null,
     onSecondButtonPress: null,
-    onThirdbuttonPress: null,
+    onThirdButtonPress: null,
     onHideButtons: null,
   };
 
@@ -93,7 +93,7 @@ class CreateButton extends React.Component {
     onPress: PropTypes.func,
     onFirstButtonPress: PropTypes.func,
     onSecondButtonPress: PropTypes.func,
-    onThirdbuttonPress: PropTypes.func,
+    onThirdButtonPress: PropTypes.func,
     onHideButtons: PropTypes.func,
   };
 
@@ -586,7 +586,11 @@ tabNavigator.navigationOptions = ({ navigation }) => {
   }
 
   let headerRight = (
-    <View>
+    <View
+      style={{
+        flexDirection: 'row',
+      }}
+    >
       { headerRightChildren }
     </View>
   );

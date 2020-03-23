@@ -51,7 +51,9 @@ export default class GoalsScreen extends FocusListenerScreen {
     }
 
     setSaveButtonVisible(create);
+    setOnSaveButtonPress(this.onSaveButtonPress);
     setDeleteButtonVisible(false);
+    setOnDeleteButtonPress(this.onDeleteButtonPress);
   }
 
   onFABPress() {

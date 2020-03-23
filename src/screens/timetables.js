@@ -87,7 +87,7 @@ export default class TimetablesScreen extends FocusListenerScreen {
   }
 
   didFocus() {
-    let create = this.props.navigation.getParam('create');
+    let create = this.props.navigation.getParam('create', false);
     if (create) {
       this.revealer.expand();
     } else {
@@ -96,9 +96,10 @@ export default class TimetablesScreen extends FocusListenerScreen {
     }
 
     setSaveButtonVisible(create);
-    setOnFABPress(this.onFABPress);
     setOnSaveButtonPress(this.onSaveButtonPress);
     setOnDeleteButtonPress(this.deleteSelectedClassSchedules);
+
+    setOnFABPress(this.onFABPress);
 
     this.props.navigation.setParams({ create: false });
     BackHandler.addEventListener('hardwareBackPress', this.onBackButtonPressAndroid);

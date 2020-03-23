@@ -11,6 +11,7 @@ export default class Storage {
     visibleHours: 'visiblehours',
     theme: 'theme',
     schedules: 'schedules',
+    notes: 'notes',
     recentColors: 'recentcolors',
     createScheduleAtEmptyHour: 'createscheduleatemptyhour',
     dailyClassesNotificationsIDs: 'dailyclassesnotificationsids',
