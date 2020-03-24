@@ -95,7 +95,7 @@ export default class State {
     let stateVars = {};
 
     if (values[languageKey] !== State.language)
-      stateVar['language'] = values[languageKey];
+      stateVars['language'] = values[languageKey];
 
     if (values[visibleDaysKey] !== State.visibleDays)
       stateVars['visible-days'] = values[visibleDaysKey];

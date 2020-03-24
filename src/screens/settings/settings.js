@@ -46,19 +46,20 @@ export default class SettingsScreen extends FocusListenerScreen {
   }
 
   componentDidMount() {
-    State.subscribeTo(
+    const modifiers = [
+      'language',
       'visible-days',
-      () => {
-        this.setState({ rendered: false });
-      }
-    );
-
-    State.subscribeTo(
       'visible-hours',
-      () => {
-        this.setState({ rendered: false });
-      }
-    );
+    ];
+
+    for (modifier of modifiers) {
+      State.subscribeTo(
+        modifier,
+        () => {
+          this.setState({ rendered: false });
+        },
+      );
+    }
   }
 
   didFocus() {
@@ -126,7 +127,12 @@ export default class SettingsScreen extends FocusListenerScreen {
     State.setCreateScheduleAtEmptyHour(value);
   }
 
+  onLanguageChanged(language) {
+    State.setLanguage(language);
+  }
+
   render() {
+    console.log('settings render');
     this.state.rendered = true;
 
     let themes = {
@@ -134,6 +140,11 @@ export default class SettingsScreen extends FocusListenerScreen {
       'dark': { title: i18n.t('theme-dark') },
       'amoled': { title: i18n.t('theme-amoled') },
     };
+
+    let languages = {};
+    for (let abv in i18n.supportedLanguages) {
+      languages[abv] = { title: i18n.supportedLanguages[abv] };
+    }
 
     let theme = Colors.Themes[this.state.theme];
 
@@ -198,6 +209,17 @@ export default class SettingsScreen extends FocusListenerScreen {
             icon={ 'bell' }
             navigation={ this.props.navigation }
             screenName={ 'Notifications' }
+          />
+
+          <SelectionSettingItem
+            title={ i18n.t('language') }
+            icon={ 'translate' }
+            modalTitle={ i18n.t('language') }
+            options={ languages }
+            selected={ State.language }
+            onChange={ language => this.onLanguageChanged(language) }
+            showUpModal={ this.addModal }
+            closeModal={ this.removeModal }
           />
 
           <SettingsSectionHeader

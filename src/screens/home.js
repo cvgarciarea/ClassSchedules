@@ -338,6 +338,11 @@ class BottomTabBar extends React.Component {
       'theme',
       () => this.setState({ rendered: false }),
     );
+
+    State.subscribeTo(
+      'language',
+      () => this.setState({ rendered: false }),
+    );
   }
 
   animateFAB(mode) {
