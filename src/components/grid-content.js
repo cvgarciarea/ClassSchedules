@@ -84,11 +84,22 @@ export default class GridContent extends React.Component {
     );
   }
 
+  makeCellAccessibilityLabel(day, hour) {
+    let dayName = i18n.t(Consts.dayNames[day]);
+    let [ genericLocale ] = i18n.locale.split('-')
+
+    if (genericLocale === 'en') {
+      return `${ dayName} from ${ hour } o'clock to ${ hour + 1 } o'clock`;
+    } else if (genericLocale === 'es') {
+      return `${ dayName } de ${ hour } a ${ hour + 1 }`;
+    }
+  }
+
   renderCell(row, cell) {
     let theme = Colors.Themes[State.theme];
     const hour = Number(row);
     const day = Number(cell.id);
-    const accessibilityLabel = Utils.makeCellAccessibilityLabel(day, hour);
+    const accessibilityLabel = this.makeCellAccessibilityLabel(day, hour);
 
     return (
       <TouchableOpacity

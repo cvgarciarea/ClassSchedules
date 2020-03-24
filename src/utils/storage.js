@@ -1,12 +1,11 @@
 import AsyncStorage from '@react-native-community/async-storage';
-import moment from 'moment';
 
 import Utils from './utils';
-import Consts from './consts';
 
 export default class Storage {
 
   static Keys = {
+    language: 'language',
     visibleDays: 'visibledays',
     visibleHours: 'visiblehours',
     theme: 'theme',

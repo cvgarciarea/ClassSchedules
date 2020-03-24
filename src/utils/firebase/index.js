@@ -7,7 +7,7 @@ import Notifications from './notifications';
 
 export let firebaseApp = null;
 
-export default function initFirebase() {
+export default function initFirebase(i18n) {
   if (firebase.apps.length === 0) {
     firebaseApp = firebase.initializeApp(config);
   }
@@ -15,7 +15,7 @@ export default function initFirebase() {
   // Todo lo que viene a continuación debería hacerlo dentro del if?
   Firestore.init();
   Storage.init();
-  Notifications.init();
+  Notifications.init(i18n);
 }
 
 export {

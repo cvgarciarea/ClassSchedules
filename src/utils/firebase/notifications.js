@@ -1,11 +1,18 @@
+import {
+  Platform,
+} from 'react-native';
 import firebase from 'react-native-firebase';
 import moment from 'moment';
 
-import i18n from '../../i18n';
+// import i18n from '../../i18n';
 import Consts from '../consts';
 import Utils from '../utils';
 import InternalStorage from '../storage';  // No confundir con firebase storage
-import State from '../state';
+
+// FIXME: Encontrar una mejor manera de utilizar i18n sin tener que
+//        importarlo, preferiblemente sin tener que pasarlo como
+//        parámetro como hasta ahora.
+let i18n = null;
 
 export default class Notifications {
 
@@ -16,15 +23,21 @@ export default class Notifications {
   static todayClassesChannel = null;
   static listener = null;
 
-  static init() {
-    Notifications.todayClassesChannel = new firebase.notifications.Android.Channel(
-      Notifications.channels.todayClasses,
-      i18n.t('notification-channel-today-classes-name'),
-      firebase.notifications.Android.Importance.Default,
-    )
-    .setDescription(i18n.t('notification-channel-today-classes-description'));
+  static init(_i18n) {
+    i18n = _i18n;
 
-    firebase.notifications().android.createChannel(Notifications.todayClassesChannel);
+    if (Platform.OS === 'android') {
+      Notifications.todayClassesChannel = new firebase.notifications.Android.Channel(
+        Notifications.channels.todayClasses,
+        i18n.t('notification-channel-today-classes-name'),
+        firebase.notifications.Android.Importance.Default,
+      )
+      .setDescription(i18n.t('notification-channel-today-classes-description'));
+
+      firebase.notifications()
+      .android
+      .createChannel(Notifications.todayClassesChannel);
+    }
   }
 
   static async requestPermission() {
@@ -105,6 +118,15 @@ export default class Notifications {
   static async buildDailyClassesNotifications() {
     await Notifications.clearDailyClassesNotifications();
 
+    /**
+     * DISCLAIMER: Leerlo del disco me sirve para no crear un 'require cycle'
+     * al importar State.
+     */
+    const dailySubjectsNotificationTime = await InternalStorage.getValue(InternalStorage.Keys.dailySubjectsNotificationTime, '08:00');
+    let _moment = moment(dailySubjectsNotificationTime, 'HH:mm');
+    const hour = _moment.get('hour');
+    const minute = _moment.get('minute');
+
     const {
       schedules: schedulesKey,
       dailyClassesNotificationsIDs: dailyKey,
@@ -167,7 +189,7 @@ export default class Notifications {
         // Construyo la notificación en sí
         let notification = Notifications.buildNotification({
           id: notificationID,
-          title: i18n.t(Consts.dayNames[day]),
+          title: Utils.getDayName(day),
           body: lines.join(' '),
           largeBody: lines.join('\n'),
         });
@@ -179,9 +201,6 @@ export default class Notifications {
           ? 7    // Los domingos son 7, en mi notación valen 0
           : day  // Cualquier otro día de la semana coincide
         );
-
-        const hour = moment(State.dailySubjectsNotificationTime, 'HH:mm').get('hour');
-        const minute = moment(State.dailySubjectsNotificationTime, 'HH:mm').get('minute');
 
         fireDate.set('hour', hour);
         fireDate.set('minute', minute);

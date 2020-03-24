@@ -32,6 +32,7 @@ export default class Consts {
   };
 
   static defaultSettings = {
+    language: 'en',
     theme: 'light',
     visibleDays: [
       Consts.Days.MONDAY,

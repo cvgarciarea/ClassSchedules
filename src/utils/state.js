@@ -5,6 +5,7 @@ import { Notifications } from './firebase';
 
 export default class State {
 
+  static language = Consts.defaultSettings.language;
   static theme = Consts.defaultSettings.theme;
   static visibleHours = Consts.defaultSettings.visibleHours;
   static visibleDays = Consts.defaultSettings.visibleDays;
@@ -37,6 +38,7 @@ export default class State {
   static async loadFromStorage(triggerCallbacks=false) {
     // Leo los valores guardados
     let {
+      language: languageKey,
       visibleDays: visibleDaysKey,
       visibleHours: visibleHoursKey,
       theme: themeKey,
@@ -47,6 +49,7 @@ export default class State {
     } = Storage.Keys;
 
     const defaultValues = {
+      [languageKey]: Consts.defaultSettings.language,
       [visibleDaysKey]: JSON.stringify(Consts.defaultSettings.visibleDays),
       [visibleHoursKey]: JSON.stringify(Consts.defaultSettings.visibleHours),
       [themeKey]: Consts.defaultSettings.theme,
@@ -57,6 +60,7 @@ export default class State {
     };
 
     let values = await Storage.getMultipleValues([
+      languageKey,
       visibleDaysKey,
       visibleHoursKey,
       themeKey,
@@ -90,6 +94,9 @@ export default class State {
     // Detecto cuáles valores cambiaron con respecto al estado actual
     let stateVars = {};
 
+    if (values[languageKey] !== State.language)
+      stateVar['language'] = values[languageKey];
+
     if (values[visibleDaysKey] !== State.visibleDays)
       stateVars['visible-days'] = values[visibleDaysKey];
 
@@ -112,6 +119,7 @@ export default class State {
       stateVars['daily-subject-notification-time'] = values[dailySubjectsNotificationTimeKey];
 
     // Establezco los valores leídos
+    State.language = values[languageKey];
     State.visibleDays = values[visibleDaysKey];
     State.visibleHours = values[visibleHoursKey];
     State.theme = values[themeKey];
@@ -126,6 +134,12 @@ export default class State {
         State._trigger(stateVar, stateVars[stateVar]);
       }
     }
+  }
+
+  static setLanguage(language) {
+    State.language = language;
+    Storage.storeValue(Storage.Keys.language, language);
+    State._trigger('language');
   }
 
   static setVisibleDays(days) {

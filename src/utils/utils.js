@@ -3,9 +3,6 @@ import {
   Platform,
 } from 'react-native';
 
-import i18n from '../i18n';
-import Consts from './consts';
-
 export default class Utils {
 
   static getCellsByRow(visibleHoursRange, visibleDays=[0, 1, 2, 3, 4, 5, 6]) {
@@ -47,6 +44,10 @@ export default class Utils {
 
   static isBoolean(value) {
     return typeof value === 'boolean';
+  }
+
+  static getDayName() {
+    return i18n.t(Consts.dayNames[day]);
   }
 
   /**
@@ -132,16 +133,5 @@ export default class Utils {
       let r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
       return v.toString(16);
     });
-  }
-
-  static makeCellAccessibilityLabel(day, hour) {
-    let dayName = i18n.t(Consts.dayNames[day]);
-    let [ genericLocale ] = i18n.locale.split('-')
-
-    if (genericLocale === 'en') {
-      return `${ dayName} from ${ hour } o'clock to ${ hour + 1 } o'clock`;
-    } else if (genericLocale === 'es') {
-      return `${ dayName } de ${ hour } a ${ hour + 1 }`;
-    }
   }
 }

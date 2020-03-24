@@ -5,6 +5,7 @@ import {
 } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 
+import i18n from '../i18n';
 import State from '../utils/state';
 import initFirebase, { Notifications } from '../utils/firebase';
 
@@ -23,7 +24,7 @@ export default class SplashScreen extends React.Component {
   }
 
   async componentDidMount() {
-    initFirebase();
+    initFirebase(i18n);
 
     setTimeout(() => {
       Notifications.requestPermission();
