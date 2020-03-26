@@ -11,19 +11,20 @@ export default class TextSection extends React.Component {
 
   static propTypes = {
     body: PropTypes.string,
+    backgroundColor: PropTypes.string,
   };
 
   render() {
-    const theme = Colors.Themes[State.theme];
     const {
       body,
+      backgroundColor,
     } = this.props;
 
     return (
       <Text
         ellipsizeMode={ 'tail' }
         style={{
-          color: theme.foreground,
+          color: Colors.getTextColorForBackground(backgroundColor || Colors.Themes[State.theme]),
           flexWrap: 'wrap',
         }}
       >

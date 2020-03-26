@@ -21,6 +21,7 @@ export default class Note extends React.Component {
   static propTypes = {
     id: PropTypes.string.isRequired,
     title: PropTypes.string,
+    color: PropTypes.string,
     data: PropTypes.arrayOf(PropTypes.object).isRequired,
     onPress: PropTypes.func,
     onLongPress: PropTypes.func,
@@ -34,6 +35,7 @@ export default class Note extends React.Component {
     const theme = Colors.Themes[State.theme];
     const {
       title,
+      color,
       data: allData,
       size,
       margin,
@@ -42,6 +44,18 @@ export default class Note extends React.Component {
       onLongPress,
       onDelete,
     } = this.props;
+
+    let borderColor;
+    let backgroundColor;
+
+    if (Utils.isDefined(color)) {
+      backgroundColor = color;
+      let shadePercent = State.theme === 'light' ? -20 : 40;
+      borderColor = Colors.shadeColor(backgroundColor, shadePercent);
+    } else {
+      borderColor = theme.foreground;
+      backgroundColor = theme.background;
+    }
 
     const deleteIconSize = margin * 1.5;
 
@@ -62,8 +76,9 @@ export default class Note extends React.Component {
           style={[
             styles.note,
             {
-              borderColor: theme.backgroundLight,
-            }
+              borderColor,
+              backgroundColor,
+            },
           ]}
         >
           {
@@ -72,7 +87,7 @@ export default class Note extends React.Component {
                 style={[
                   styles.title,
                   {
-                    color: theme.foreground,
+                    color: Colors.getTextColorForBackground(backgroundColor),
                     marginBottom: margin / 4,
                   }
                 ]}
@@ -93,6 +108,7 @@ export default class Note extends React.Component {
                     <TextSection
                       key={ index }
                       body={ data.body }
+                      backgroundColor={ backgroundColor }
                     />
                   );
 

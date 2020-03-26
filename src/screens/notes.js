@@ -286,6 +286,7 @@ export default class NotesScreen extends FocusListenerScreen {
                     key={ index }
                     id={ id }
                     title={ note.title }
+                    color={ note.color }
                     data={ note.data }
                     size={ noteSize }
                     margin={ noteMargin }

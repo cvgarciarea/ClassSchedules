@@ -189,6 +189,20 @@ export default class Colors {
   ]
 
   /**
+   * Expandir abreviación de un color, ejemplo: de '03F' a '0033FF'.
+   * 
+   * @param {String} hex
+   * 
+   * @return {String}
+   */
+  static expandHex(hex) {
+    let shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+    return hex.replace(shorthandRegex, function(m, r, g, b) {
+      return r + r + g + g + b + b;
+    });
+  }
+
+  /**
    * https://stackoverflow.com/a/5624139/2461236
    * Convierte un color en formato '#XXX' o '#XXXXXX' a { r: X, g: X, b: X }
    * 
@@ -202,13 +216,9 @@ export default class Colors {
    * @return {RGBColor}
    */
   static hexToRGB(hex) {
-    // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
-    var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
-    hex = hex.replace(shorthandRegex, function(m, r, g, b) {
-      return r + r + g + g + b + b;
-    });
-  
-    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    hex = Colors.expandHex(hex);
+    let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+
     return result ? {
       r: parseInt(result[1], 16),
       g: parseInt(result[2], 16),
@@ -226,5 +236,34 @@ export default class Colors {
                 color.b * 0.114 > 186;
 
     return light ? '#000' : '#fff';
+  }
+
+  /**
+   * https://stackoverflow.com/a/13532993
+   * 
+   * @param {String} color 
+   * @param {Number} percent 
+   * 
+   * @return {String}
+   */
+  static shadeColor(color, percent) {
+    color = Colors.expandHex(color);
+    let R = parseInt(color.substring(1, 3), 16);
+    let G = parseInt(color.substring(3, 5), 16);
+    let B = parseInt(color.substring(5, 7), 16);
+
+    R = parseInt(R * (100 + percent) / 100);
+    G = parseInt(G * (100 + percent) / 100);
+    B = parseInt(B * (100 + percent) / 100);
+
+    R = (R < 255) ? R : 255;
+    G = (G < 255) ? G : 255;
+    B = (B < 255) ? B : 255;
+
+    const RR = ((R.toString(16).length === 1) ? '0' + R.toString(16) : R.toString(16));
+    const GG = ((G.toString(16).length === 1) ? '0' + G.toString(16) : G.toString(16));
+    const BB = ((B.toString(16).length === 1) ? '0' + B.toString(16) : B.toString(16));
+
+    return `#${ RR }${ GG }${ BB }`;
   }
 }

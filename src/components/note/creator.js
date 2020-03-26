@@ -18,6 +18,8 @@ import Utils from '../../utils/utils';
 import State from '../../utils/state';
 import Colors from '../../utils/colors';
 
+import ColorPickerPallete from '../color-picker-pallete';
+
 class InputButton extends React.Component {
 
   static propTypes = {
@@ -58,12 +60,16 @@ class InputButton extends React.Component {
   }
 }
 
+/**
+ * TODO: Poder quitarle el color a una nota.
+ */
 export default class NoteCreator extends React.Component {
 
   static propTypes = {
     id: PropTypes.string,
     title: PropTypes.string,
     classID: PropTypes.string,
+    color: PropTypes.string,
     data: PropTypes.array,
   };
 
@@ -71,6 +77,7 @@ export default class NoteCreator extends React.Component {
     id: null,
     title: '',
     classID: null,
+    color: null,
     data: [],
   };
 
@@ -81,6 +88,7 @@ export default class NoteCreator extends React.Component {
       id,
       title,
       classID,
+      color,
       data,
     } = this.props;
 
@@ -88,6 +96,7 @@ export default class NoteCreator extends React.Component {
       id,
       title,
       classID,
+      color,
       data,
     };
 
@@ -99,6 +108,7 @@ export default class NoteCreator extends React.Component {
       id: this.state.id,
       title: this.state.title,
       classID: this.state.classID,
+      color: this.state.color,
       data: this.state.data,
     };
   }
@@ -162,6 +172,7 @@ export default class NoteCreator extends React.Component {
                 styles.textInput,
                 {
                   backgroundColor: theme.backgroundLight,
+                  color: Colors.getTextColorForBackground(theme.backgroundLight),
                 },
               ]}
               onChangeText={ text => {
@@ -316,12 +327,24 @@ export default class NoteCreator extends React.Component {
             {
               fontWeight: 'bold',
               backgroundColor: theme.backgroundLight,
+              color: Colors.getTextColorForBackground(theme.backgroundLight),
               marginHorizontal: 10,
             },
           ]}
           onChangeText={ title => {
             this.setState({ title });
           }}
+        />
+
+        <ColorPickerPallete
+          selectedColor={ this.state.color }
+          onSelect={ color => {
+            this.setState({ color });
+          }}
+        />
+
+        <View
+          style={{ height: 10 }}
         />
 
         { this.renderValues() }
