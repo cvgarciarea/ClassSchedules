@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   YellowBox,
 } from 'react-native';
@@ -7,8 +6,10 @@ import {
   createStackNavigator,
 } from 'react-navigation';
 
-import Primitives from './src/utils/primitives';
+// Cargar funciones extras para los tipos de datos de JavaScript
+require('./src/utils/primitives');
 
+// Cargar pantallas y componentes
 import SplashScreen from './src/screens/splash';
 import HomeScreen from './src/screens/home';
 import EditClassScheduleScreen from './src/screens/edit-class-schedule';

@@ -35,100 +35,6 @@ export default class NotesScreen extends FocusListenerScreen {
       tempNote: {},
       notes: [],
       notesData: {},
-
-      /*
-      notes: [ 'id1', 'id2', 'id3', 'id4', 'id5' ],
-      notesData: {
-        id1: {
-          title: 'prueba simple',
-          data: [
-            {
-              type: 'text',
-              body: 'cuerpo1',
-            },
-          ],
-        },
-        id2: {
-          title: 'prueba texto largo',
-          data: [
-            {
-              type: 'text',
-              body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-            },
-          ],
-        },
-        id3: {
-          title: 'imagen unica',
-          data: [
-            {
-              type: 'image',
-              images: [
-                {
-                  src: 'https://www.morrishospital.org/wp-content/uploads/2018/12/penguin2_2-1024x768.jpg',
-                  width: 1024,
-                  height: 768,
-                }
-              ],
-            },
-          ],
-        },
-        id4: {
-          title: 'muchas imagenes',
-          data: [
-            {
-              type: 'image',
-              images: [
-                {
-                  src: 'https://amayei.nyc3.digitaloceanspaces.com/2019/10/58e336b26ee69cbfb21d906c57b8ac8f9cb53bdf.jpg',
-                  width: 768,
-                  height: 512,
-                },
-                {
-                  src: 'https://scx1.b-cdn.net/csz/news/800/2019/marchofthemu.jpg',
-                  width: 800,
-                  height: 480,
-                },
-                {
-                  src: 'https://www.nationalgeographic.com/content/dam/news/2016/06/29/adelie_penguin/01_adelie_penguin.jpg',
-                  width: 2048,
-                  height: 1365,
-                },
-                {
-                  src: 'https://images.axios.com/2KVFKm3seLEb-6dNRPpysqzUTrw=/0x475:5000x3287/1920x1080/2019/04/25/1556175266452.jpg',
-                  width: 1920,
-                  height: 1080,
-                },
-                {
-                  src: 'https://www.realityblurred.com/realitytv/images/2020/03/penguins-falkland-islands.jpg',
-                  width: 800,
-                  height: 500,
-                },
-              ],
-            },
-          ],
-        },
-        id5: {
-          title: 'documentos adjuntos',
-          data: [
-            {
-              type: 'document',
-              fileType: 'pdf',
-              fileName: 'test.pdf',
-            },
-            {
-              type: 'document',
-              fileType: 'docx',
-              fileName: 'test.docx',
-            },
-            {
-              type: 'document',
-              fileType: 'unknown',
-              fileName: 'unknown file'
-            }
-          ],
-        },
-      },
-      */
     };
 
     this.revealer = null;
@@ -145,7 +51,7 @@ export default class NotesScreen extends FocusListenerScreen {
       () => this.setState({ rendered: false }),
     );
 
-    Storage.getValue(Storage.Keys.notes, '{}')
+    Storage.getLargeValue(Storage.Keys.notes, '{}')
     .then(notesData => {
       notesData = JSON.parse(notesData);
       let notes = Object.keys(notesData);
@@ -158,7 +64,10 @@ export default class NotesScreen extends FocusListenerScreen {
   }
 
   saveNotes() {
-    Storage.storeValue(Storage.Keys.notes, JSON.stringify(this.state.notesData));
+    Storage.storeLargeValue(
+      Storage.Keys.notes,
+      JSON.stringify(this.state.notesData)
+    );
   }
 
   didFocus() {

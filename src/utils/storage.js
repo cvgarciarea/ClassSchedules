@@ -145,6 +145,7 @@ export default class Storage {
    */
   static async getLargeValue(key) {
     let keys = await AsyncStorage.getAllKeys();
+
     keys.sort((a, b) => {
       aStarts = a.startsWith(key);
       bStarts = b.startsWith(key);
