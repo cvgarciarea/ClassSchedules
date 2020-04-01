@@ -1,9 +1,9 @@
 import React from 'react';
 import {
   View,
-  StatusBar,
   Dimensions,
   ScrollView,
+  BackHandler,
   LayoutAnimation,
 } from 'react-native';
 
@@ -43,6 +43,7 @@ export default class NotesScreen extends FocusListenerScreen {
     this.onFABPress = this.onFABPress.bind(this);
     this.onSaveButtonPress = this.onSaveButtonPress.bind(this);
     this.onDeleteButtonPress = this.onDeleteButtonPress.bind(this);
+    this.onBackButtonPressAndroid = this.onBackButtonPressAndroid.bind(this);
   }
 
   componentDidMount() {
@@ -63,11 +64,20 @@ export default class NotesScreen extends FocusListenerScreen {
     });
   }
 
-  saveNotes() {
-    Storage.storeLargeValue(
-      Storage.Keys.notes,
-      JSON.stringify(this.state.notesData)
-    );
+  resetCreateSchedule() {
+    let revealed = !Utils.emptyValue(this.revealer) &&
+                   this.revealer.getVisible();
+
+    if (revealed) {
+      this.revealer.collapse();
+      animateFAB('create');
+    }
+
+    return revealed;
+  }
+
+  onBackButtonPressAndroid() {
+    return this.resetCreateSchedule();
   }
 
   didFocus() {
@@ -75,6 +85,18 @@ export default class NotesScreen extends FocusListenerScreen {
     this.resetCreateNote();
 
     this.props.navigation.setParams({ create: false });
+    BackHandler.addEventListener('hardwareBackPress', this.onBackButtonPressAndroid);
+  }
+
+  willBlur() {
+    BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressAndroid);
+  }
+
+  saveNotes() {
+    Storage.storeLargeValue(
+      Storage.Keys.notes,
+      JSON.stringify(this.state.notesData)
+    );
   }
 
   resetCreateNote() {
