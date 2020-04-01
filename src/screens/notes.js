@@ -217,17 +217,22 @@ export default class NotesScreen extends FocusListenerScreen {
                        *       crear una especie de papelera de notas.
                        */
 
-                      /**
-                       * TODO: Guardar en disco los cambios.
-                       */
-
+                       // Quitar del objeto que almacena todas las notas
                        let { notes, notesData } = this.state;
                        notesData = JSON.parse(JSON.stringify(notesData));
                        delete notesData[id];
 
+                       // Quitar del arreglo con los ids de las notas
                        notes = JSON.parse(JSON.stringify(notes));
                        notes = notes.removeAll(id);
 
+                       // Guardar en disco
+                       Storage.storeLargeValue(
+                         Storage.Keys.notes,
+                         JSON.stringify(notesData),
+                       );
+
+                       // Actualizar estado
                        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 
                        this.setState({
