@@ -103,6 +103,16 @@ export default class NoteCreator extends React.Component {
     this.renderedOnce = false;
   }
 
+  appendNewValue(value) {
+    // FIXME: Tiene que haber una mejor manera de hacer esto
+
+    let { data } = this.state;
+    data = JSON.parse(JSON.stringify(data));
+    data.push(value);
+
+    this.setState({ data });
+  }
+
   getNote() {
     return {
       id: this.state.id,
@@ -126,9 +136,22 @@ export default class NoteCreator extends React.Component {
 
     ImagePicker.openPicker(croppingOptions)
     .then(medias => {
+      const newValue = {
+        type: 'image',
+        images: [],
+      };
+
       for (let mediaData of medias) {
-        console.log(mediaData);
+        const image = {
+          src: `data:${ mediaData.mime };base64,${ mediaData.data }`,
+          width: mediaData.width,
+          height: mediaData.height,
+        };
+
+        newValue.images.push(image);
       }
+
+      this.appendNewValue(newValue);
 
       // for (let imageData of images) {
         /**
@@ -260,14 +283,12 @@ export default class NoteCreator extends React.Component {
               icon={ 'textbox' }
               color={ '#8EC75C' }
               onPress={ () => {
-                let { data } = this.state;
-                data = JSON.parse(JSON.stringify(data));
-                data.push({
+                const newValue = {
                   type: 'text',
                   body: '',
-                });
+                };
 
-                this.setState({ data });
+                this.appendNewValue(newValue);
               }}
             />
 
