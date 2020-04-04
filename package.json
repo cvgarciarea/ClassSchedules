@@ -7,7 +7,8 @@
     "ios": "react-native run-ios",
     "start": "react-native start",
     "test": "jest",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "postinstall": "python3 scripts/postinstall.py"
   },
   "dependencies": {
     "@ptomasroos/react-native-multi-slider": "1.0.0",
