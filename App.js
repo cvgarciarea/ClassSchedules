@@ -1,3 +1,5 @@
+require('./src/ignore-stupid-warnings');
+
 import {
   YellowBox,
 } from 'react-native';
