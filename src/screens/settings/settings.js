@@ -223,17 +223,6 @@ export default class SettingsScreen extends FocusListenerScreen {
           />
 
           <SettingsSectionHeader
-            title={ i18n.t('backup') }
-          />
-
-          <NestedScreenSettingItem
-            title={ i18n.t('backup-and-restorations') }
-            icon={ 'cloud-sync' }
-            // navigation={ this.props.navigation }
-            screenName={ 'Backup' }
-          />
-
-          <SettingsSectionHeader
             title={ i18n.t('section-app-info') }
           />
 

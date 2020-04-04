@@ -17,7 +17,6 @@ import HomeScreen from './src/screens/home';
 import EditClassScheduleScreen from './src/screens/edit-class-schedule';
 import {
   NotificationsScreen,
-  BackupScreen,
   AboutScreen,
 } from './src/screens/settings';
 
@@ -32,7 +31,6 @@ let App = createAppContainer(
     Home: { screen: HomeScreen },
     EditClassSchedule: { screen: EditClassScheduleScreen },
     Notifications: { screen: NotificationsScreen },
-    Backup: { screen: BackupScreen },
     About: { screen: AboutScreen },
   })
 );
