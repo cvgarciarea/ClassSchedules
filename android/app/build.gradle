@@ -130,8 +130,8 @@ android {
         applicationId "com.cgarcia.classschedules"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 2
-        versionName "0.1.4"
+        versionCode 3
+        versionName "0.2.0"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
         missingDimensionStrategy 'react-native-camera', 'general'
