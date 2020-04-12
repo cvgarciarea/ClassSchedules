@@ -240,14 +240,14 @@ class CreateButton extends React.Component {
 
                   {
                     /**
-                     * Un botón de más falso que solo se ve con el modal, da
+                     * Un botón "de más" falso que solo se ve con el modal, da
                      * la impresión de que es el otro porque se encuentra en
                      * la misma posición.
                      */
                     renderPlusButton({
                       position: 'absolute',
                       left: (screenWidth - size) / 2,
-                      bottom: 35,
+                      top: startY - 4,
                       zIndex: 100,
                     })
                   }
